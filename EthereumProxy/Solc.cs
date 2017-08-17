@@ -18,7 +18,7 @@ namespace Auctus.EthereumProxy
 
         internal static List<SCCompiled> Compile(string name, string smartContractStringified)
         {
-            string filePath = string.Format("{0}{1}{2}.sol", Config.IS_WINDOWS ? Config.WindowsGethPath : Config.LinuxGethPath, name, DateTime.UtcNow.Ticks);
+            string filePath = string.Format("{0}{1}{2}.sol", Config.GETH_PATH, name, DateTime.UtcNow.Ticks);
             File.WriteAllText(filePath, smartContractStringified);
             try
             {
@@ -31,12 +31,7 @@ namespace Auctus.EthereumProxy
                 File.Delete(filePath);
             }
         }
-
-        protected override string GetWorkingDirectory()
-        {
-            return Config.IS_WINDOWS ? Config.WindowsGethPath : Config.LinuxGethPath;
-        }
-
+        
         protected override ConsoleOutput ReadOutput(Process process)
         {
             ConsoleOutput output = base.ReadOutput(process);

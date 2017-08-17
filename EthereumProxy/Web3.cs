@@ -53,7 +53,7 @@ namespace Auctus.EthereumProxy
             
             Wallet account = new Wallet();
             account.Address = output.Output;
-            string completePath = Directory.EnumerateFiles(string.Format("{0}keystore", Config.IS_WINDOWS ? Config.WindowsGethPath : Config.LinuxGethPath)).Where(c => c.Split(new string[] { "Z--" }, StringSplitOptions.RemoveEmptyEntries).Last() == account.Address.Substring(2)).Single();
+            string completePath = Directory.EnumerateFiles(string.Format("{0}keystore", Config.GETH_PATH)).Where(c => c.Split(new string[] { "Z--" }, StringSplitOptions.RemoveEmptyEntries).Last() == account.Address.Substring(2)).Single();
             account.File = File.ReadAllBytes(completePath);
             char splitCharacter = Config.IS_WINDOWS ? '\\' : '/';
             account.FileName = completePath.Split(splitCharacter).Last();
@@ -163,17 +163,12 @@ namespace Auctus.EthereumProxy
         #region Override Methods
         protected override string GetFileName()
         {
-            return Config.IS_WINDOWS ? Config.WindowsGethExec : Config.LinuxGethExec;
+            return Config.IS_WINDOWS ? "geth.exe" : "geth";
         }
-
-        protected override string GetWorkingDirectory()
-        {
-            return Config.IS_WINDOWS ? Config.WindowsGethPath : Config.LinuxGethPath;
-        }
-
+        
         protected override string GetStartArgument(Command command)
         {
-            return string.Format("attach{0}", Config.IS_WINDOWS ? "" : string.Format(" ipc:{0}geth.ipc", Config.LinuxGethPath));
+            return string.Format("attach{0}", Config.IS_WINDOWS ? "" : string.Format(" ipc:{0}geth.ipc", Config.GETH_PATH));
         }
 
         protected override string GetFormattedComand(string command)

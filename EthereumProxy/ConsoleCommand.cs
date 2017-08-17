@@ -41,11 +41,14 @@ namespace Auctus.EthereumProxy
             return output;
         }
 
-        protected abstract string GetWorkingDirectory();
+        protected virtual string GetWorkingDirectory()
+        {
+            return Config.GETH_PATH;
+        }
 
         protected virtual string GetFileName()
         {
-            return Config.IS_WINDOWS ? Config.WindowsExec : Util.Config.LinuxExec;
+            return Config.IS_WINDOWS ? "cmd.exe" : "/bin/bash";
         }
         
         protected virtual string GetStartArgument(Command command)
