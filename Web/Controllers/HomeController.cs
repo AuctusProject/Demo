@@ -11,13 +11,6 @@ namespace Web.Controllers
     {
         public IActionResult Index()
         {
-
-            var service = new AccountsService();
-            new AccountsService().createCompany("teste" + DateTime.Now.Ticks);
-            var list = service.listAllCompanies();
-
-
-
             return View();
         }
 
