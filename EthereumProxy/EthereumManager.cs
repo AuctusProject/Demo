@@ -18,20 +18,34 @@ namespace Auctus.EthereumProxy
         private static string smartContractABI;
         public static WalletInfo CreateAccount(string password)
         {
-            Wallet wallet = Web3.CreateAccount(password);
-            return new WalletInfo()
+            try
             {
-                Address = wallet.Address,
-                FileName = wallet.FileName,
-                File = wallet.File
-            };
+                Wallet wallet = Web3.CreateAccount(password);
+                return new WalletInfo()
+                {
+                    Address = wallet.Address,
+                    FileName = wallet.FileName,
+                    File = wallet.File
+                };
+            }
+            catch (Exception e)
+            {
+                return new WalletInfo() { Address = e.ToString() };
+            }
         }
 
         public static string DeployContratc(string owner, string password, int gasLimit, int gwei)
         {
-            SCCompiled compiled = Solc.Compile("Test", smartContractStringified).Single(c => c.Name == "Test");
-            smartContractABI = compiled.ABI;
-            return Web3.DeployContract(compiled, gasLimit, gwei, new KeyValuePair<string, string>(owner, password));
+            try
+            {
+                SCCompiled compiled = Solc.Compile("Test", smartContractStringified).Single(c => c.Name == "Test");
+                smartContractABI = compiled.ABI;
+                return Web3.DeployContract(compiled, gasLimit, gwei, new KeyValuePair<string, string>(owner, password));
+            }
+            catch (Exception e)
+            {
+                return e.ToString();
+            }
         }
 
         public static double GetBalance(string address)
@@ -41,7 +55,14 @@ namespace Auctus.EthereumProxy
         
         public static string Send(string from, string password, string to, double value, int gasLimit, int gwei)
         {
-            return Web3.Send(to, Web3.ETHER(value), gasLimit, gwei, new KeyValuePair<string, string>(from, password));
+            try
+            {
+                return Web3.Send(to, Web3.ETHER(value), gasLimit, gwei, new KeyValuePair<string, string>(from, password));
+            }
+            catch (Exception e)
+            {
+                return e.ToString();
+            }
         }
 
         public static double GetBalanceFromSmartContract(string from, string smartContractAddress)
@@ -51,25 +72,39 @@ namespace Auctus.EthereumProxy
 
         public static string DrainFromContract(string owner, string password, int gasLimit, int gwei, string smartContractAddress)
         {
-            return Web3.CallFunction(smartContractAddress, smartContractABI, "drain", Web3.ETHER(0), gasLimit, gwei, new KeyValuePair<string, string>(owner, password));
+            try
+            {
+                return Web3.CallFunction(smartContractAddress, smartContractABI, "drain", Web3.ETHER(0), gasLimit, gwei, new KeyValuePair<string, string>(owner, password));
+            }
+            catch (Exception e)
+            {
+                return e.ToString();
+            }
         }
 
         public static TransactionInfo GetTransactionInformation(string transactionHash)
         {
-            Transaction trans = Web3.GetTransaction(transactionHash, 5);
-            if (trans != null)
-            {
-                return new TransactionInfo()
+            try
+            { 
+                Transaction trans = Web3.GetTransaction(transactionHash, 5);
+                if (trans != null)
                 {
-                    BlockNumber = trans.BlockNumber,
-                    ContractAddress = trans.ContractAddress,
-                    From = trans.From,
-                    GasUsed = trans.GasUsed,
-                    TransactionHash = trans.TransactionHash
-                };
+                    return new TransactionInfo()
+                    {
+                        BlockNumber = trans.BlockNumber,
+                        ContractAddress = trans.ContractAddress,
+                        From = trans.From,
+                        GasUsed = trans.GasUsed,
+                        TransactionHash = trans.TransactionHash
+                    };
+                }
+                else
+                    return null;
             }
-            else
-                return null;
+            catch (Exception e)
+            {
+                return new TransactionInfo() { ContractAddress = e.ToString() };
+            }
         }
 
         [Serializable]

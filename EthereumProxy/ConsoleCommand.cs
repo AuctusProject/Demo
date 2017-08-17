@@ -5,13 +5,12 @@ using System.Text;
 using System.Linq;
 using System.IO;
 using System.Threading.Tasks;
+using Auctus.Util;
 
 namespace Auctus.EthereumProxy
 {
     internal abstract class ConsoleCommand 
     {
-        protected static readonly bool IS_WINDOWS = false;
-
         protected ConsoleOutput Execute(string command)
         {
             return Execute(new Command() { Comm = command });
@@ -22,10 +21,10 @@ namespace Auctus.EthereumProxy
             ConsoleOutput output = new ConsoleOutput();
             try
             {
-                using (Process process = new Process() { StartInfo = getBaseStartInfo(command) })
+                using (Process process = new Process() { StartInfo = GetBaseStartInfo(command) })
                 {
                     if (process.Start())
-                        output = executeProcess(process, command);
+                        output = ExecuteProcess(process, command);
                     else
                         output.Output = "Error to start Process.";
 
@@ -42,41 +41,40 @@ namespace Auctus.EthereumProxy
             return output;
         }
 
-        protected virtual string getFileName()
+        protected abstract string GetWorkingDirectory();
+
+        protected virtual string GetFileName()
         {
-            return IS_WINDOWS ? Util.Config.WindowsCmdExec : Util.Config.LinuxCmdExec;
+            return Config.IS_WINDOWS ? Config.WindowsExec : Util.Config.LinuxExec;
+        }
+        
+        protected virtual string GetStartArgument(Command command)
+        {
+            return GetValidCommand(command);
         }
 
-        protected virtual string getWorkingDirectory()
+        protected virtual string GetFormattedComand(string command)
         {
-            return IS_WINDOWS ? Util.Config.WindowsWorkingDir : Util.Config.LinuxWorkingDir;
+            string baseCommand = Config.IS_WINDOWS ? "/c{0}" : "-c \"{0}\"";
+            return string.Format(baseCommand, command);
         }
 
-        protected virtual string getStartArgument(Command command)
+        protected virtual ConsoleOutput ExecuteProcess(Process process, Command command)
         {
-            return getValidCommand(command);
+            ConsoleOutput output = ReadOutput(process);
+            return ProcessAllCommands(output, command, process);
         }
 
-        protected virtual string getFormattedComand(string command)
+        protected virtual void WriteCommand(Process process, Command command)
         {
-            return string.Format("{1}{0}", IS_WINDOWS ?  "/c" : "-c", command);
-        }
-
-        protected virtual ConsoleOutput executeProcess(Process process, Command command)
-        {
-            ConsoleOutput output = readOutput(process);
-            return processAllCommands(output, command, process);
-        }
-
-        protected virtual void writeCommand(Process process, Command command)
-        {
-            process.StartInfo.Arguments = getValidCommand(command);
+            process.StartInfo.Arguments = GetValidCommand(command);
             process.Start();
         }
 
-        protected virtual ConsoleOutput readOutput(Process process)
+        protected virtual ConsoleOutput ReadOutput(Process process)
         {
             string standard = process.StandardOutput.ReadToEnd();
+            process.WaitForExit(15000);
             ConsoleOutput output = new ConsoleOutput();
             output.Success = process.HasExited && process.ExitCode == 0;
             if (output.Success)
@@ -89,33 +87,33 @@ namespace Auctus.EthereumProxy
             return output;
         }
 
-        protected ConsoleOutput processCommand(Process process, Command command)
+        protected ConsoleOutput ProcessCommand(Process process, Command command)
         {
-            writeCommand(process, command);
-            ConsoleOutput output = readOutput(process);
-            return processAllCommands(output, command, process);
+            WriteCommand(process, command);
+            ConsoleOutput output = ReadOutput(process);
+            return ProcessAllCommands(output, command, process);
         }
 
-        protected string getValidCommand(Command command)
+        protected string GetValidCommand(Command command)
         {
             if (command == null || string.IsNullOrWhiteSpace(command.Comm))
                 throw new ArgumentNullException("command.Comm", "Command instruction must be filled.");
 
-            return getFormattedComand(command.Comm);
+            return GetFormattedComand(command.Comm);
         }
 
-        private ConsoleOutput processAllCommands(ConsoleOutput currentOutput, Command command, Process process)
+        private ConsoleOutput ProcessAllCommands(ConsoleOutput currentOutput, Command command, Process process)
         {
             if (command.ReturnFunction != null)
             {
                 Command nextCommand = command.ReturnFunction(currentOutput);
                 if (nextCommand != null)
-                    currentOutput = processCommand(process, nextCommand);
+                    currentOutput = ProcessCommand(process, nextCommand);
             }
             return currentOutput;
         }
 
-        private ProcessStartInfo getBaseStartInfo(Command command)
+        private ProcessStartInfo GetBaseStartInfo(Command command)
         {
             return new ProcessStartInfo()
             {
@@ -126,9 +124,9 @@ namespace Auctus.EthereumProxy
                 StandardOutputEncoding = Encoding.UTF8,
                 UseShellExecute = false,
                 CreateNoWindow = true,
-                FileName = getFileName(),
-                Arguments = getStartArgument(command),
-                WorkingDirectory = getWorkingDirectory()
+                FileName = GetFileName(),
+                Arguments = GetStartArgument(command),
+                WorkingDirectory = GetWorkingDirectory()
             };
         }
 

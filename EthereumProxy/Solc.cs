@@ -5,13 +5,12 @@ using System.IO;
 using System.Text;
 using System.Reflection;
 using System.Linq;
+using Auctus.Util;
 
 namespace Auctus.EthereumProxy
 {
     internal class Solc : ConsoleCommand
     {
-        private static readonly string CONTRACT_PATH = IS_WINDOWS ? Util.Config.WindowsContractsFolder : Util.Config.LinuxContractsFolder;
-
         private Solc() { }
 
         private List<SCCompiled> CompiledData { get; set; }
@@ -19,7 +18,7 @@ namespace Auctus.EthereumProxy
 
         internal static List<SCCompiled> Compile(string name, string smartContractStringified)
         {
-            string filePath = string.Format("{0}\\{1}{2}.sol", CONTRACT_PATH, name, DateTime.UtcNow.Ticks);
+            string filePath = string.Format("{0}{1}{2}.sol", Config.IS_WINDOWS ? Config.WindowsGethPath : Config.LinuxGethPath, name, DateTime.UtcNow.Ticks);
             File.WriteAllText(filePath, smartContractStringified);
             try
             {
@@ -33,14 +32,14 @@ namespace Auctus.EthereumProxy
             }
         }
 
-        protected override string getWorkingDirectory()
+        protected override string GetWorkingDirectory()
         {
-            return IS_WINDOWS ? Util.Config.WindowsSolcWorkingDir : Util.Config.LinuxGethWorkingDir;
+            return Config.IS_WINDOWS ? Config.WindowsGethPath : Config.LinuxGethPath;
         }
 
-        protected override ConsoleOutput readOutput(Process process)
+        protected override ConsoleOutput ReadOutput(Process process)
         {
-            ConsoleOutput output = base.readOutput(process);
+            ConsoleOutput output = base.ReadOutput(process);
             output.Output = output.Output?.Trim('\n', '\r', '\0', ' ');
             return output;
         }
@@ -54,7 +53,7 @@ namespace Auctus.EthereumProxy
             if (!output.Ok)
                 throw new Exception(string.Format("Failed to compile ABI.\n\n{0}", output.Output));
 
-            parseSCAbi(output.Output);
+            ParseSCAbi(output.Output);
         }
 
         private Command AfterGenerateBinary(ConsoleOutput output)
@@ -62,21 +61,21 @@ namespace Auctus.EthereumProxy
             if (!output.Ok)
                 throw new Exception(string.Format("Failed to compile binary.\n\n{0}", output.Output));
 
-            parseSCBinary(output.Output);
+            ParseSCBinary(output.Output);
             return new Command() { Comm = string.Format("solc --abi {0}", BaseFilePath) };
         }
 
-        private void parseSCBinary(string output)
+        private void ParseSCBinary(string output)
         {
-            parseOutput(output, "Binary:", "Binary");
+            ParseOutput(output, "Binary:", "Binary");
         }
 
-        private void parseSCAbi(string output)
+        private void ParseSCAbi(string output)
         {
-            parseOutput(output, "Contract JSON ABI", "ABI");
+            ParseOutput(output, "Contract JSON ABI", "ABI");
         }
 
-        private void parseOutput(string output, string subtitle, string propertyNameToBeSet)
+        private void ParseOutput(string output, string subtitle, string propertyNameToBeSet)
         {
             string[] initialSplit = output.Split(new string[] { subtitle, "\n", "\r", " ", "=" }, StringSplitOptions.RemoveEmptyEntries);
             SCCompiled scCompiled;

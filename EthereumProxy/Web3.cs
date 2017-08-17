@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using System.Threading;
 using System.Globalization;
 using System.Numerics;
+using Auctus.Util;
 
 namespace Auctus.EthereumProxy
 {
@@ -20,14 +21,7 @@ namespace Auctus.EthereumProxy
         internal enum VariableType { Address, Number, BigNumber, Text, Bool, Null }
 
         private static KeyValuePair<string, string> MAIN_ADDRESS;
-
-        //WINDOWS
-        //private static string KEYSTORE_PATH = "C:\\Users\\Dell\\AppData\\Roaming\\Ethereum\\keystore"; //Main
-        //private static string KEYSTORE_PATH = "C:\\Users\\Dell\\AppData\\Roaming\\Ethereum\\testnet\\keystore"; //Tesnet
-        //private const string KEYSTORE_PATH = "C:\\Users\\Dell\\AppData\\Local\\Temp\\ethereum_dev_mode\\keystore"; //Dev
-        //LINUX
-        //private static string KEYSTORE_PATH = "/home/ubuntu/.ethereum/keystore"; //Main
-        private static string KEYSTORE_PATH = Util.Config.KeystorePath; //Tesnet
+        
         private const int MAX_CHAR_STAND_INPUT_WRITE = 4096;
         private const int ETHEREUM_DECIMAL = 18;
         private const string DOUBLE_FIXED_POINT = "########################################0.##########################################################################################";
@@ -55,13 +49,14 @@ namespace Auctus.EthereumProxy
 
             ConsoleOutput output = new Web3().Execute(string.Format("personal.newAccount(\"{0}\")", password));
             if (!output.Ok || !IS_ADDRESS.IsMatch(output.Output))
-                return null;
+                throw new Exception(string.Format("Fail to create account.\n\n{0}", output.Output));
             
             Wallet account = new Wallet();
             account.Address = output.Output;
-            string completePath = Directory.EnumerateFiles(KEYSTORE_PATH).Where(c => c.Split(new string[] { "Z--" }, StringSplitOptions.RemoveEmptyEntries).Last() == account.Address.Substring(2)).Single();
+            string completePath = Directory.EnumerateFiles(string.Format("{0}keystore", Config.IS_WINDOWS ? Config.WindowsGethPath : Config.LinuxGethPath)).Where(c => c.Split(new string[] { "Z--" }, StringSplitOptions.RemoveEmptyEntries).Last() == account.Address.Substring(2)).Single();
             account.File = File.ReadAllBytes(completePath);
-            account.FileName = completePath.Split('\\').Last();
+            char splitCharacter = Config.IS_WINDOWS ? '\\' : '/';
+            account.FileName = completePath.Split(splitCharacter).Last();
             return account;
         }
 
@@ -73,7 +68,7 @@ namespace Auctus.EthereumProxy
             ValidateGasValues(gasLimit, gweiGasPrice);
             ownerAddressPassword = GetSourceAddres(ownerAddressPassword);
             
-            return new Web3().deployContract(sc, gasLimit, gweiGasPrice, ownerAddressPassword);
+            return new Web3().InternalDeployContract(sc, gasLimit, gweiGasPrice, ownerAddressPassword);
         }
 
         internal static string Send(string to, BigNumber value, int gasLimit, int gweiGasPrice, KeyValuePair<string, string> fromAddressPassword = default(KeyValuePair<string, string>))
@@ -83,7 +78,7 @@ namespace Auctus.EthereumProxy
             string bigNumber = GetBigNumberFormatted(value);
             fromAddressPassword = GetSourceAddres(fromAddressPassword);
             
-            return new Web3().send(to, bigNumber, gasLimit, gweiGasPrice, fromAddressPassword);
+            return new Web3().InternalSend(to, bigNumber, gasLimit, gweiGasPrice, fromAddressPassword);
         }
 
         internal static Variable CallConstFunction(CompleteVariableType returnType, string scAddress, string abi, string functionName, params Variable[] parameters)
@@ -91,7 +86,7 @@ namespace Auctus.EthereumProxy
             if (returnType == null)
                 throw new ArgumentNullException("Return type must be filled.", "returnType");
             ValidateContractData(scAddress, abi, functionName);
-            return new Web3().callConstFunction(returnType, scAddress, abi, functionName, parameters);
+            return new Web3().InternalCallConstFunction(returnType, scAddress, abi, functionName, parameters);
         }
 
         internal static string CallFunction(string scAddress, string abi, string functionName, BigNumber value, int gasLimit, int gweiGasPrice, KeyValuePair<string, string> fromAddressPassword = default(KeyValuePair<string, string>), params Variable[] parameters)
@@ -101,7 +96,7 @@ namespace Auctus.EthereumProxy
             string bigNumber = GetBigNumberFormatted(value);
             fromAddressPassword = GetSourceAddres(fromAddressPassword);
 
-            return new Web3().callFunction(scAddress, abi, functionName, bigNumber, gasLimit, gweiGasPrice, fromAddressPassword, parameters);
+            return new Web3().InternalCallFunction(scAddress, abi, functionName, bigNumber, gasLimit, gweiGasPrice, fromAddressPassword, parameters);
         }
 
         internal static double GetBalance(string address)
@@ -122,7 +117,7 @@ namespace Auctus.EthereumProxy
                 (eventParameters != null && filterParameters != null && eventParameters.Where(c => c.Indexed).Count() < filterParameters.Length))
                 throw new ArgumentException("Filter parameters must match with indexed event parameters.");
             
-            return new Web3().readEventFunction(scAddress, eventName, eventParameters, filterParameters);
+            return new Web3().InternalReadEvent(scAddress, eventName, eventParameters, filterParameters);
         }
 
         internal static BigNumber ETHER(double value)
@@ -166,52 +161,52 @@ namespace Auctus.EthereumProxy
         }
         #endregion
         #region Override Methods
-        protected override string getFileName()
+        protected override string GetFileName()
         {
-            return IS_WINDOWS ? Util.Config.WindowsGethExec : Util.Config.LinuxGethExec;
+            return Config.IS_WINDOWS ? Config.WindowsGethExec : Config.LinuxGethExec;
         }
 
-        protected override string getWorkingDirectory()
+        protected override string GetWorkingDirectory()
         {
-            return IS_WINDOWS ? Util.Config.WindowsGethWorkingDir : Util.Config.LinuxGethWorkingDir;
+            return Config.IS_WINDOWS ? Config.WindowsGethPath : Config.LinuxGethPath;
         }
 
-        protected override string getStartArgument(Command command)
+        protected override string GetStartArgument(Command command)
         {
-            return "attach "+Util.Config.IpcPath;
+            return string.Format("attach{0}", Config.IS_WINDOWS ? "" : string.Format(" ipc:{0}geth.ipc", Config.LinuxGethPath));
         }
 
-        protected override string getFormattedComand(string command)
+        protected override string GetFormattedComand(string command)
         {
             return command;
         }
 
-        protected override ConsoleOutput executeProcess(Process process, Command command)
+        protected override ConsoleOutput ExecuteProcess(Process process, Command command)
         {
-            string startOutput = readOutputStream(process.StandardOutput);
+            string startOutput = ReadOutputStream(process.StandardOutput);
             if (!startOutput.StartsWith("Welcome to the Geth JavaScript console!"))
                 throw new Exception(string.Format("Error to attach geth.\n\n{0}", startOutput));
             else
-                return processCommand(process, command);
+                return ProcessCommand(process, command);
         }
 
-        protected override void writeCommand(Process process, Command command)
+        protected override void WriteCommand(Process process, Command command)
         {
-            process.StandardInput.WriteLine(getValidCommand(command));
+            process.StandardInput.WriteLine(GetValidCommand(command));
         }
 
-        protected override ConsoleOutput readOutput(Process process)
+        protected override ConsoleOutput ReadOutput(Process process)
         {
             return new ConsoleOutput()
             {
                 Success = true,
-                Output = readOutputStream(process.StandardOutput)
+                Output = ReadOutputStream(process.StandardOutput)
             };
         }
         #endregion
         #region Private Methods
         #region Executes
-        private string getTransaction(string transactionHash)
+        private string GetTransaction(string transactionHash)
         {
             ConsoleOutput output = Execute(string.Format("eth.getTransactionReceipt(\"{0}\")", transactionHash));
             if (output.Ok && output.Output != "null")
@@ -225,7 +220,7 @@ namespace Auctus.EthereumProxy
                 return null;
         }
 
-        private string deployContract(SCCompiled sc, int gasLimit, int gweiGasPrice, KeyValuePair<string, string> ownerAddressPassword)
+        private string InternalDeployContract(SCCompiled sc, int gasLimit, int gweiGasPrice, KeyValuePair<string, string> ownerAddressPassword)
         {
             DeployInfo = new DeployData()
             {
@@ -242,7 +237,7 @@ namespace Auctus.EthereumProxy
                 RemainingString = DeployInfo.ABI,
                 SplitCounter = 0,
                 VariableNames = new List<string>(),
-                NextFunction = setBinaryBigVariableCommand
+                NextFunction = SetBinaryBigVariableCommand
             };
             BinaryVariableInfo = new BigVariableData()
             {
@@ -250,16 +245,16 @@ namespace Auctus.EthereumProxy
                 RemainingString = string.Format("0x{0}", DeployInfo.Binary),
                 SplitCounter = 0,
                 VariableNames = new List<string>(),
-                NextFunction = deployCommand
+                NextFunction = DeployCommand
             };
-            ConsoleOutput output = Execute(getUnlockAccountCommand(ownerAddressPassword.Key, ownerAddressPassword.Value, setABIBigVariableCommand));
+            ConsoleOutput output = Execute(GetUnlockAccountCommand(ownerAddressPassword.Key, ownerAddressPassword.Value, SetABIBigVariableCommand));
             if (!output.Ok || !output.Output.Contains("transactionHash"))
                 throw new Exception(string.Format("Error to deploy contract.\n\n{0}", output.Output));
 
             return output.Output.Split(new string[] { "transactionHash:" }, StringSplitOptions.RemoveEmptyEntries).Last().Trim(' ', '\n', '\r', '}', '"');
         }
 
-        private string send(string to, string value, int gasLimit, int gweiGasPrice, KeyValuePair<string, string> fromAddressPassword)
+        private string InternalSend(string to, string value, int gasLimit, int gweiGasPrice, KeyValuePair<string, string> fromAddressPassword)
         {
             TransactionInfo = new TransactionData()
             {
@@ -269,14 +264,14 @@ namespace Auctus.EthereumProxy
                 GasLimit = gasLimit,
                 GasPrice = GetBigNumberFormatted(new BigNumber(gweiGasPrice, 9))
             };
-            ConsoleOutput output = Execute(getUnlockAccountCommand(fromAddressPassword.Key, fromAddressPassword.Value, sendCommand));
+            ConsoleOutput output = Execute(GetUnlockAccountCommand(fromAddressPassword.Key, fromAddressPassword.Value, SendCommand));
             if (!output.Ok || !output.Output.StartsWith("0x"))
                 throw new Exception(string.Format("Error on send transaction.\n\n{0}", output.Output));
 
             return output.Output;
         }
 
-        private string callFunction(string scAddress, string abi, string functionName, string value, int gasLimit, int gweiGasPrice, KeyValuePair<string, string> fromAddressPassword, params Variable[] parameters)
+        private string InternalCallFunction(string scAddress, string abi, string functionName, string value, int gasLimit, int gweiGasPrice, KeyValuePair<string, string> fromAddressPassword, params Variable[] parameters)
         {
             TransactionInfo = new TransactionData()
             {
@@ -294,16 +289,16 @@ namespace Auctus.EthereumProxy
                 RemainingString = abi,
                 SplitCounter = 0,
                 VariableNames = new List<string>(),
-                NextFunction = callFunctionCommand
+                NextFunction = CallFunctionCommand
             };
-            ConsoleOutput output = Execute(getUnlockAccountCommand(fromAddressPassword.Key, fromAddressPassword.Value, setABIBigVariableCommand));
+            ConsoleOutput output = Execute(GetUnlockAccountCommand(fromAddressPassword.Key, fromAddressPassword.Value, SetABIBigVariableCommand));
             if (!output.Ok || !output.Output.StartsWith("0x"))
                 throw new Exception(string.Format("Error on call transaction function.\n\n{0}", output.Output));
 
             return output.Output;
         }
 
-        private Variable callConstFunction(CompleteVariableType returnType, string scAddress, string abi, string functionName, params Variable[] parameters)
+        private Variable InternalCallConstFunction(CompleteVariableType returnType, string scAddress, string abi, string functionName, params Variable[] parameters)
         {
             TransactionInfo = new TransactionData()
             {
@@ -317,22 +312,22 @@ namespace Auctus.EthereumProxy
                 RemainingString = abi,
                 SplitCounter = 0,
                 VariableNames = new List<string>(),
-                NextFunction = callConstFunctionCommand
+                NextFunction = CallConstFunctionCommand
             };
-            ConsoleOutput output = Execute(setABIBigVariableCommand(new ConsoleOutput() { Success = true, Output = "Start" }));
+            ConsoleOutput output = Execute(SetABIBigVariableCommand(new ConsoleOutput() { Success = true, Output = "Start" }));
             if (!output.Ok)
                 throw new Exception(string.Format("Error on call const function.\n\n{0}", output.Output));
 
-            return parseStringToVariable(output.Output, returnType.Type, returnType.Decimals);
+            return ParseStringToVariable(output.Output, returnType.Type, returnType.Decimals);
         }
 
-        private List<Event> readEventFunction(string scAddress, string eventName, List<CompleteVariableType> eventParameters, params EventParameter[] parameters)
+        private List<Event> InternalReadEvent(string scAddress, string eventName, List<CompleteVariableType> eventParameters, params EventParameter[] parameters)
         {
             string formattedParameters = GetParameterListFormatted(parameters);
             if (!string.IsNullOrEmpty(formattedParameters))
                 formattedParameters = "," + formattedParameters;
 
-            string eventParameterTypes = eventParameters == null || eventParameters.Count == 0 ? "" : string.Join(",", eventParameters.Select(c => c.getTypeDescription()));
+            string eventParameterTypes = eventParameters == null || eventParameters.Count == 0 ? "" : string.Join(",", eventParameters.Select(c => c.GetTypeDescription()));
 
             ConsoleOutput output = Execute(string.Format("eth.filter({{ \"fromBlock\": \"0x0\", \"toBlock\": \"latest\", \"address\": \"{0}\", \"topics\": [ web3.sha3(\"{1}({2})\"){3} ] }}).get(function(error,result) {{ error ? console.log(\"Error: \" + error) : console.log(JSON.stringify(result)); }})",
                                             scAddress, eventName, eventParameterTypes, formattedParameters));
@@ -340,25 +335,25 @@ namespace Auctus.EthereumProxy
                 throw new Exception(string.Format("Error on read event.\n\n{0}", output.Output));
 
             string result = output.Output.Split(new string[] { "callbacks:" }, StringSplitOptions.RemoveEmptyEntries).First().TrimEnd('\n', '\r', '{', ' ');
-            return parseEventResult(result, eventParameters);
+            return ParseEventResult(result, eventParameters);
         }
         #endregion
         #region 
-        private Command callConstFunctionCommand(ConsoleOutput output)
+        private Command CallConstFunctionCommand(ConsoleOutput output)
         {
-            return baseCommand(string.Format("eth.contract(JSON.parse(abi{0})).at(\"{1}\").{0}.call({2})", TransactionInfo.Function, TransactionInfo.To, TransactionInfo.Parameters), output);
+            return BaseCommand(string.Format("eth.contract(JSON.parse(abi{0})).at(\"{1}\").{0}.call({2})", TransactionInfo.Function, TransactionInfo.To, TransactionInfo.Parameters), output);
         }
 
-        private Command callFunctionCommand(ConsoleOutput output)
+        private Command CallFunctionCommand(ConsoleOutput output)
         {
-            return baseCommand(string.Format("eth.contract(JSON.parse(abi{0})).at(\"{1}\").{0}.sendTransaction({2}{{ \"from\": \"{3}\", \"value\": {4}, \"gas\": {5}, \"gasprice\": {6} }})",
+            return BaseCommand(string.Format("eth.contract(JSON.parse(abi{0})).at(\"{1}\").{0}.sendTransaction({2}{{ \"from\": \"{3}\", \"value\": {4}, \"gas\": {5}, \"gasprice\": {6} }})",
                                 TransactionInfo.Function, TransactionInfo.To, TransactionInfo.Parameters + (string.IsNullOrEmpty(TransactionInfo.Parameters) ? "" : ","),
                                 TransactionInfo.From, TransactionInfo.Value, TransactionInfo.GasLimit, TransactionInfo.GasPrice), output);
         }
 
-        private Command sendCommand(ConsoleOutput output)
+        private Command SendCommand(ConsoleOutput output)
         {
-            validateAccountUnlocked(output);
+            ValidateAccountUnlocked(output);
 
             return new Command()
             {
@@ -367,29 +362,29 @@ namespace Auctus.EthereumProxy
             };
         }
         
-        private Command setABIBigVariableCommand(ConsoleOutput output)
+        private Command SetABIBigVariableCommand(ConsoleOutput output)
         {
             if (!output.Ok)
                 throw new Exception(string.Format("Error: {0}", output.Output));
 
-            return processBigVariableCommand(ABIVariableInfo, setABIBigVariableCommand);
+            return ProcessBigVariableCommand(ABIVariableInfo, SetABIBigVariableCommand);
         }
 
-        private Command setBinaryBigVariableCommand(ConsoleOutput output)
+        private Command SetBinaryBigVariableCommand(ConsoleOutput output)
         {
             if (!output.Ok)
                 throw new Exception(string.Format("Error: {0}", output.Output));
 
-            return processBigVariableCommand(BinaryVariableInfo, setBinaryBigVariableCommand);
+            return ProcessBigVariableCommand(BinaryVariableInfo, SetBinaryBigVariableCommand);
         }
         
-        private Command deployCommand(ConsoleOutput output)
+        private Command DeployCommand(ConsoleOutput output)
         {
-            return baseCommand(string.Format("eth.contract(JSON.parse(abi{0})).new(\"{0}\", {{ \"from\": \"{1}\", \"data\": bin{0}, \"gas\": {2}, \"gasprice\": {3} }})",
+            return BaseCommand(string.Format("eth.contract(JSON.parse(abi{0})).new(\"{0}\", {{ \"from\": \"{1}\", \"data\": bin{0}, \"gas\": {2}, \"gasprice\": {3} }})",
                                         DeployInfo.Name, DeployInfo.Address, DeployInfo.GasLimit, DeployInfo.GasPrice), output);
         }
 
-        private Command baseCommand(string nextCommand, ConsoleOutput output)
+        private Command BaseCommand(string nextCommand, ConsoleOutput output)
         {
             if (!output.Ok)
                 throw new Exception(string.Format("Error: {0}", output.Output));
@@ -397,7 +392,7 @@ namespace Auctus.EthereumProxy
             return new Command() { Comm = nextCommand };
         }
 
-        private Command processBigVariableCommand(BigVariableData bigVariableData, Func<ConsoleOutput, Command> currentFunction)
+        private Command ProcessBigVariableCommand(BigVariableData bigVariableData, Func<ConsoleOutput, Command> currentFunction)
         {
             Command nextCommand = new Command();
             if (string.IsNullOrEmpty(bigVariableData.RemainingString))
@@ -429,7 +424,7 @@ namespace Auctus.EthereumProxy
             return nextCommand;
         }
         #endregion
-        private string readOutputStream(StreamReader output, int attempt = 1)
+        private string ReadOutputStream(StreamReader output, int attempt = 1)
         {
             int current = -1, previous = -1;
             List<char> buffer = new List<char>();
@@ -450,20 +445,20 @@ namespace Auctus.EthereumProxy
                     throw new Exception("Failed to read console output. Output cannot be read.");
 
                 Thread.Sleep(200);
-                return readOutputStream(output, attempt + 1);
+                return ReadOutputStream(output, attempt + 1);
             }
             else
                 return consoleOutput.Trim('"', ' ');
         }
         
-        private void validateAccountUnlocked(ConsoleOutput output)
+        private void ValidateAccountUnlocked(ConsoleOutput output)
         {
             bool unlocked = false;
             if (!(output.Ok && bool.TryParse(output.Output, out unlocked) && unlocked))
                 throw new Exception(string.Format("Failed to unlock account. Return: {0}", output.Output));
         }
 
-        private List<Event> parseEventResult(string eventResult, List<CompleteVariableType> eventParameters)
+        private List<Event> ParseEventResult(string eventResult, List<CompleteVariableType> eventParameters)
         {
             if (string.IsNullOrEmpty(eventResult))
                 return null;
@@ -506,12 +501,12 @@ namespace Auctus.EthereumProxy
                             {
                                 if (type.Indexed)
                                 {
-                                    e.Data.Add(parseStringToVariable(eventData.Topics[indexed + 1].Substring(2), type.Type, type.Decimals, true));
+                                    e.Data.Add(ParseStringToVariable(eventData.Topics[indexed + 1].Substring(2), type.Type, type.Decimals, true));
                                     ++indexed;
                                 }
                                 else
                                 {
-                                    e.Data.Add(parseStringToVariable(datas[normal], type.Type, type.Decimals, true));
+                                    e.Data.Add(ParseStringToVariable(datas[normal], type.Type, type.Decimals, true));
                                     ++normal;
                                 }
                             }
@@ -523,7 +518,7 @@ namespace Auctus.EthereumProxy
             }
         }
 
-        private Variable parseStringToVariable(string data, VariableType type, int? decimals = null, bool isEvent = false)
+        private Variable ParseStringToVariable(string data, VariableType type, int? decimals = null, bool isEvent = false)
         {
             Variable param = new Variable();
             param.Type = type;
@@ -579,7 +574,7 @@ namespace Auctus.EthereumProxy
         {
             if (gasLimit < 21000)
                 throw new ArgumentException("Invalid gas limit.", "gasLimit");
-            if (gweiGasPrice < 15)
+            if (gweiGasPrice < 12)
                 throw new ArgumentException("Invalid gas price.", "gweiGasPrice");
         }
 
@@ -598,7 +593,7 @@ namespace Auctus.EthereumProxy
                 throw new ArgumentNullException("Invalid smart contract function/event.");
         }
                 
-        private Command getUnlockAccountCommand(string address, string password, Func<ConsoleOutput, Command> returnFunction, int timeUnlocked = 180)
+        private Command GetUnlockAccountCommand(string address, string password, Func<ConsoleOutput, Command> returnFunction, int timeUnlocked = 180)
         {
             if (string.IsNullOrEmpty(address))
                 throw new ArgumentNullException("Address must be filled.", "address");
@@ -712,7 +707,7 @@ namespace Auctus.EthereumProxy
                     Thread.Sleep(waitingTime);
 
                 attempt++;
-                output = web3.getTransaction(transactionHash);
+                output = web3.GetTransaction(transactionHash);
             }
             return output;
         }
@@ -796,7 +791,7 @@ namespace Auctus.EthereumProxy
                 Indexed = indexed;
             }
 
-            public string getTypeDescription()
+            public string GetTypeDescription()
             {
                 switch(Type)
                 {
