@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <RootNamespace>Auctus.DataAccess</RootNamespace>
+    <AssemblyName>DataAccess</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="1.50.2" />
+    <PackageReference Include="MySql.Data" Version="8.0.8-dmr" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Contracts\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DomainObjects\5-DomainObjects.csproj" />
+    <ProjectReference Include="..\Util\7-Util.csproj" />
+  </ItemGroup>
+
+</Project>

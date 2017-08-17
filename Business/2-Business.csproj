@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <RootNamespace>Auctus.Business</RootNamespace>
+    <AssemblyName>Business</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DataAccess\4-DataAccess.csproj" />
+    <ProjectReference Include="..\DomainObjects\5-DomainObjects.csproj" />
+    <ProjectReference Include="..\EthereumProxy\3-EthereumProxy.csproj" />
+  </ItemGroup>
+
+</Project>
