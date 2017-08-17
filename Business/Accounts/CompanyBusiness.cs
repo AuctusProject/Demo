@@ -1,5 +1,5 @@
 ﻿using Auctus.DataAccess.Accounts;
-using DomainObjects.Accounts;
+using Auctus.DomainObjects.Accounts;
 using System;
 using System.Collections.Generic;
 using System.Text;

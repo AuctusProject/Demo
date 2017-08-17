@@ -12,10 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Contracts\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\DomainObjects\5-DomainObjects.csproj" />
     <ProjectReference Include="..\Util\7-Util.csproj" />
   </ItemGroup>

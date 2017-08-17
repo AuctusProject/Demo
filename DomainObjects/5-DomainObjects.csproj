@@ -2,12 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp1.1</TargetFramework>
-    <RootNamespace>DomainObjects</RootNamespace>
+    <RootNamespace>Auctus.DomainObjects</RootNamespace>
     <AssemblyName>DomainObjects</AssemblyName>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Folder Include="Contracts\" />
-  </ItemGroup>
 
 </Project>
