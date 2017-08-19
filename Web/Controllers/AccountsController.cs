@@ -4,11 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Web.Controllers
 {
-    public class AccountsController : Controller
+    public class AccountsController : BaseController
     {
+        public AccountsController(ILoggerFactory loggerFactory, IServiceProvider serviceProvider) : base (loggerFactory, serviceProvider)
+        { }
+
         // GET: Accounts
         public ActionResult Index()
         {

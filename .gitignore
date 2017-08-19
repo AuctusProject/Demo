@@ -3,3 +3,5 @@ obj
 packages
 .DS_Store
 Util/Config.cs
+.vs
+Web/nlog.config

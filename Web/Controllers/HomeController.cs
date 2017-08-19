@@ -4,11 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Auctus.Service;
+using Microsoft.Extensions.Logging;
 
 namespace Web.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
+        public HomeController(ILoggerFactory loggerFactory, IServiceProvider serviceProvider) : base (loggerFactory, serviceProvider)
+        { }
+
         public IActionResult Index()
         {
             return View();
