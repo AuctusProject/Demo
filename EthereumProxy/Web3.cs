@@ -359,6 +359,8 @@ namespace Auctus.EthereumProxy
         
         private Command SetABIBigVariableCommand(ConsoleOutput output)
         {
+            if (ABIVariableInfo.SplitCounter == 0)
+                ValidateAccountUnlocked(output);
             if (!output.Ok)
                 throw new Exception(string.Format("Error: {0}", output.Output));
 
