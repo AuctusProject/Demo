@@ -5,23 +5,23 @@ using System.Text;
 
 namespace Auctus.Business
 {
-    public abstract class BaseBusiness<T, D> where D : BaseData<T>
+    public abstract class BaseBusiness<T, D> where D : BaseData<T> , new()
     {
-        public abstract D data { get; }
+        public D Data => new D();
 
         public IEnumerable<T> ListAll()
         {
-            return data.ListAll();
+            return Data.ListAll();
         }
 
         public void Insert(params object[] values)
         {
-            data.Insert(values);
+            Data.Insert(values);
         }
 
         public void DeleteById(Int32 id)
         {
-            data.DeleteById(id);
+            Data.DeleteById(id);
         }
     }
 }

@@ -8,8 +8,6 @@ namespace Auctus.Business.Accounts
 {
     public class CompanyBusiness : BaseBusiness<Company, CompanyData>
     {
-        public override CompanyData data =>  new CompanyData();
-
-        // Some specific business method 
+       
     }
 }

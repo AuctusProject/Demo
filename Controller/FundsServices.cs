@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Auctus.Business.Contracts
+namespace Auctus.Service
 {
-    class SmartContractBusiness
+    public class FundsServices
     {
     }
 }
