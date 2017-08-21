@@ -11,17 +11,22 @@ namespace Auctus.Business
 
         public IEnumerable<T> ListAll()
         {
-            return Data.ListAll();
+            return Data.Select<T>();
         }
 
-        public void Insert(params object[] values)
+        public void Insert(T obj)
         {
-            Data.Insert(values);
+            Data.Insert(obj);
         }
 
-        public void DeleteById(Int32 id)
+        public void Update(T obj)
         {
-            Data.DeleteById(id);
+            Data.Update(obj);
+        }
+
+        public void Delete(T obj)
+        {
+            Data.Delete(obj);
         }
     }
 }

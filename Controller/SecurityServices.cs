@@ -13,6 +13,11 @@ namespace Auctus.Service
             return new UserBusiness().Login(login, password);
         }
 
+        public bool ChangePassword(string newPassword, string validationToken)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool ForgotPassword(string email)
         {
             throw new NotImplementedException();

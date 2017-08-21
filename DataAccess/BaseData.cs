@@ -8,42 +8,35 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using MySql.Data.MySqlClient;
+using Auctus.DataAccess.Core;
 
 namespace Auctus.DataAccess
 {
-    public abstract class BaseData<T>
+    public abstract class BaseData<T> : DapperRepositoryBase
     {
-        public BaseData()
+        public BaseData() : base(Util.Config.DbConnString)
         { }
         //TODO: add to configuration manager like structure
         private string connString = Util.Config.DbConnString;
 
-        public abstract string TableName { get; }
-        public IEnumerable<T> ListAll()
+        public new IEnumerable<T> Select<T>(object criteria = null)
         {
-            using (IDbConnection db = new MySqlConnection(connString))
-            {
-                return db.Query<T> (String.Format("SELECT * FROM {0}", TableName));
-            }
+            return base.Select<T>(criteria);
         }
 
-        public void Insert(params object[] values)
+        public new void Insert<T>(T obj)
         {
-            using (IDbConnection db = new MySqlConnection(connString))
-            {
-                db.Execute(String.Format("INSERT INTO {0} VALUES ({1})", TableName, string.Join(",",values.Select(x => x.ToStringWithSingleQuotes()))));
-            }
+            base.Insert<T>(obj);
         }
 
-        public void DeleteById(Int32 id)
+        public new void Update<T>(T obj)
         {
-            using (IDbConnection db = new MySqlConnection(connString))
-            {
-                db.Execute(String.Format("DELETE FROM {0} WHERE ID = {1} ", TableName, id));
-            }
+            base.Update<T>(obj);
         }
 
-        //TODO: add generic update
-
+        public new void Delete<T>(T obj)
+        {
+            base.Delete<T>(obj);
+        }
     }
 }

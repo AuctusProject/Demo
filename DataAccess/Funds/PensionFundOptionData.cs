@@ -8,5 +8,7 @@ namespace Auctus.DataAccess.Funds
     public class PensionFundOptionData : BaseData<PensionFundOption>
     {
         public override string TableName => "PensionFundOption";
+
+
     }
 }

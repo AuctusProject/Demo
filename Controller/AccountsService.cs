@@ -14,15 +14,6 @@ namespace Auctus.Service
             return new CompanyBusiness().ListAll();
         }
 
-        public void createCompany(String name)
-        {
-            new CompanyBusiness().Insert(name);
-        }
-
-        public void removeCompany(Int32 id)
-        {
-            new CompanyBusiness().DeleteById(id);
-        }
         #endregion  
     }
 }

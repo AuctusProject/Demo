@@ -7,6 +7,6 @@ namespace Auctus.DataAccess.Accounts
 {
     public class CompanyData : BaseData<Company>
     {
-        public override string TableName => "Company"; 
+        public override string TableName => "Company";
     }
 }
