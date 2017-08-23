@@ -1,22 +1,27 @@
-﻿<div class="row col-md-offset-2 col-md-7 clearfix form-group">
-    <h2 class="col-md-offset-1 col-md-11">Contribution Rules</h2>
+﻿<div class="row clearfix form-group">
+    <h2 class="col-md-12">Contribution Rules</h2>
 </div>
-<div class="row col-md-offset-2 col-md-7 clearfix" style="margin-top:50px;">
-    <div class="col-md-offset-1 col-md-12">
-        <div class="form-group">
-            <input class="form-control" placeholder="" />
-        </div>
-        <div class="form-group">
-            <input class="form-control" placeholder="" />
-        </div>
-        <div class="form-group">
-            <input class="form-control" placeholder="" />
+<div class="row clearfix">
+    <div id="vesting-content" class="col-md-12">
+        <div id="vesting-row-template" class="form-inline" style="display:none">
+            <div class="form-group">
+                <div data-index="template" id="slider-range-template" style="width:150px;display:inline-block">
+                    <div id="slider-value-template" class="ui-slider-handle ui-state-default ui-corner-all" 
+                         style="left: 100%;
+                                width: 3em;
+                                height: 1.6em;
+                                text-align: center;
+                                margin-top: -0.1em;"></div>
+                </div>
+                <input class="form-control" placeholder="" style="margin-left:40px;width:65px;" value="1"/>
+                @*<button type="button" class="btn btn-primary" placeholder=""><i class="glyphicon glyphicon-plus"></i></button>*@
+            </div>
         </div>
     </div>
 </div>
-<div class="row col-md-offset-2 col-md-7 clearfix">
-    <div class="col-md-offset-1 col-md-12">
-        <button type="button" class="btn btn-default prev-step">Save</button>
-        <button type="button" class="btn pull-right btn-primary next-step">Next</button>
+<div class="row clearfix">
+    <div class="col-md-12">
+        <button type="button" class="btn btn-default prev-step">Previous</button>
+        <button type="button" class="btn pull-right btn-primary next-step" id="wizard-save-button" >Save</button>
     </div>
 </div>

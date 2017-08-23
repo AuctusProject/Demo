@@ -17,7 +17,7 @@ namespace Auctus.DataAccess
         public BaseData() : base(Util.Config.DbConnString)
         { }
         //TODO: add to configuration manager like structure
-        private string connString = Util.Config.DbConnString;
+        private readonly string connString = Util.Config.DbConnString;
 
         public new IEnumerable<T> Select<T>(object criteria = null)
         {
