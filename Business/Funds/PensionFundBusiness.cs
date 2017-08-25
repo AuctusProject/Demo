@@ -1,5 +1,8 @@
-﻿using Auctus.DataAccess.Funds;
+﻿using Auctus.Business.Accounts;
+using Auctus.Business.Contracts;
+using Auctus.DataAccess.Funds;
 using Auctus.DomainObjects.Funds;
+using Auctus.Model;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,6 +19,26 @@ namespace Auctus.Business.Funds
         {
             //Insert();
             return "";
+        }
+
+        public void CreateCompleteEntry(Fund fund, Company company, Employee employee, Contract contract)
+        {
+            Validate(fund);
+            CompanyBusiness.Validate(company);
+            EmployeeBusiness.Validate(employee);
+            ContractBusiness.Validate(contract);
+        }
+
+        internal static void Validate(Fund fund)
+        {
+            if (fund == null)
+                throw new ArgumentNullException("fund");
+            if (fund.LatePaymentFee < 0)
+                throw new ArgumentException("Late Payment Fee cannot be negative.");
+            if (fund.Fee < 0)
+                throw new ArgumentException("Fee cannot be negative.");
+            if (fund.Fee > 99)
+                throw new ArgumentException("Fee cannot be greater than 99.");
         }
     }
 }

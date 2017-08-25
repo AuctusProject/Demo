@@ -38,6 +38,7 @@
     <Folder Include="Views\Accounts\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\8-Model\8-Model.csproj" />
     <ProjectReference Include="..\Controller\1-Service.csproj" />
   </ItemGroup>
   <ItemGroup>

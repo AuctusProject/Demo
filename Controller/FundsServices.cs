@@ -1,5 +1,6 @@
 ﻿using Auctus.Business.Funds;
 using Auctus.DomainObjects.Funds;
+using Auctus.Model;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -19,6 +20,11 @@ namespace Auctus.Service
              companyName, companyDescription, bonusFee, maxBonusFee,
              employeeName, employeeSalary, meployeeContributionPercentage,
              options);
+        }
+
+        public void CreateCompleteEntry(Fund fund, Company company, Employee employee, Contract contract)
+        {
+            new PensionFundBusiness().CreateCompleteEntry(fund, company, employee, contract);
         }
     }
 }

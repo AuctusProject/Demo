@@ -4,8 +4,11 @@
   "dependencies": {
     "bootstrap": "3.3.7",
     "jquery": "2.2.0",
-    "jquery-validation": "1.14.0",
     "jquery-validation-unobtrusive": "3.2.6",
-    "jquery-ui-min": "v1.11.4"
+    "jquery-ui-min": "v1.11.4",
+    "jquery-validation": "1.16.0"
+  },
+  "resolutions": {
+    "jquery-validation": "1.17.0"
   }
 }

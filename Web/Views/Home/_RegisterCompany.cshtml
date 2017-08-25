@@ -1,31 +1,33 @@
-﻿<div class="row clearfix form-group">
-    <h2 class="col-md-12">Register Company</h2>
-</div>
-<div class="row clearfix">
-    <div class="col-md-12">
-        <div class="form-group">
-            <label for="companyName">Company Name</label>
-            <input class="form-control" placeholder="Company Name" id="companyName"/>
-        </div>
-        <div class="form-group">
-            <label for="bonusFee">Bonus Fee</label>
-            <div class="input-group">
-                <span class="input-group-addon" id="basic-addon2" title="Company contribution % of employee contribution">?</span>
-                <input class="form-control" placeholder="Bonus Fee" id="bonusFee" type="number" min="0" max="100"/>
+﻿<form>
+    <div class="row clearfix form-group">
+        <h2 class="col-md-12">Register Company</h2>
+    </div>
+    <div class="row clearfix">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="companyName">Company Name</label>
+                <input name="Company Name" class="form-control" placeholder="Company Name" id="companyName" maxlength="50"/>
             </div>
-        </div>
-        <div class="form-group">
-            <label for="maxBonusFee">Max Bonus Fee</label>
-            <div class="input-group">
-                <span class="input-group-addon" id="basic-addon2">%</span>
-                <input class="form-control" placeholder="Max Bonus Fee" id="maxBonusFee"/>
+            <div class="form-group">
+                <label for="bonusFee">Bonus Fee</label>
+                <div class="input-group">
+                    <span class="input-group-addon" id="basic-addon2" title="Company contribution % of employee contribution">?</span>
+                    <input name="Bonus Fee" class="form-control" placeholder="Bonus Fee" id="bonusFee" type="number" min="0" max="100" required/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="maxBonusFee">Max Bonus Fee</label>
+                <div class="input-group">
+                    <span class="input-group-addon" id="basic-addon2">%</span>
+                    <input name="Max Bonus Fee" class="form-control" placeholder="Max Bonus Fee" id="maxBonusFee" min="0" max="100" required/>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<div class="row clearfix"  >
-    <div class="col-md-12">
-        <button type="button" class="btn btn-default prev-step">Previous</button>
-        <button type="button" class="btn pull-right btn-primary next-step">Next</button>
+    <div class="row clearfix">
+        <div class="col-md-12">
+            <button type="button" class="btn btn-default prev-step">Previous</button>
+            <button type="button" class="btn pull-right btn-primary next-step">Next</button>
+        </div>
     </div>
-</div>
+</form>

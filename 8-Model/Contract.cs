@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Auctus.Web.Model.Home
+namespace Auctus.Model
 {
     public class Contract
     {
