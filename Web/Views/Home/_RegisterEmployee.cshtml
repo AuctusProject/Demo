@@ -1,31 +1,33 @@
-﻿<div class="row clearfix form-group">
-    <h2 class="col-md-12">Register Employee</h2>
-</div>
-<div class="row clearfix">
-    <div class="col-md-12">
-        <div class="form-group">
-            <label for="name">Name</label>
-            <input class="form-control" placeholder="Name" id="employeeName" />
-        </div>
-        <div class="form-group">
-            <label for="salary">Salary</label>
-            <div class="input-group">
-                <span class="input-group-addon">$</span>
-                <input class="form-control" placeholder="Salary" id="salary"/>
+﻿<form role="form">
+    <div class="row clearfix form-group">
+        <h2 class="col-md-12">Register Employee</h2>
+    </div>
+    <div class="row clearfix">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input name="Name" class="form-control" placeholder="Name" id="employeeName" maxlength="50"/>
             </div>
-        </div>
-        <div class="form-group">
-            <label for="contributionPercentage">Contribution Percentage</label>
-            <div class="input-group">
-                <span class="input-group-addon">%</span>
-                <input class="form-control" placeholder="Contribution Percentage" id="contributionPercentage" />
+            <div class="form-group">
+                <label for="salary">Salary</label>
+                <div class="input-group">
+                    <span class="input-group-addon">$</span>
+                    <input name="Salary" class="form-control" placeholder="Salary" id="salary" min="1" required/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="contributionPercentage">Contribution Percentage</label>
+                <div class="input-group">
+                    <span class="input-group-addon">%</span>
+                    <input name="Contribution Percentage" class="form-control" placeholder="Contribution Percentage" id="contributionPercentage" min="0.01" max="100" required/>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<div class="row clearfix">
-    <div class="col-md-12">
-        <button type="button" class="btn btn-default prev-step">Previous</button>
-        <button type="button" class="btn pull-right btn-primary next-step">Next</button>
+    <div class="row clearfix">
+        <div class="col-md-12">
+            <button type="button" class="btn btn-default prev-step">Previous</button>
+            <button type="button" class="btn pull-right btn-primary next-step">Next</button>
+        </div>
     </div>
-</div>
+</form>

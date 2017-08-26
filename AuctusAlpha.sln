@@ -3,36 +3,38 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "0-Web", "Web\0-Web.csproj", "{D00E2A77-3F46-4480-AE15-3E3CD4AC387F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "0-Web", "Web\0-Web.csproj", "{D00E2A77-3F46-4480-AE15-3E3CD4AC387F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{7D0ACDB6-F39F-4A54-8463-706B0EF4E5D9} = {7D0ACDB6-F39F-4A54-8463-706B0EF4E5D9}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "1-Service", "Controller\1-Service.csproj", "{7D0ACDB6-F39F-4A54-8463-706B0EF4E5D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "1-Service", "Controller\1-Service.csproj", "{7D0ACDB6-F39F-4A54-8463-706B0EF4E5D9}"
 	ProjectSection(ProjectDependencies) = postProject
 		{EC352D3E-2B07-45E3-A9C0-A8BB705CD76F} = {EC352D3E-2B07-45E3-A9C0-A8BB705CD76F}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2-Business", "Business\2-Business.csproj", "{EC352D3E-2B07-45E3-A9C0-A8BB705CD76F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "2-Business", "Business\2-Business.csproj", "{EC352D3E-2B07-45E3-A9C0-A8BB705CD76F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{41F3272E-33E2-4079-A53B-364B6B1E0212} = {41F3272E-33E2-4079-A53B-364B6B1E0212}
 		{17D7D4E6-2AD2-4C0B-A250-81E8593B0B39} = {17D7D4E6-2AD2-4C0B-A250-81E8593B0B39}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "3-EthereumProxy", "EthereumProxy\3-EthereumProxy.csproj", "{17D7D4E6-2AD2-4C0B-A250-81E8593B0B39}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "3-EthereumProxy", "EthereumProxy\3-EthereumProxy.csproj", "{17D7D4E6-2AD2-4C0B-A250-81E8593B0B39}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "4-DataAccess", "DataAccess\4-DataAccess.csproj", "{41F3272E-33E2-4079-A53B-364B6B1E0212}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "4-DataAccess", "DataAccess\4-DataAccess.csproj", "{41F3272E-33E2-4079-A53B-364B6B1E0212}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "6-UnitTest", "UnitTest\6-UnitTest.csproj", "{AB8B2586-6949-46F9-A061-980F60A0305E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "6-UnitTest", "UnitTest\6-UnitTest.csproj", "{AB8B2586-6949-46F9-A061-980F60A0305E}"
 	ProjectSection(ProjectDependencies) = postProject
 		{EC352D3E-2B07-45E3-A9C0-A8BB705CD76F} = {EC352D3E-2B07-45E3-A9C0-A8BB705CD76F}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "5-DomainObjects", "DomainObjects\5-DomainObjects.csproj", "{DB4E3F73-BAB0-40D7-B80B-C5C285D95F51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "5-DomainObjects", "DomainObjects\5-DomainObjects.csproj", "{DB4E3F73-BAB0-40D7-B80B-C5C285D95F51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "7-Util", "Util\7-Util.csproj", "{2797D810-9659-429F-8D61-66A9E3824C22}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "7-Util", "Util\7-Util.csproj", "{2797D810-9659-429F-8D61-66A9E3824C22}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "WebApi\WebApi.csproj", "{8F33F31C-9A02-4E43-BA72-840E3241173A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi", "WebApi\WebApi.csproj", "{8F33F31C-9A02-4E43-BA72-840E3241173A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "8-Model", "8-Model\8-Model.csproj", "{F809A797-2814-480C-815E-CB8385555EED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -76,6 +78,10 @@ Global
 		{8F33F31C-9A02-4E43-BA72-840E3241173A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F33F31C-9A02-4E43-BA72-840E3241173A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F33F31C-9A02-4E43-BA72-840E3241173A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F809A797-2814-480C-815E-CB8385555EED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F809A797-2814-480C-815E-CB8385555EED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F809A797-2814-480C-815E-CB8385555EED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F809A797-2814-480C-815E-CB8385555EED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

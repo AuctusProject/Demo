@@ -12,9 +12,11 @@
     });
 
     $(".next-step").click(function (e) {
-        var $active = $('.wizard .nav-tabs li.active');
-        $active.next().removeClass('disabled');
-        nextTab($active);
+        if ($(this).closest('form').valid()) {
+            var $active = $('.wizard .nav-tabs li.active');
+            $active.next().removeClass('disabled');
+            nextTab($active);
+        }
     });
 
     $(".prev-step").click(function (e) {
@@ -22,9 +24,11 @@
         prevTab($active);
 
     });
-   
+
     Wizard.Components.Contract.Initialize();
     Wizard.Components.Buttons.Save.click(Wizard.Operations.Save);
+
+    $('form').validate();
 });
 
 function nextTab(elem) {
@@ -53,15 +57,17 @@ Wizard.Components = {
             Name: $('#employeeName'),
             Salary: $('#salary'),
             ContributionPercentage: $('#contributionPercentage')
+        },
+        Contract: {
+            VestingRules: {}
         }
     },
     Contract: {
         RowTemplateHtml: $('#vesting-row-template').prop('outerHTML'),
         Content: $('#vesting-content'),
-        MaxVestingIndex: 0,
         Initialize: function () {
             $('#vesting-row-template').remove();
-            //createSlider(++Wizard.Components.Contract.MaxVestingIndex);
+            createSlider(1, 0);
         }
     },
     Buttons: {
@@ -72,9 +78,41 @@ Wizard.Components = {
 Wizard.Operations = {
     Save: function () {
         var model = convertModel(Wizard.Components.Model);
-        $.post("Home/Save", model);
+        model.Contract.VestingRules = GetVestingRules();
+
+        if (Wizard.Operations.Validate(model)) {
+            $.post("Home/Save", model);
+        }
+    },
+    Validate: function (model) {
+        var previousVestingRule = null;
+        for (var i = 0; i < model.Contract.VestingRules.length; i++) {
+            if (previousVestingRule != null) {
+                if (model.Contract.VestingRules[i].Period <= previousVestingRule.Period) {
+                    $('#vesting-error').text("Period must be crescent");
+                    $('#vesting-content').addClass('has-error');
+                    $('#vesting-error').show();
+                    return false;
+                }
+            }
+            previousVestingRule = model.Contract.VestingRules[i];
+        }
+        $('#vesting-content').removeClass('has-error');
+        $('#vesting-error').hide();
+        return true;
     }
 };
+
+function GetVestingRules() {
+    var rules = [];
+    $('.vesting-row').each(function (i, element) {
+        var period = $('.vesting-period', element).val();
+        var percentage = $('.vesting-percentage', element).text();
+        rules.push({ Percentage: parseInt(percentage), Period: parseInt(period) });
+    });
+    return rules;
+}
+
 
 function convertModel(obj) {
     var model = {};
@@ -89,49 +127,119 @@ function convertModel(obj) {
     return model;
 }
 
-function createSlider(index) {
+function disableIfIsOnlyOneButtonAndEnableIfIsMore() {
+    var buttons = $('.btn-remove-slider');
+    if (buttons.length == 1)
+        buttons.prop('disabled', true);
+    else
+        buttons.prop('disabled', false);
+}
+
+function createSlider(index, currentIndex) {
     Wizard.Components.Contract.Content.append(Wizard.Components.Contract.RowTemplateHtml.replaceAll('template', index));
+    disableIfIsOnlyOneButtonAndEnableIfIsMore();
+    $("#btn-remove-" + index).click(
+        function () {
+            var currentSlider = $('#slider-range-' + index);
+
+            var previousIndex = currentSlider.slider('option', 'previousIndex');
+            var previousSlider = $('#slider-range-' + previousIndex);
+
+            var nextIndex = currentSlider.slider('option', 'nextIndex');
+            var nextSlider = $('#slider-range-' + nextIndex);
+
+            previousSlider.slider('option', 'nextIndex', nextIndex);
+            nextSlider.slider('option', 'previousIndex', previousIndex);
+
+            if (nextSlider.length)
+                setSliderMinValue(nextSlider.slider('option', 'myIndex'), previousSlider.length ? previousSlider.slider('values')[1] : 0);
+
+            if (previousSlider.length)
+                setSliderMaxValue(previousSlider.slider('option', 'myIndex'), nextSlider.length ? nextSlider.slider('values')[0] : 100);
+
+            $('#vesting-row-' + index).remove();
+            disableIfIsOnlyOneButtonAndEnableIfIsMore();
+        }
+    );
+
+
     $('#vesting-row-' + index).show();
 
-    var minValue = getPreviousSliderValue(index) + 1;
-    
-    $('#slider-range-'+index).slider({
-        range: index === 1 ? "min" : true,
-        value: index === 1 ? 100 : null,
-        values: index === 1 ? null : [minValue, 100],
+    var minValue = getPreviousSliderValue(currentIndex);
+
+    $('#slider-range-' + index).slider({
+        range: true,
+        value: $(this).data('index') === 1 ? 100 : minValue,
+        values: [minValue, 100],
         min: 0,
         max: 100,
         stop: function (event, ui) {
-            onStopSlider($(this).data('index'), ui.value);
+            if (ui.value == ui.values[0])
+                return false;
+
+            onStopSlider($(this).slider('option', 'myIndex'), ui.value);
         },
         create: function () {
-            if (index === 1) {
-                $(this).children('#slider-value-' + index).text($(this).slider("value"));
-            }
+            setSliderValuesText(this, $(this).slider('option', 'myIndex'), [minValue, 100]);
         },
         slide: function (event, ui) {
-            if (index === 1) {
-                $(this).children('#slider-value-' + index).text(ui.value);
+            if (ui.value == ui.values[0])
+                return false;
+
+            if (ui.value >= getSliderMaxValue($(this).slider('option', 'nextIndex'))) {
+                setSliderMaxValue($(this).slider('option', 'myIndex'), getSliderMaxValue($(this).slider('option', 'nextIndex')) - 1);
+                return false;
             }
-            else {
-                if (ui.value < minValue)
-                    return false;
-                $(this).children('#slider-value-' + index).text(ui.values[1]);
-            }
-        }
+
+            setSliderMinValue($(this).slider('option', 'nextIndex'), ui.value);
+            setSliderValuesText(this, $(this).slider('option', 'myIndex'), ui.values);
+        },
+        myIndex: index,
+        nextIndex: index + 1,
+        previousIndex: currentIndex
     });
 }
 
-function getPreviousSliderValue(index) {
-    if (index <= 1)
-        return 0;
-    var previousSliderValue = $('#slider-range-' + (index - 1)).slider("value");
-    return previousSliderValue; 
+function setSliderMaxValue(index, value) {
+    var element = $('#slider-range-' + (index));
+    element.slider('values', [getSliderMinValue(index), value]).change();
+    setSliderMinValue(element.slider('option', 'nextIndex'), value);
+    setSliderValuesText(element, index, element.slider("values"));
 }
 
-function onStopSlider(sliderIndex, value) {
-    if (sliderIndex === Wizard.Components.Contract.MaxVestingIndex && value < 100)
-        createSlider(++Wizard.Components.Contract.MaxVestingIndex);
+function setSliderValuesText(element, index, values) {
+    $(element).children('#slider-value-1-' + index).text(values[0]);
+    $(element).children('#slider-value-2-' + index).text(values[1]);
+}
+
+function setSliderMinValue(index, value) {
+    var element = $('#slider-range-' + (index));
+    element.slider('values', [value, getSliderMaxValue(index)]).change();
+    setSliderValuesText(element, index, element.slider("values"));
+}
+
+function getPreviousSliderValue(index) {
+    if (index < 1)
+        return 0;
+
+    return getSliderMaxValue(index);
+}
+
+function getSliderMinValue(index) {
+    return previousSliderValue = $('#slider-range-' + (index)).slider("values")[0];
+}
+
+function getSliderMaxValue(index) {
+    return previousSliderValue = $('#slider-range-' + (index)).slider("values")[1];
+}
+
+function onStopSlider(index, value) {
+    var currentSlider = $('#slider-range-' + index);
+    var nextIndex = currentSlider.slider('option', 'nextIndex');
+    var nextSlider = $('#slider-range-' + nextIndex);
+
+    if (!nextSlider.length && value < 100)
+        createSlider(nextIndex, index);
 }
 
 

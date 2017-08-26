@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using Auctus.Model;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Auctus.Web.Model.Home
