@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 using System.Threading;
 using System.Globalization;
 using System.Numerics;
-using Auctus.Util;
+using Auctus.Util.NotShared;
 
 namespace Auctus.EthereumProxy
 {

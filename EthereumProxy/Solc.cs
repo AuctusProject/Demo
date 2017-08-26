@@ -5,7 +5,7 @@ using System.IO;
 using System.Text;
 using System.Reflection;
 using System.Linq;
-using Auctus.Util;
+using Auctus.Util.NotShared;
 
 namespace Auctus.EthereumProxy
 {

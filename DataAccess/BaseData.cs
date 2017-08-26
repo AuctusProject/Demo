@@ -9,15 +9,16 @@ using System.Linq;
 using System.Text;
 using MySql.Data.MySqlClient;
 using Auctus.DataAccess.Core;
+using Auctus.Util.NotShared;
 
 namespace Auctus.DataAccess
 {
     public abstract class BaseData<T> : DapperRepositoryBase
     {
-        public BaseData() : base(Util.Config.DbConnString)
+        public BaseData() : base(Config.DbConnString)
         { }
         //TODO: add to configuration manager like structure
-        private readonly string connString = Util.Config.DbConnString;
+        private readonly string connString = Config.DbConnString;
 
         public new IEnumerable<T> Select<T>(object criteria = null)
         {
