@@ -46,7 +46,7 @@ namespace Auctus.EthereumProxy
 
             ConsoleOutput output = Execute(new Command() { Comm = string.Format("solc --optimize --bin {0}", BaseFilePath), ReturnFunction = AfterGenerateBinary });
             if (!output.Ok)
-                throw new Exception(string.Format("Failed to compile ABI.\n\n{0}", output.Output));
+                throw new SolcException(string.Format("Failed to compile ABI.\n\n{0}", output.Output));
 
             ParseSCAbi(output.Output);
         }
@@ -54,7 +54,7 @@ namespace Auctus.EthereumProxy
         private Command AfterGenerateBinary(ConsoleOutput output)
         {
             if (!output.Ok)
-                throw new Exception(string.Format("Failed to compile binary.\n\n{0}", output.Output));
+                throw new SolcException(string.Format("Failed to compile binary.\n\n{0}", output.Output));
 
             ParseSCBinary(output.Output);
             return new Command() { Comm = string.Format("solc --abi {0}", BaseFilePath) };

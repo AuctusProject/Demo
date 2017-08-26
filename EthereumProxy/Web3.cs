@@ -45,11 +45,11 @@ namespace Auctus.EthereumProxy
         internal static Wallet CreateAccount(string password)
         {
             if (string.IsNullOrEmpty(password) || password.Contains(" "))
-                throw new ArgumentException("Invalid password.", "password");
+                throw new Web3Exception("Invalid password.");
 
             ConsoleOutput output = new Web3().Execute(string.Format("personal.newAccount(\"{0}\")", password));
             if (!output.Ok || !IS_ADDRESS.IsMatch(output.Output))
-                throw new Exception(string.Format("Fail to create account.\n\n{0}", output.Output));
+                throw new Web3Exception(string.Format("Fail to create account.\n\n{0}", output.Output));
             
             Wallet account = new Wallet();
             account.Address = output.Output;
@@ -63,7 +63,7 @@ namespace Auctus.EthereumProxy
         internal static string DeployContract(SCCompiled sc, int gasLimit, int gweiGasPrice, KeyValuePair<string, string> ownerAddressPassword = default(KeyValuePair<string, string>))
         {
             if (sc == null || string.IsNullOrEmpty(sc.Name) || (string.IsNullOrEmpty(sc.Binary) && (string.IsNullOrEmpty(sc.ABI) || sc.ABI == "[]")))
-                throw new ArgumentException("Invalid compiled smart contract.", "sc");
+                throw new Web3Exception("Invalid compiled smart contract.");
 
             ValidateGasValues(gasLimit, gweiGasPrice);
             ownerAddressPassword = GetSourceAddres(ownerAddressPassword);
@@ -84,9 +84,16 @@ namespace Auctus.EthereumProxy
         internal static Variable CallConstFunction(CompleteVariableType returnType, string scAddress, string abi, string functionName, params Variable[] parameters)
         {
             if (returnType == null)
-                throw new ArgumentNullException("Return type must be filled.", "returnType");
+                throw new Web3Exception("Return type must be filled.");
+            return CallConstFunction(new CompleteVariableType[] { returnType }, scAddress, abi, functionName, parameters).Single();
+        }
+
+        internal static List<Variable> CallConstFunction(IEnumerable<CompleteVariableType> returnTypes, string scAddress, string abi, string functionName, params Variable[] parameters)
+        {
+            if (returnTypes == null || returnTypes.Count() == 0)
+                throw new Web3Exception("Return type must be filled.");
             ValidateContractData(scAddress, abi, functionName);
-            return new Web3().InternalCallConstFunction(returnType, scAddress, abi, functionName, parameters);
+            return new Web3().InternalCallConstFunction(returnTypes, scAddress, abi, functionName, parameters);
         }
 
         internal static string CallFunction(string scAddress, string abi, string functionName, BigNumber value, int gasLimit, int gweiGasPrice, KeyValuePair<string, string> fromAddressPassword = default(KeyValuePair<string, string>), params Variable[] parameters)
@@ -104,7 +111,7 @@ namespace Auctus.EthereumProxy
             ValidateAddress(address);
             ConsoleOutput output = new Web3().Execute(string.Format("eth.getBalance(\"{0}\").toString(10)", address));
             if (!output.Ok)
-                throw new Exception("Error to read balance.");
+                throw new Web3Exception("Error to read balance.");
             return GetBigNumberStringToDouble(output.Output, ETHEREUM_DECIMAL);
         }
 
@@ -112,10 +119,10 @@ namespace Auctus.EthereumProxy
         {
             ValidateAddress(scAddress);
             if (string.IsNullOrEmpty(eventName))
-                throw new ArgumentNullException("Event name must be filled.", "eventName");
+                throw new Web3Exception("Event name must be filled.");
             if ((eventParameters == null && filterParameters != null && filterParameters.Length > 0) ||
                 (eventParameters != null && filterParameters != null && eventParameters.Where(c => c.Indexed).Count() < filterParameters.Length))
-                throw new ArgumentException("Filter parameters must match with indexed event parameters.");
+                throw new Web3Exception("Filter parameters must match with indexed event parameters.");
             
             return new Web3().InternalReadEvent(scAddress, eventName, eventParameters, filterParameters);
         }
@@ -124,20 +131,53 @@ namespace Auctus.EthereumProxy
         {
             return new BigNumber(value, ETHEREUM_DECIMAL);
         }
-        
+
+        internal static string GetNumberFormatted(double number, int decimals)
+        {
+            string[] numberFractions = number.ToString(DOUBLE_FIXED_POINT).Replace(',', '.').Split('.');
+            string strDecimals = "";
+            string strNonDecimal = numberFractions[0];
+            if (numberFractions.Length == 1)
+            {
+                if (strNonDecimal != "0")
+                    strDecimals = "".PadLeft(decimals, '0');
+            }
+            else
+            {
+                if (strNonDecimal == "0")
+                    strNonDecimal = "";
+                if (numberFractions[1].Length > decimals)
+                    strDecimals = numberFractions[1].Substring(0, decimals);
+                else
+                    strDecimals = numberFractions[1].PadRight(decimals, '0').TrimStart('0');
+            }
+            return string.Format("{0}{1}", strNonDecimal, strDecimals);
+        }
+
         internal static double GetBigNumberStringToDouble(string bigNumber, int decimals)
         {
-            if (string.IsNullOrEmpty(bigNumber) || !ONLY_NUMBERS.IsMatch(bigNumber))
-                throw new Exception("Invalid big number.");
+            if (string.IsNullOrEmpty(bigNumber) || (!ONLY_NUMBERS.IsMatch(bigNumber) && 
+                (!bigNumber.Contains("e+") || !ONLY_NUMBERS.IsMatch(bigNumber.Replace("e+", "").Replace(".", "")))))
+                throw new Web3Exception("Invalid big number.");
             if (decimals < 0)
-                throw new Exception("Invalid decimals.");
+                throw new Web3Exception("Invalid decimals.");
+
+            if (bigNumber.Contains("e+"))
+            {
+                string[] numberSplitted = bigNumber.Split(new string[] { "e+" }, StringSplitOptions.RemoveEmptyEntries);
+                string[] baseNumber = numberSplitted[0].Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+                if (baseNumber.Length > 1)
+                    bigNumber = string.Format("{0}{1}", baseNumber[0], baseNumber[1].PadRight(Convert.ToInt32(numberSplitted[1]), '0'));
+                else
+                    bigNumber = string.Format("{0}{1}", baseNumber[0], "".PadRight(Convert.ToInt32(numberSplitted[1]), '0'));
+            }
 
             string strNonDecimals = "0";
             string strDecimals = "0";
             if (decimals == 0)
                 strNonDecimals = bigNumber;
             else if (bigNumber.Length <= decimals)
-                strDecimals = bigNumber.PadRight(decimals, '0');
+                strDecimals = bigNumber.PadLeft(decimals, '0');
             else
             {
                 strNonDecimals = bigNumber.Substring(0, bigNumber.Length - decimals);
@@ -180,7 +220,7 @@ namespace Auctus.EthereumProxy
         {
             string startOutput = ReadOutputStream(process.StandardOutput);
             if (!startOutput.StartsWith("Welcome to the Geth JavaScript console!"))
-                throw new Exception(string.Format("Error to attach geth.\n\n{0}", startOutput));
+                throw new Web3Exception(string.Format("Error to attach geth.\n\n{0}", startOutput));
             else
                 return ProcessCommand(process, command);
         }
@@ -209,7 +249,7 @@ namespace Auctus.EthereumProxy
                 if (output.Output.Contains("transactionHash"))
                     return output.Output;
                 else
-                    throw new Exception(string.Format("Invalid transaction data.\n\n{0}", output.Output));
+                    throw new Web3Exception(string.Format("Invalid transaction data.\n\n{0}", output.Output));
             }
             else
                 return null;
@@ -244,7 +284,7 @@ namespace Auctus.EthereumProxy
             };
             ConsoleOutput output = Execute(GetUnlockAccountCommand(ownerAddressPassword.Key, ownerAddressPassword.Value, SetABIBigVariableCommand));
             if (!output.Ok || !output.Output.Contains("transactionHash"))
-                throw new Exception(string.Format("Error to deploy contract.\n\n{0}", output.Output));
+                throw new Web3Exception(string.Format("Error to deploy contract.\n\n{0}", output.Output));
 
             return output.Output.Split(new string[] { "transactionHash:" }, StringSplitOptions.RemoveEmptyEntries).Last().Trim(' ', '\n', '\r', '}', '"');
         }
@@ -261,7 +301,7 @@ namespace Auctus.EthereumProxy
             };
             ConsoleOutput output = Execute(GetUnlockAccountCommand(fromAddressPassword.Key, fromAddressPassword.Value, SendCommand));
             if (!output.Ok || !output.Output.StartsWith("0x"))
-                throw new Exception(string.Format("Error on send transaction.\n\n{0}", output.Output));
+                throw new Web3Exception(string.Format("Error on send transaction.\n\n{0}", output.Output));
 
             return output.Output;
         }
@@ -288,12 +328,12 @@ namespace Auctus.EthereumProxy
             };
             ConsoleOutput output = Execute(GetUnlockAccountCommand(fromAddressPassword.Key, fromAddressPassword.Value, SetABIBigVariableCommand));
             if (!output.Ok || !output.Output.StartsWith("0x"))
-                throw new Exception(string.Format("Error on call transaction function.\n\n{0}", output.Output));
+                throw new Web3Exception(string.Format("Error on call transaction function.\n\n{0}", output.Output));
 
             return output.Output;
         }
-
-        private Variable InternalCallConstFunction(CompleteVariableType returnType, string scAddress, string abi, string functionName, params Variable[] parameters)
+        
+        private List<Variable> InternalCallConstFunction(IEnumerable<CompleteVariableType> returnTypes, string scAddress, string abi, string functionName, params Variable[] parameters)
         {
             TransactionInfo = new TransactionData()
             {
@@ -311,9 +351,22 @@ namespace Auctus.EthereumProxy
             };
             ConsoleOutput output = Execute(SetABIBigVariableCommand(new ConsoleOutput() { Success = true, Output = "Start" }));
             if (!output.Ok)
-                throw new Exception(string.Format("Error on call const function.\n\n{0}", output.Output));
+                throw new Web3Exception(string.Format("Error on call const function.\n\n{0}", output.Output));
 
-            return ParseStringToVariable(output.Output, returnType.Type, returnType.Decimals);
+            List<Variable> variablesReturned = new List<Variable>();
+            if (returnTypes.Count() > 1)
+            {
+                IEnumerable<string> values = output.Output.Trim('[', ']').Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(c => c.Trim());
+                if (values.Count() != returnTypes.Count())
+                    throw new Web3Exception("Return types do not match.");
+
+                for(int i = 0; i < returnTypes.Count(); ++i)
+                    variablesReturned.Add(ParseStringToVariable(values.ElementAt(i), returnTypes.ElementAt(i).Type, returnTypes.ElementAt(i).Decimals));
+            }
+            else
+                variablesReturned.Add(ParseStringToVariable(output.Output, returnTypes.ElementAt(0).Type, returnTypes.ElementAt(0).Decimals));
+
+            return variablesReturned;
         }
 
         private List<Event> InternalReadEvent(string scAddress, string eventName, List<CompleteVariableType> eventParameters, params EventParameter[] parameters)
@@ -327,7 +380,7 @@ namespace Auctus.EthereumProxy
             ConsoleOutput output = Execute(string.Format("eth.filter({{ \"fromBlock\": \"0x0\", \"toBlock\": \"latest\", \"address\": \"{0}\", \"topics\": [ web3.sha3(\"{1}({2})\"){3} ] }}).get(function(error,result) {{ error ? console.log(\"Error: \" + error) : console.log(JSON.stringify(result)); }})",
                                             scAddress, eventName, eventParameterTypes, formattedParameters));
             if (!output.Ok || output.Output.StartsWith("Error"))
-                throw new Exception(string.Format("Error on read event.\n\n{0}", output.Output));
+                throw new Web3Exception(string.Format("Error on read event.\n\n{0}", output.Output));
 
             string result = output.Output.Split(new string[] { "callbacks:" }, StringSplitOptions.RemoveEmptyEntries).First().TrimEnd('\n', '\r', '{', ' ');
             return ParseEventResult(result, eventParameters);
@@ -362,7 +415,7 @@ namespace Auctus.EthereumProxy
             if (ABIVariableInfo.SplitCounter == 0 && ABIVariableInfo.NextFunction != CallConstFunctionCommand)
                 ValidateAccountUnlocked(output);
             if (!output.Ok)
-                throw new Exception(string.Format("Error: {0}", output.Output));
+                throw new Web3Exception(string.Format("Error: {0}", output.Output));
 
             return ProcessBigVariableCommand(ABIVariableInfo, SetABIBigVariableCommand);
         }
@@ -370,7 +423,7 @@ namespace Auctus.EthereumProxy
         private Command SetBinaryBigVariableCommand(ConsoleOutput output)
         {
             if (!output.Ok)
-                throw new Exception(string.Format("Error: {0}", output.Output));
+                throw new Web3Exception(string.Format("Error: {0}", output.Output));
 
             return ProcessBigVariableCommand(BinaryVariableInfo, SetBinaryBigVariableCommand);
         }
@@ -384,7 +437,7 @@ namespace Auctus.EthereumProxy
         private Command BaseCommand(string nextCommand, ConsoleOutput output)
         {
             if (!output.Ok)
-                throw new Exception(string.Format("Error: {0}", output.Output));
+                throw new Web3Exception(string.Format("Error: {0}", output.Output));
 
             return new Command() { Comm = nextCommand };
         }
@@ -433,13 +486,13 @@ namespace Auctus.EthereumProxy
                 current = output.Read();
             } while (current != -1 && (current != 32 || previous != 62));
             if (buffer.Count == 0)
-                throw new Exception("Failed to read console output. No character buffered.");
+                throw new Web3Exception("Failed to read console output. No character buffered.");
        
             string consoleOutput = new string(buffer.ToArray()).TrimEnd('>').Trim('\n', '\r');
             if (string.IsNullOrEmpty(consoleOutput))
             {
                 if (attempt > 5)
-                    throw new Exception("Failed to read console output. Output cannot be read.");
+                    throw new Web3Exception("Failed to read console output. Output cannot be read.");
 
                 Thread.Sleep(200);
                 return ReadOutputStream(output, attempt + 1);
@@ -452,9 +505,9 @@ namespace Auctus.EthereumProxy
         {
             bool unlocked = false;
             if (!(output.Ok && bool.TryParse(output.Output, out unlocked) && unlocked))
-                throw new Exception(string.Format("Failed to unlock account. Return: {0}", output.Output));
+                throw new Web3Exception(string.Format("Failed to unlock account. Return: {0}", output.Output));
         }
-
+        
         private List<Event> ParseEventResult(string eventResult, List<CompleteVariableType> eventParameters)
         {
             if (string.IsNullOrEmpty(eventResult))
@@ -468,7 +521,7 @@ namespace Auctus.EthereumProxy
                 {
                     if ((eventParameters == null && events[0].Topics.Length > 1) ||
                         (eventParameters != null && eventParameters.Where(c => c.Indexed).Count() != (events[0].Topics.Length - 1)))
-                        throw new Exception("Wrong information for event indexed parameters.");
+                        throw new Web3Exception("Wrong information for event indexed parameters.");
 
                     int chunkData = 0;
                     if (!string.IsNullOrEmpty(events[0].Data) && events[0].Data.Length >= 66)
@@ -476,7 +529,7 @@ namespace Auctus.EthereumProxy
                     
                     if ((eventParameters == null && chunkData > 0) ||
                         (eventParameters != null && eventParameters.Where(c => !c.Indexed).Count() != chunkData))
-                        throw new Exception("Wrong information for event not indexed parameters.");
+                        throw new Web3Exception("Wrong information for event not indexed parameters.");
 
                     List<Event> parsedEvents = new List<Event>();
                     foreach (EventData eventData in events)
@@ -532,7 +585,7 @@ namespace Auctus.EthereumProxy
                 case VariableType.BigNumber:
                     data = data.TrimStart('0');
                     if (string.IsNullOrEmpty(data))
-                        param.Value = 0;
+                        param.Value = new BigNumber(0, decimals.Value);
                     else
                     {
                         string bigNumber;
@@ -562,7 +615,7 @@ namespace Auctus.EthereumProxy
                     param.Value = data;
                     break;
                 default:
-                    throw new Exception("Invalid parameter type.");
+                    throw new Web3Exception("Invalid parameter type.");
             }
             return param;
         }
@@ -570,33 +623,33 @@ namespace Auctus.EthereumProxy
         private static void ValidateGasValues(int gasLimit, int gweiGasPrice)
         {
             if (gasLimit < 21000)
-                throw new ArgumentException("Invalid gas limit.", "gasLimit");
-            if (gweiGasPrice < 12)
-                throw new ArgumentException("Invalid gas price.", "gweiGasPrice");
+                throw new Web3Exception("Invalid gas limit.");
+            if (gweiGasPrice < 10)
+                throw new Web3Exception("Invalid gas price.");
         }
 
         private static void ValidateAddress(string address)
         {
             if (string.IsNullOrEmpty(address) || !IS_ADDRESS.IsMatch(address))
-                throw new ArgumentException("Invalid adresss.");
+                throw new Web3Exception("Invalid adresss.");
         }
 
         private static void ValidateContractData(string scAddress, string abi, string eventFunctionName)
         {
             ValidateAddress(scAddress);
             if (string.IsNullOrEmpty(abi))
-                throw new ArgumentNullException("Invalid smart contract ABI.", "abi");
+                throw new Web3Exception("Invalid smart contract ABI.");
             if (string.IsNullOrEmpty(eventFunctionName))
-                throw new ArgumentNullException("Invalid smart contract function/event.");
+                throw new Web3Exception("Invalid smart contract function/event.");
         }
                 
         private Command GetUnlockAccountCommand(string address, string password, Func<ConsoleOutput, Command> returnFunction, int timeUnlocked = 180)
         {
             if (string.IsNullOrEmpty(address))
-                throw new ArgumentNullException("Address must be filled.", "address");
+                throw new Web3Exception("Address must be filled.");
 
             if (string.IsNullOrEmpty(password))
-                throw new ArgumentNullException("Password must be filled.", "password");
+                throw new Web3Exception("Password must be filled.");
 
             return new Command()
             {
@@ -608,30 +661,14 @@ namespace Auctus.EthereumProxy
         private static string GetBigNumberFormatted(BigNumber bigNumber, bool isEvent = false)
         {
             if (bigNumber == null)
-                throw new ArgumentNullException("Big Number cannot be null.");
+                throw new Web3Exception("Big Number cannot be null.");
             if (bigNumber.Value < 0)
-                throw new ArgumentException("Big Number cannot be negative.");
+                throw new Web3Exception("Big Number cannot be negative.");
             if (bigNumber.Decimals < 0)
-                throw new ArgumentException("Decimals cannot be negative.");
-            
-            string[] numberFractions = bigNumber.Value.ToString(DOUBLE_FIXED_POINT).Replace(',', '.').Split('.');
-            string decimals = "";
-            string nonDecimal = numberFractions[0];
-            if (numberFractions.Length == 1)
-            {
-                if (nonDecimal != "0")
-                    decimals = "".PadLeft(bigNumber.Decimals, '0');
-            }
-            else 
-            {
-                if (nonDecimal == "0")
-                    nonDecimal = "";
-                if (numberFractions[1].Length > bigNumber.Decimals)
-                    decimals = numberFractions[1].Substring(0, bigNumber.Decimals);
-                else
-                    decimals = numberFractions[1].PadRight(bigNumber.Decimals, '0').TrimStart('0');
-            }
-            string numberParsed = BigInteger.Parse(string.Format("{0}{1}", nonDecimal, decimals)).ToString("X");
+                throw new Web3Exception("Decimals cannot be negative.");
+
+            string numberFormatted = GetNumberFormatted(bigNumber.Value, bigNumber.Decimals);
+            string numberParsed = BigInteger.Parse(numberFormatted).ToString("X");
             return string.Format("\"0x{0}{1}\"", isEvent ? "".PadLeft(64 - numberParsed.Length, '0') : "", numberParsed);
         }
 
@@ -645,14 +682,14 @@ namespace Auctus.EthereumProxy
         private static string GetParameterFormatted(Variable param)
         {
             if (param == null)
-                throw new ArgumentException("Parameter cannot be null.");
+                throw new Web3Exception("Parameter cannot be null.");
 
             string formattedParameter = "";
             switch(param.Type)
             {
                 case VariableType.Address:
                     if (!(param.Value is string))
-                        throw new ArgumentException("Invalid address type.");
+                        throw new Web3Exception("Invalid address type.");
                     ValidateAddress((string)param.Value);
                     if (param is EventParameter)
                         formattedParameter = string.Format("0x{0}{1}", "".PadLeft(24, '0'), ((string)param.Value).Substring(2));
@@ -662,12 +699,12 @@ namespace Auctus.EthereumProxy
                     break;
                 case VariableType.BigNumber:
                     if (!(param.Value is BigNumber))
-                        throw new ArgumentException("Invalid Big Number.");
+                        throw new Web3Exception("Invalid Big Number.");
                     formattedParameter = GetBigNumberFormatted((BigNumber)param.Value, param is EventParameter);
                     break;
                 case VariableType.Number:
                     if (!(param.Value is int))
-                        throw new ArgumentException("Invalid Number.");
+                        throw new Web3Exception("Invalid Number.");
                     if (param is EventParameter)
                         formattedParameter = GetBigNumberFormatted(new BigNumber(((int)param.Value), 0), true);
                     else
@@ -675,7 +712,7 @@ namespace Auctus.EthereumProxy
                     break;
                 case VariableType.Bool:
                     if (!(param.Value is bool))
-                        throw new ArgumentException("Invalid Boolean.");
+                        throw new Web3Exception("Invalid Boolean.");
                     if (param is EventParameter)
                         formattedParameter = string.Format("\"0x{0:D63}{1}\"", 0, ((bool)param.Value) ? 1 : 0);
                     else
@@ -686,7 +723,7 @@ namespace Auctus.EthereumProxy
                     break;
                 default:
                     if (!(param.Value is string) || string.IsNullOrEmpty((string)param.Value))
-                        throw new ArgumentException("Invalid Text type.");
+                        throw new Web3Exception("Invalid Text type.");
                     formattedParameter = string.Format("\"{0}\"", param.Value);
                     break;
             }
@@ -717,34 +754,13 @@ namespace Auctus.EthereumProxy
             {
                 ValidateAddress(sourceAddressPassword.Key);
                 if (string.IsNullOrEmpty(sourceAddressPassword.Value))
-                    throw new ArgumentException("Invalid password.");
+                    throw new Web3Exception("Invalid password.");
 
                 return sourceAddressPassword;
             }
         }
         #endregion
         #region Entities
-        internal class Wallet
-        {
-            public string Address { get; set; }
-            public string FileName { get; set; }
-            public byte[] File { get; set; }
-        }
-
-        internal class Transaction
-        {
-            [JsonProperty(PropertyName = "contractAddress")]
-            public string ContractAddress { get; set; }
-            [JsonProperty(PropertyName = "blockNumber")]
-            public string BlockNumber { get; set; }
-            [JsonProperty(PropertyName = "transactionHash")]
-            public string TransactionHash { get; set; }
-            [JsonProperty(PropertyName = "from")]
-            public string From { get; set; }
-            [JsonProperty(PropertyName = "gasUsed")]
-            public int GasUsed { get; set; }
-        }
-
         internal class Variable
         {
             public VariableType Type { get; set; }
@@ -803,7 +819,7 @@ namespace Auctus.EthereumProxy
                     case VariableType.Text:
                         return "string";
                     default:
-                        throw new Exception("Invalid parameter type.");
+                        throw new Web3Exception("Invalid parameter type.");
                 }
             }
         }
