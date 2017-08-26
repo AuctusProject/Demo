@@ -19,15 +19,15 @@ namespace Auctus.EthereumProxy
 
         public enum SmartContract { DefaulPensionFund };
 
-        public static void Initialize(string mainAddress, string password, string gasPriceUrl)
+        public static void Initialize(string mainAddress, string encryptedPassword, string gasPriceUrl)
         {
             GAS_PRICE_URL = gasPriceUrl;
-            Web3.InitializeMainAddress(mainAddress, password);
+            Web3.InitializeMainAddress(mainAddress, encryptedPassword);
         }
 
-        public static Wallet CreateAccount(string password)
+        public static Wallet CreateAccount(string encryptedPassword)
         {
-            return Web3.CreateAccount(password);
+            return Web3.CreateAccount(encryptedPassword);
         }
 
         public static Transaction GetTransaction(string transactionHash)

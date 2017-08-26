@@ -6,4 +6,8 @@
     <AssemblyName>Util</AssemblyName>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.0" />
+  </ItemGroup>
+
 </Project>

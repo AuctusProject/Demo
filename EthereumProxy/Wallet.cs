@@ -8,6 +8,6 @@ namespace Auctus.EthereumProxy
     {
         public string Address { get; set; }
         public string FileName { get; set; }
-        public byte[] File { get; set; }
+        public string File { get; set; }
     }
 }

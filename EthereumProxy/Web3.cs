@@ -37,48 +37,48 @@ namespace Auctus.EthereumProxy
         private Web3() { }
 
         #region External Methods
-        internal static void InitializeMainAddress(string address, string password)
+        internal static void InitializeMainAddress(string address, string encryptedPassword)
         {
-            MAIN_ADDRESS = GetSourceAddres(new KeyValuePair<string, string>(address, password));
+            MAIN_ADDRESS = GetSourceAddres(new KeyValuePair<string, string>(address, encryptedPassword));
         }
 
-        internal static Wallet CreateAccount(string password)
+        internal static Wallet CreateAccount(string encryptedPassword)
         {
-            if (string.IsNullOrEmpty(password) || password.Contains(" "))
+            if (string.IsNullOrEmpty(encryptedPassword))
                 throw new Web3Exception("Invalid password.");
 
-            ConsoleOutput output = new Web3().Execute(string.Format("personal.newAccount(\"{0}\")", password));
+            ConsoleOutput output = new Web3().Execute(string.Format("personal.newAccount(\"{0}\")", Security.Decrypt(encryptedPassword)));
             if (!output.Ok || !IS_ADDRESS.IsMatch(output.Output))
                 throw new Web3Exception(string.Format("Fail to create account.\n\n{0}", output.Output));
             
             Wallet account = new Wallet();
             account.Address = output.Output;
             string completePath = Directory.EnumerateFiles(string.Format("{0}keystore", Config.GETH_PATH)).Where(c => c.Split(new string[] { "Z--" }, StringSplitOptions.RemoveEmptyEntries).Last() == account.Address.Substring(2)).Single();
-            account.File = File.ReadAllBytes(completePath);
+            account.File = Security.Encrypt(File.ReadAllText(completePath));
             char splitCharacter = Config.IS_WINDOWS ? '\\' : '/';
             account.FileName = completePath.Split(splitCharacter).Last();
             return account;
         }
 
-        internal static string DeployContract(SCCompiled sc, int gasLimit, int gweiGasPrice, KeyValuePair<string, string> ownerAddressPassword = default(KeyValuePair<string, string>))
+        internal static string DeployContract(SCCompiled sc, int gasLimit, int gweiGasPrice, KeyValuePair<string, string> ownerAddressEncryptedPassword = default(KeyValuePair<string, string>))
         {
             if (sc == null || string.IsNullOrEmpty(sc.Name) || (string.IsNullOrEmpty(sc.Binary) && (string.IsNullOrEmpty(sc.ABI) || sc.ABI == "[]")))
                 throw new Web3Exception("Invalid compiled smart contract.");
 
             ValidateGasValues(gasLimit, gweiGasPrice);
-            ownerAddressPassword = GetSourceAddres(ownerAddressPassword);
+            ownerAddressEncryptedPassword = GetSourceAddres(ownerAddressEncryptedPassword);
             
-            return new Web3().InternalDeployContract(sc, gasLimit, gweiGasPrice, ownerAddressPassword);
+            return new Web3().InternalDeployContract(sc, gasLimit, gweiGasPrice, ownerAddressEncryptedPassword);
         }
 
-        internal static string Send(string to, BigNumber value, int gasLimit, int gweiGasPrice, KeyValuePair<string, string> fromAddressPassword = default(KeyValuePair<string, string>))
+        internal static string Send(string to, BigNumber value, int gasLimit, int gweiGasPrice, KeyValuePair<string, string> fromAddressEncryptedPassword = default(KeyValuePair<string, string>))
         {
             ValidateAddress(to);
             ValidateGasValues(gasLimit, gweiGasPrice);
             string bigNumber = GetBigNumberFormatted(value);
-            fromAddressPassword = GetSourceAddres(fromAddressPassword);
+            fromAddressEncryptedPassword = GetSourceAddres(fromAddressEncryptedPassword);
             
-            return new Web3().InternalSend(to, bigNumber, gasLimit, gweiGasPrice, fromAddressPassword);
+            return new Web3().InternalSend(to, bigNumber, gasLimit, gweiGasPrice, fromAddressEncryptedPassword);
         }
 
         internal static Variable CallConstFunction(CompleteVariableType returnType, string scAddress, string abi, string functionName, params Variable[] parameters)
@@ -96,14 +96,14 @@ namespace Auctus.EthereumProxy
             return new Web3().InternalCallConstFunction(returnTypes, scAddress, abi, functionName, parameters);
         }
 
-        internal static string CallFunction(string scAddress, string abi, string functionName, BigNumber value, int gasLimit, int gweiGasPrice, KeyValuePair<string, string> fromAddressPassword = default(KeyValuePair<string, string>), params Variable[] parameters)
+        internal static string CallFunction(string scAddress, string abi, string functionName, BigNumber value, int gasLimit, int gweiGasPrice, KeyValuePair<string, string> fromAddressEncryptedPassword = default(KeyValuePair<string, string>), params Variable[] parameters)
         {
             ValidateContractData(scAddress, abi, functionName);
             ValidateGasValues(gasLimit, gweiGasPrice);
             string bigNumber = GetBigNumberFormatted(value);
-            fromAddressPassword = GetSourceAddres(fromAddressPassword);
+            fromAddressEncryptedPassword = GetSourceAddres(fromAddressEncryptedPassword);
 
-            return new Web3().InternalCallFunction(scAddress, abi, functionName, bigNumber, gasLimit, gweiGasPrice, fromAddressPassword, parameters);
+            return new Web3().InternalCallFunction(scAddress, abi, functionName, bigNumber, gasLimit, gweiGasPrice, fromAddressEncryptedPassword, parameters);
         }
 
         internal static double GetBalance(string address)
@@ -255,12 +255,12 @@ namespace Auctus.EthereumProxy
                 return null;
         }
 
-        private string InternalDeployContract(SCCompiled sc, int gasLimit, int gweiGasPrice, KeyValuePair<string, string> ownerAddressPassword)
+        private string InternalDeployContract(SCCompiled sc, int gasLimit, int gweiGasPrice, KeyValuePair<string, string> ownerAddressEncryptedPassword)
         {
             DeployInfo = new DeployData()
             {
                 ABI = sc.ABI,
-                Address = ownerAddressPassword.Key,
+                Address = ownerAddressEncryptedPassword.Key,
                 Binary = sc.Binary,
                 GasLimit = gasLimit,
                 GasPrice = GetBigNumberFormatted(new BigNumber(gweiGasPrice, 9)),
@@ -282,36 +282,36 @@ namespace Auctus.EthereumProxy
                 VariableNames = new List<string>(),
                 NextFunction = DeployCommand
             };
-            ConsoleOutput output = Execute(GetUnlockAccountCommand(ownerAddressPassword.Key, ownerAddressPassword.Value, SetABIBigVariableCommand));
+            ConsoleOutput output = Execute(GetUnlockAccountCommand(ownerAddressEncryptedPassword.Key, ownerAddressEncryptedPassword.Value, SetABIBigVariableCommand));
             if (!output.Ok || !output.Output.Contains("transactionHash"))
                 throw new Web3Exception(string.Format("Error to deploy contract.\n\n{0}", output.Output));
 
             return output.Output.Split(new string[] { "transactionHash:" }, StringSplitOptions.RemoveEmptyEntries).Last().Trim(' ', '\n', '\r', '}', '"');
         }
 
-        private string InternalSend(string to, string value, int gasLimit, int gweiGasPrice, KeyValuePair<string, string> fromAddressPassword)
+        private string InternalSend(string to, string value, int gasLimit, int gweiGasPrice, KeyValuePair<string, string> fromAddressEncryptedPassword)
         {
             TransactionInfo = new TransactionData()
             {
                 To = to,
-                From = fromAddressPassword.Key,
+                From = fromAddressEncryptedPassword.Key,
                 Value = value,
                 GasLimit = gasLimit,
                 GasPrice = GetBigNumberFormatted(new BigNumber(gweiGasPrice, 9))
             };
-            ConsoleOutput output = Execute(GetUnlockAccountCommand(fromAddressPassword.Key, fromAddressPassword.Value, SendCommand));
+            ConsoleOutput output = Execute(GetUnlockAccountCommand(fromAddressEncryptedPassword.Key, fromAddressEncryptedPassword.Value, SendCommand));
             if (!output.Ok || !output.Output.StartsWith("0x"))
                 throw new Web3Exception(string.Format("Error on send transaction.\n\n{0}", output.Output));
 
             return output.Output;
         }
 
-        private string InternalCallFunction(string scAddress, string abi, string functionName, string value, int gasLimit, int gweiGasPrice, KeyValuePair<string, string> fromAddressPassword, params Variable[] parameters)
+        private string InternalCallFunction(string scAddress, string abi, string functionName, string value, int gasLimit, int gweiGasPrice, KeyValuePair<string, string> fromAddressEncryptedPassword, params Variable[] parameters)
         {
             TransactionInfo = new TransactionData()
             {
                 To = scAddress,
-                From = fromAddressPassword.Key,
+                From = fromAddressEncryptedPassword.Key,
                 Value = value,
                 GasLimit = gasLimit,
                 GasPrice = GetBigNumberFormatted(new BigNumber(gweiGasPrice, 9)),
@@ -326,7 +326,7 @@ namespace Auctus.EthereumProxy
                 VariableNames = new List<string>(),
                 NextFunction = CallFunctionCommand
             };
-            ConsoleOutput output = Execute(GetUnlockAccountCommand(fromAddressPassword.Key, fromAddressPassword.Value, SetABIBigVariableCommand));
+            ConsoleOutput output = Execute(GetUnlockAccountCommand(fromAddressEncryptedPassword.Key, fromAddressEncryptedPassword.Value, SetABIBigVariableCommand));
             if (!output.Ok || !output.Output.StartsWith("0x"))
                 throw new Web3Exception(string.Format("Error on call transaction function.\n\n{0}", output.Output));
 
@@ -643,17 +643,17 @@ namespace Auctus.EthereumProxy
                 throw new Web3Exception("Invalid smart contract function/event.");
         }
                 
-        private Command GetUnlockAccountCommand(string address, string password, Func<ConsoleOutput, Command> returnFunction, int timeUnlocked = 180)
+        private Command GetUnlockAccountCommand(string address, string encryptedPassword, Func<ConsoleOutput, Command> returnFunction, int timeUnlocked = 180)
         {
             if (string.IsNullOrEmpty(address))
                 throw new Web3Exception("Address must be filled.");
 
-            if (string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(encryptedPassword))
                 throw new Web3Exception("Password must be filled.");
 
             return new Command()
             {
-                Comm = string.Format("personal.unlockAccount(\"{0}\", \"{1}\", {2})", address, password, timeUnlocked),
+                Comm = string.Format("personal.unlockAccount(\"{0}\", \"{1}\", {2})", address, Security.Decrypt(encryptedPassword), timeUnlocked),
                 ReturnFunction = returnFunction
             };
         }
@@ -746,17 +746,17 @@ namespace Auctus.EthereumProxy
             return output;
         }
 
-        private static KeyValuePair<string, string> GetSourceAddres(KeyValuePair<string, string> sourceAddressPassword)
+        private static KeyValuePair<string, string> GetSourceAddres(KeyValuePair<string, string> sourceAddressEncryptedPassword)
         {
-            if (default(KeyValuePair<string, string>).Equals(sourceAddressPassword))
+            if (default(KeyValuePair<string, string>).Equals(sourceAddressEncryptedPassword))
                 return MAIN_ADDRESS;
             else
             {
-                ValidateAddress(sourceAddressPassword.Key);
-                if (string.IsNullOrEmpty(sourceAddressPassword.Value))
+                ValidateAddress(sourceAddressEncryptedPassword.Key);
+                if (string.IsNullOrEmpty(sourceAddressEncryptedPassword.Value))
                     throw new Web3Exception("Invalid password.");
 
-                return sourceAddressPassword;
+                return sourceAddressEncryptedPassword;
             }
         }
         #endregion
