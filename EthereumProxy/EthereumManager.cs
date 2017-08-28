@@ -15,16 +15,6 @@ namespace Auctus.EthereumProxy
 {
     public class EthereumManager
     {
-        private static string GAS_PRICE_URL;
-
-        public enum SmartContract { DefaulPensionFund };
-
-        public static void Initialize(string mainAddress, string encryptedPassword, string gasPriceUrl)
-        {
-            GAS_PRICE_URL = gasPriceUrl;
-            Web3.InitializeMainAddress(mainAddress, encryptedPassword);
-        }
-
         public static Wallet CreateAccount(string encryptedPassword)
         {
             return Web3.CreateAccount(encryptedPassword);
@@ -35,7 +25,7 @@ namespace Auctus.EthereumProxy
             return Web3.GetTransaction(transactionHash);
         }
 
-        public static string DeployDefaultPensionFund(
+        public static KeyValuePair<string, string> DeployDefaultPensionFund(
             int gasLimit,
             string pensionFundAddress, 
             string employerAddress, 
@@ -43,30 +33,31 @@ namespace Auctus.EthereumProxy
             double pensionFundFee,
             double pensionFundLatePenalty,
             double auctusFee,
-            string referenceAddress,
             double maxSalaryBonus,
             double employeeContribution,
             double employeeContributionBonus,
-            int employeeSalary,
+            double employeeSalary,
+            Dictionary<string, double> referenceValues,
             Dictionary<int, double> bonusVestingDistribuition)
         {
-            int feeDecimals = 4;
+            int rateDecimals = 4;
             string smartContractStringified = DemoSmartContracts.DEFAULT_PENSION_FUND_SC
                 .Replace("{PENSION_FUND_ADDRESS}", pensionFundAddress)
                 .Replace("{EMPLOYER_ADDRESS}", employerAddress)
                 .Replace("{EMPLOYEE_ADDRESS}", employeeAddress)
-                .Replace("{PENSION_FUND_FEE}", Web3.GetNumberFormatted(pensionFundFee, feeDecimals))
-                .Replace("{PENSION_FUND_LATE_PENALTY}", Web3.GetNumberFormatted(pensionFundLatePenalty, feeDecimals))
-                .Replace("{AUCTUS_FEE}", Web3.GetNumberFormatted(auctusFee, feeDecimals))
-                .Replace("{REFERENCE_VALUE_ADDRESS}", referenceAddress)
-                .Replace("{MAX_SALARY_BONUS}", Web3.GetNumberFormatted(maxSalaryBonus, feeDecimals))
-                .Replace("{EMPLOYEE_CONTRIBUTION}", Web3.GetNumberFormatted(employeeContribution, feeDecimals))
-                .Replace("{EMPLOYEE_CONTRIBUTION_BONUS}", Web3.GetNumberFormatted(employeeContributionBonus, feeDecimals))
-                .Replace("{EMPLOYEE_SALARY}", employeeSalary.ToString())
-                .Replace("{BONUS_DISTRIBUTION}", string.Join("\n\t\t", bonusVestingDistribuition.Select(c => string.Format("bonusDistribution.push(BonusVesting({0}, {1}));", c.Key.ToString(), Web3.GetNumberFormatted(c.Value, feeDecimals)))));
+                .Replace("{PENSION_FUND_FEE}", Web3.GetNumberFormatted(pensionFundFee, rateDecimals))
+                .Replace("{PENSION_FUND_LATE_PENALTY}", Web3.GetNumberFormatted(pensionFundLatePenalty, rateDecimals))
+                .Replace("{AUCTUS_FEE}", Web3.GetNumberFormatted(auctusFee, rateDecimals))
+                .Replace("{MAX_SALARY_BONUS}", Web3.GetNumberFormatted(maxSalaryBonus, rateDecimals))
+                .Replace("{EMPLOYEE_CONTRIBUTION}", Web3.GetNumberFormatted(employeeContribution, rateDecimals))
+                .Replace("{EMPLOYEE_CONTRIBUTION_BONUS}", Web3.GetNumberFormatted(employeeContributionBonus, rateDecimals))
+                .Replace("{EMPLOYEE_SALARY}", Web3.GetNumberFormatted(employeeSalary, 12))
+                .Replace("{REFERENCE_VALUE_ADDRESS}", string.Join("\n\t\t", referenceValues.Select(c => string.Format("reference.push(Reference({0}, {1}));", c.Key, Web3.GetNumberFormatted(c.Value, rateDecimals)))))
+                .Replace("{BONUS_DISTRIBUTION}", string.Join("\n\t\t", bonusVestingDistribuition.Select(c => string.Format("bonusDistribution.push(BonusVesting({0}, {1}));", c.Key.ToString(), Web3.GetNumberFormatted(c.Value, rateDecimals)))));
 
             SCCompiled scCompiled = Solc.Compile("CompanyContract", smartContractStringified).Single(c => c.Name == "CompanyContract");
-            return Web3.DeployContract(scCompiled, gasLimit, GetGweiPrice());
+            string transactionHash = Web3.DeployContract(scCompiled, gasLimit, GetGweiPrice());
+            return new KeyValuePair<string, string>(transactionHash, smartContractStringified);
         }
 
         public static string WithdrawalFromDefaultPensionFund(string employeeAddress, string smartContractAddress, string abi, int gasLimit)
@@ -115,12 +106,12 @@ namespace Auctus.EthereumProxy
                 {
                     TransactionHash = e.TransactionHash,
                     BlockNumber = e.BlockNumber,
-                    Period = (int)e.Data[0].Value,
+                    Period = Convert.ToInt32(e.Data[0].Value),
                     Responsable = (string)e.Data[1].Value,
                     TokenAmount = ((BigNumber)e.Data[2].Value).Value,
                     SzaboInvested = ((BigNumber)e.Data[3].Value).Value,
                     LatePenalty = ((BigNumber)e.Data[4].Value).Value,
-                    DaysOverdue = (int)e.Data[5].Value,
+                    DaysOverdue = Convert.ToInt32(e.Data[5].Value),
                     PensionFundFee = ((BigNumber)e.Data[6].Value).Value,
                     AuctusFee = ((BigNumber)e.Data[7].Value).Value
                 });
@@ -145,7 +136,7 @@ namespace Auctus.EthereumProxy
             {
                 TransactionHash = withdrawalEvent.TransactionHash,
                 BlockNumber = withdrawalEvent.BlockNumber,
-                Period = (int)withdrawalEvent.Data[0].Value,
+                Period = Convert.ToInt32(withdrawalEvent.Data[0].Value),
                 Responsable = (string)withdrawalEvent.Data[1].Value,
                 EmployeeBonus = ((BigNumber)withdrawalEvent.Data[2].Value).Value,
                 EmployeeAbsoluteBonus = ((BigNumber)withdrawalEvent.Data[3].Value).Value,
@@ -155,7 +146,7 @@ namespace Auctus.EthereumProxy
                 EmployeeSzaboCashback = ((BigNumber)withdrawalEvent.Data[7].Value).Value
             };
         }
-
+        
         private static string BuyDefaultPensionFund(string employeeAddress, string smartContractAddress, string abi, int gasLimit, int daysOverdue, 
             string getRequiredValueMethod, string buyMethod)
         {
@@ -174,7 +165,7 @@ namespace Auctus.EthereumProxy
             //    using (HttpClient client = new HttpClient())
             //    {
             //        client.Timeout = new TimeSpan(0, 0, 0, 2);
-            //        using (HttpResponseMessage response = client.GetAsync(GAS_PRICE_URL).Result)
+            //        using (HttpResponseMessage response = client.GetAsync(Config.URL_GAS_PRICE).Result)
             //        {
             //            if (response.IsSuccessStatusCode)
             //            {

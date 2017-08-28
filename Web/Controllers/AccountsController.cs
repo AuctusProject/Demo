@@ -5,12 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Web.Controllers
 {
     public class AccountsController : BaseController
     {
-        public AccountsController(ILoggerFactory loggerFactory, IServiceProvider serviceProvider) : base (loggerFactory, serviceProvider)
+        public AccountsController(IMemoryCache memoryCache, ILoggerFactory loggerFactory, IServiceProvider serviceProvider) : base (memoryCache, loggerFactory, serviceProvider)
         { }
 
         // GET: Accounts

@@ -55,6 +55,11 @@ contract DemoPensionFund {
 		uint256 invested;
     }
 	
+	struct Reference {
+    	address referenceAddress;
+		uint256 participation; //per 1000000
+    }
+	
 	string public name = ""Pension Fund Demo Token""; 
     uint8 public decimals = 18;
     uint256 public totalSupply = 0;
@@ -63,12 +68,13 @@ contract DemoPensionFund {
     uint256 public fundFee = {PENSION_FUND_FEE}; //per 1000000
     uint256 public latePenaltyFeePerDay = {PENSION_FUND_LATE_PENALTY}; //per 1000000
 	uint256 public auctusParticipationFee = {AUCTUS_FEE}; //per 1000000
-	uint256 public referenceAddress = {REFERENCE_VALUE_ADDRESS};
 
+	Reference[] public reference;
     mapping(address => Token) public addressBalance;
     mapping(address => uint64) public investedPeriods;
 	
 	uint256 internal decimalsToFraction = 1000000;
+	uint256 internal overflowNumberControl = 999999999999999999999999999999999999999999999999;
 	
     modifier onlyOwner() {
         require(msg.sender == owner);
@@ -111,7 +117,7 @@ contract DemoPensionFund {
         uint64 remainingDivisions = daysOverdue;
         for (uint64 i = 1; i < daysOverdue; ++i) {
             latePenalty = latePenalty * baseFee;
-            if (latePenalty > 999999999999999999999999999999999999999999999999) {
+            if (latePenalty > overflowNumberControl) {
                 latePenalty = latePenalty.divided(decimalsToFraction);
                 remainingDivisions = remainingDivisions - 1;
             }
@@ -124,8 +130,20 @@ contract DemoPensionFund {
     }
 
     function getTokenReferenceValue(uint64 period, uint64 daysOverdue) internal returns(uint256) {
-        ReferenceValue referenceValueContract = ReferenceValue(referenceAddress);
-        return referenceValueContract.getValueAt(period, daysOverdue);
+		uint256 tokenValue = 0;
+		uint256 remainingDivisions = reference.length;
+		for(uint64 i = 0; i < reference.length; ++i) {
+            ReferenceValue referenceValueContract = ReferenceValue(reference[i].referenceAddress);
+			tokenValue = tokenValue + (referenceValueContract.getValueAt(period, daysOverdue) * reference[i].participation);
+			if (tokenValue > overflowNumberControl) {
+				tokenValue = tokenValue.divided(decimalsToFraction);
+                remainingDivisions = remainingDivisions - 1;
+			}
+		}
+		for(uint64 j = 0; j < remainingDivisions; ++j) {
+			tokenValue = tokenValue.divided(decimalsToFraction);
+		}
+		return tokenValue;
     }
 
     function sendFees(uint256 baseInvestment, uint256 latePenalty) internal returns(uint256, uint256) {
@@ -172,9 +190,11 @@ contract CompanyContract is DemoPensionFund {
     function CompanyContract() {
         owner = msg.sender; //owner is Auctus Account
 
+		{REFERENCE_VALUE_ADDRESS}
+		
         {BONUS_DISTRIBUTION}
 
-        setContributionInformation({EMPLOYEE_ADDRESS}, {EMPLOYEE_CONTRIBUTION}, {EMPLOYEE_CONTRIBUTION_BONUS}, {EMPLOYEE_SALARY} szabo);
+        setContributionInformation({EMPLOYEE_ADDRESS}, {EMPLOYEE_CONTRIBUTION}, {EMPLOYEE_CONTRIBUTION_BONUS}, {EMPLOYEE_SALARY});
     }
 
     function getEmployeeInvestment(address employee, uint64 daysOverdue) constant returns (uint256) {
@@ -296,7 +316,6 @@ contract CompanyContract is DemoPensionFund {
         return baseInvestment.divided(decimalsToFraction);
     }
 }";
-
-
+        
     }
 }

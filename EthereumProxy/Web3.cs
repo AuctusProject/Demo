@@ -19,8 +19,6 @@ namespace Auctus.EthereumProxy
     internal class Web3 : ConsoleCommand
     {
         internal enum VariableType { Address, Number, BigNumber, Text, Bool, Null }
-
-        private static KeyValuePair<string, string> MAIN_ADDRESS;
         
         private const int MAX_CHAR_STAND_INPUT_WRITE = 4096;
         private const int ETHEREUM_DECIMAL = 18;
@@ -37,11 +35,6 @@ namespace Auctus.EthereumProxy
         private Web3() { }
 
         #region External Methods
-        internal static void InitializeMainAddress(string address, string encryptedPassword)
-        {
-            MAIN_ADDRESS = GetSourceAddres(new KeyValuePair<string, string>(address, encryptedPassword));
-        }
-
         internal static Wallet CreateAccount(string encryptedPassword)
         {
             if (string.IsNullOrEmpty(encryptedPassword))
@@ -603,9 +596,9 @@ namespace Auctus.EthereumProxy
                     else
                     {
                         if (isEvent)
-                            param.Value = int.Parse(data, NumberStyles.HexNumber);
+                            param.Value = long.Parse(data, NumberStyles.HexNumber);
                         else
-                            param.Value = int.Parse(data);
+                            param.Value = long.Parse(data);
                     }
                     break;
                 case VariableType.Bool:
@@ -703,12 +696,12 @@ namespace Auctus.EthereumProxy
                     formattedParameter = GetBigNumberFormatted((BigNumber)param.Value, param is EventParameter);
                     break;
                 case VariableType.Number:
-                    if (!(param.Value is int))
+                    if (!(param.Value is long) && !(param.Value is int) && !(param.Value is short))
                         throw new Web3Exception("Invalid Number.");
                     if (param is EventParameter)
-                        formattedParameter = GetBigNumberFormatted(new BigNumber(((int)param.Value), 0), true);
+                        formattedParameter = GetBigNumberFormatted(new BigNumber(Convert.ToInt64(param.Value), 0), true);
                     else
-                        formattedParameter = ((int)param.Value).ToString();
+                        formattedParameter = Convert.ToInt64(param.Value).ToString();
                     break;
                 case VariableType.Bool:
                     if (!(param.Value is bool))
@@ -749,7 +742,7 @@ namespace Auctus.EthereumProxy
         private static KeyValuePair<string, string> GetSourceAddres(KeyValuePair<string, string> sourceAddressEncryptedPassword)
         {
             if (default(KeyValuePair<string, string>).Equals(sourceAddressEncryptedPassword))
-                return MAIN_ADDRESS;
+                return new KeyValuePair<string, string>(Config.AUCTUS_ADDRESS, Config.AUCTUS_PASSWORD); 
             else
             {
                 ValidateAddress(sourceAddressEncryptedPassword.Key);

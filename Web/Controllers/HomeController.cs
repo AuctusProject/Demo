@@ -7,12 +7,13 @@ using Auctus.Service;
 using Microsoft.Extensions.Logging;
 using Auctus.Web.Model.Home;
 using System.Net;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Web.Controllers
 {
     public class HomeController : BaseController
     {
-        public HomeController(ILoggerFactory loggerFactory, IServiceProvider serviceProvider) : base (loggerFactory, serviceProvider)
+        public HomeController(IMemoryCache memoryCache, ILoggerFactory loggerFactory, IServiceProvider serviceProvider) : base (memoryCache, loggerFactory, serviceProvider)
         { }
 
         public IActionResult Index()

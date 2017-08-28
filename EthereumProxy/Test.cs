@@ -4,6 +4,7 @@ using System.Text;
 using System.Linq;
 using static Auctus.EthereumProxy.Solc;
 using static Auctus.EthereumProxy.Web3;
+using Auctus.Util.NotShared;
 
 namespace Auctus.EthereumProxy
 {
@@ -250,64 +251,137 @@ namespace Auctus.EthereumProxy
         #endregion
 
         #region Reference SC
-        private const string referenceSmartContractCode = @"pragma solidity ^0.4.13;
+        private const string referenceSmartContractCode1 = @"pragma solidity ^0.4.13;
 
 
-                contract ReferenceValue {
-	
-	                mapping(uint64 => uint256) public values;
-	                uint64 public pointsBetweenValues = 30;
-	
-	                function ReferenceValue() {
-		                values[0] = 1367068422;
-		                values[1] = 1367068639;
-		                values[2] = 1367068834;
-		                values[3] = 1367068912;
-		                values[4] = 1367068790;
-		                values[5] = 1367068929;
-		                values[6] = 1367069101;
-		                values[7] = 1367069003;
-		                values[8] = 1367069278;
-		                values[9] = 1367069511;
-		                values[10] = 1367069942;
-		                values[11] = 1367070366;
-		                values[12] = 1367071478;
-		                values[13] = 1367071612;
-		                values[14] = 1367072105;
-		                values[15] = 1367072503;
-		                values[16] = 1367072002;
-		                values[17] = 1367072589;
-		                values[18] = 1367073044;
-		                values[19] = 1367073678;
-		                values[20] = 1367074172;
-		                values[21] = 1367074980;
-		                values[22] = 1367075831;
-		                values[23] = 1367075440;
-		                values[24] = 1367076268;
-		                values[25] = 1367076075;
-	                }
-	
-	                function getValueAt(uint64 period, uint64 daysOverdue) constant returns (uint256) {
-		                uint256 value = values[period];
-		                if(daysOverdue > 0) {
-			                uint256 nextValue = values[period + 1];
-			                if(nextValue != value) {
-				                uint256 difference;
-				                if (nextValue > value) 
-					                difference = nextValue - value;
-				                else 
-					                difference = value - nextValue;
+contract ReferenceValue {
+	mapping(uint64 => uint256) public values;
+	uint64 public pointsBetweenValues;
 
-				                uint256 weight = (difference * daysOverdue);
-				                if(weight > pointsBetweenValues)
-					                value = value + (weight / pointsBetweenValues);
-				                else
-					                value = nextValue;
-			                }
-		                }
-		                return value;
-	                }
-                }";
+	function ReferenceValue() {
+		pointsBetweenValues = 30;
+
+		values[1] = 2000;
+		values[2] = 1000;
+		values[3] = 3000;
+		values[4] = 4500;
+		values[5] = 6000;
+		values[6] = 169101;
+		values[7] = 169003;
+		values[8] = 169278;
+		values[9] = 169511;
+		values[10] = 169942;
+		values[11] = 170366;
+		values[12] = 171478;
+		values[13] = 171612;
+		values[14] = 172105;
+		values[15] = 172503;
+		values[16] = 172002;
+		values[17] = 172589;
+		values[18] = 173044;
+		values[19] = 173678;
+		values[20] = 174172;
+		values[21] = 174980;
+		values[22] = 175831;
+		values[23] = 175440;
+		values[24] = 176268;
+		values[25] = 176075;
+		values[26] = 176991;
+		values[27] = 177628;
+		values[28] = 178346;
+		values[29] = 178805;
+		values[30] = 179553;
+		values[31] = 179722;
+		values[32] = 179947;
+		values[33] = 180123;
+		values[34] = 180754;
+		values[35] = 181861;
+		values[36] = 181998;
+	}
+
+	function getValueAt(uint64 period, uint64 daysOverdue) constant returns (uint256) {
+		uint256 value = getBaseValue(period);
+		if(daysOverdue > 0) {
+			uint256 nextValue = getBaseValue(period + 1);
+			if(nextValue != value) {
+				uint256 difference;
+				if (nextValue > value) 
+					difference = nextValue - value;
+				else 
+					difference = value - nextValue;
+
+				uint256 weight = (difference * daysOverdue);
+				if(weight > pointsBetweenValues) {
+					if (nextValue > value) 
+						value = value + (weight / pointsBetweenValues);
+					else
+						value = value - (weight / pointsBetweenValues);
+				}
+				else
+					value = nextValue;
+			}
+		}
+		return value;
+	}
+	
+	function getBaseValue(uint64 period) constant internal returns (uint256) {
+		return (values[1] * 1 szabo) / values[period];
+	}
+}";
+
+        private const string referenceSmartContractCode2 = @"pragma solidity ^0.4.13;
+
+
+contract ReferenceValue {
+	mapping(uint64 => uint256) public values;
+	uint64 public pointsBetweenValues;
+
+	function ReferenceValue() {
+		pointsBetweenValues = 3;
+
+		values[1] = 150;
+		values[2] = 300;
+		values[3] = 400;
+		values[4] = 450;
+		values[5] = 500;
+		values[6] = 1140;
+		values[7] = 1182;
+		values[8] = 1182;
+		values[9] = 1204;
+		values[10] = 1189;
+		values[11] = 1211;
+		values[12] = 1245;
+	}
+
+	function getValueAt(uint64 period, uint64 daysOverdue) constant returns (uint256) {
+		uint256 value = getBaseValue(period);
+		if(daysOverdue > 0) {
+			uint256 nextValue = getBaseValue(period + 1);
+			if(nextValue != value) {
+				uint256 difference;
+				if (nextValue > value) 
+					difference = nextValue - value;
+				else 
+					difference = value - nextValue;
+
+				uint256 weight = (difference * daysOverdue);
+				if(weight > pointsBetweenValues) {
+					if (nextValue > value) 
+						value = value + (weight / pointsBetweenValues);
+					else
+						value = value - (weight / pointsBetweenValues);
+				}
+				else
+					value = nextValue;
+			}
+		}
+		return value;
+	}
+	
+	function getBaseValue(uint64 period) constant internal returns (uint256) {
+		return (values[1] * 1 szabo) / values[period];
+	}
+}";
         #endregion
 
         #region Demo ABI
@@ -318,7 +392,7 @@ namespace Auctus.EthereumProxy
         {
             #region Initialization
             int gwei = 21;
-            string password = "test";
+            string password = Security.Encrypt("test");
             string mainAddress = "0xfa4ef7de49b1460d4114a8385af5cd638cf55b43";
             string secondAddress = "0xc795b00c8a9e5a0413f48424183dae789d7555d5";
             string thirdAddress = "0x3a56c7e6a97842fdc343de56c960db7c33e33c22";
@@ -330,7 +404,6 @@ namespace Auctus.EthereumProxy
                 throw new Exception();
             string createdAddress = account.Address;
             KeyValuePair<string, string> createdAccount = new KeyValuePair<string, string>(createdAddress, password);
-            EthereumManager.Initialize(mainAddress, password, "");
             #endregion
 
 
@@ -487,32 +560,40 @@ namespace Auctus.EthereumProxy
 
         public static void DefaultDemoContractTest()
         {
-            EthereumManager.Initialize("0xfa4ef7de49b1460d4114a8385af5cd638cf55b43", "test", "");
-            Wallet pensionFundAccount = Web3.CreateAccount("test");
+            string password = Security.Encrypt("test");
+            Wallet pensionFundAccount = Web3.CreateAccount(password);
             if (pensionFundAccount == null)
                 throw new Exception();
-            Wallet employerAccount = Web3.CreateAccount("test");
+            Wallet employerAccount = Web3.CreateAccount(password);
             if (employerAccount == null)
                 throw new Exception();
-            Wallet employeeAccount = Web3.CreateAccount("test");
+            Wallet employeeAccount = Web3.CreateAccount(password);
             if (employeeAccount == null)
                 throw new Exception();
             string pensionFundAddress = pensionFundAccount.Address;
             string employerAddress = employerAccount.Address;
             string employeeAddress = employeeAccount.Address;
 
-            SCCompiled scCompiled = Solc.Compile("ReferenceValue", referenceSmartContractCode).Single(c => c.Name == "ReferenceValue");
-            Transaction referenceContractTransaction = Web3.GetTransaction(Web3.DeployContract(scCompiled, 2500000, EthereumManager.GetGweiPrice()), 10);
-            if (referenceContractTransaction == null)
+            SCCompiled scCompiled1 = Solc.Compile("ReferenceValue", referenceSmartContractCode1).Single(c => c.Name == "ReferenceValue");
+            Transaction referenceContractTransaction1 = Web3.GetTransaction(Web3.DeployContract(scCompiled1, 2500000, EthereumManager.GetGweiPrice()), 10);
+            if (referenceContractTransaction1 == null)
                 throw new Exception();
-            string referenceAddress = referenceContractTransaction.ContractAddress;
-
+            SCCompiled scCompiled2 = Solc.Compile("ReferenceValue", referenceSmartContractCode2).Single(c => c.Name == "ReferenceValue");
+            Transaction referenceContractTransaction2 = Web3.GetTransaction(Web3.DeployContract(scCompiled2, 2500000, EthereumManager.GetGweiPrice()), 10);
+            if (referenceContractTransaction2 == null)
+                throw new Exception();
+            string referenceAddress1 = referenceContractTransaction1.ContractAddress;
+            string referenceAddress2 = referenceContractTransaction2.ContractAddress;
+            
             Dictionary<int, double> bonusDistribution = new Dictionary<int, double>();
             bonusDistribution[2] = 10;
             bonusDistribution[4] = 40;
             bonusDistribution[6] = 100;
+            Dictionary<string, double> reference = new Dictionary<string, double>();
+            reference[referenceAddress1] = 40;
+            reference[referenceAddress2] = 60;
             string demoTransaction = EthereumManager.DeployDefaultPensionFund(3500000, pensionFundAddress, employerAddress, employeeAddress,
-                3, 0.06, 20, referenceAddress, 5, 6, 80, 300, bonusDistribution);
+                3, 0.06, 20, 5, 6, 80, 300, reference, bonusDistribution).Key;
             Transaction demoContractTransaction = Web3.GetTransaction(demoTransaction, 10);
             if (demoContractTransaction == null)
                 throw new Exception();
@@ -526,30 +607,34 @@ namespace Auctus.EthereumProxy
 
             double demo1 = GetBalance(demoAddress);
             double pension1 = GetBalance(pensionFundAddress);
+            Variable token1 = Web3.CallConstFunction(new CompleteVariableType(VariableType.BigNumber), demoAddress, demoABI, "totalSupply");
 
-            string buyEmployee2 = EthereumManager.EmployeeBuyFromDefaultPensionFund(employeeAddress, demoAddress, demoABI, 3, gasLimitBuy);
+            string buyEmployee2 = EthereumManager.EmployeeBuyFromDefaultPensionFund(employeeAddress, demoAddress, demoABI, 0, gasLimitBuy);
             string buyEmployer2 = EthereumManager.EmployerBuyFromDefaultPensionFund(employeeAddress, demoAddress, demoABI, 0, gasLimitBuy);
             if (Web3.GetTransaction(buyEmployee2, 8) == null || Web3.GetTransaction(buyEmployer2, 8) == null)
                 throw new Exception();
 
             double demo2 = GetBalance(demoAddress);
             double pension2 = GetBalance(pensionFundAddress);
+            Variable token2 = Web3.CallConstFunction(new CompleteVariableType(VariableType.BigNumber), demoAddress, demoABI, "totalSupply");
 
-            string buyEmployee3 = EthereumManager.EmployeeBuyFromDefaultPensionFund(employeeAddress, demoAddress, demoABI, 18, gasLimitBuy);
-            string buyEmployer3 = EthereumManager.EmployerBuyFromDefaultPensionFund(employeeAddress, demoAddress, demoABI, 1, gasLimitBuy);
+            string buyEmployee3 = EthereumManager.EmployeeBuyFromDefaultPensionFund(employeeAddress, demoAddress, demoABI, 0, gasLimitBuy);
+            string buyEmployer3 = EthereumManager.EmployerBuyFromDefaultPensionFund(employeeAddress, demoAddress, demoABI, 0, gasLimitBuy);
             if (Web3.GetTransaction(buyEmployee3, 8) == null || Web3.GetTransaction(buyEmployer3, 8) == null)
                 throw new Exception();
 
             double demo3 = GetBalance(demoAddress);
             double pension3 = GetBalance(pensionFundAddress);
+            Variable token3 = Web3.CallConstFunction(new CompleteVariableType(VariableType.BigNumber), demoAddress, demoABI, "totalSupply");
 
             string buyEmployee4 = EthereumManager.EmployeeBuyFromDefaultPensionFund(employeeAddress, demoAddress, demoABI, 0, gasLimitBuy);
-            string buyEmployer4 = EthereumManager.EmployerBuyFromDefaultPensionFund(employeeAddress, demoAddress, demoABI, 2, gasLimitBuy);
+            string buyEmployer4 = EthereumManager.EmployerBuyFromDefaultPensionFund(employeeAddress, demoAddress, demoABI, 0, gasLimitBuy);
             if (Web3.GetTransaction(buyEmployee4, 8) == null || Web3.GetTransaction(buyEmployer4, 8) == null)
                 throw new Exception();
 
             double demo4 = GetBalance(demoAddress);
             double pension4 = GetBalance(pensionFundAddress);
+            Variable token4 = Web3.CallConstFunction(new CompleteVariableType(VariableType.BigNumber), demoAddress, demoABI, "totalSupply");
 
             string withdrawal = EthereumManager.WithdrawalFromDefaultPensionFund(employeeAddress, demoAddress, demoABI, 200000);
             if (Web3.GetTransaction(withdrawal, 8) == null)
@@ -557,7 +642,7 @@ namespace Auctus.EthereumProxy
 
             List<BuyInfo> buy = EthereumManager.ReadBuyFromDefaultPensionFund(demoAddress);
             WithdrawalInfo sell = EthereumManager.ReadWithdrawalFromDefaultPensionFund(demoAddress);
-
+            
             double employee = GetBalance(employeeAddress);
             double employer = GetBalance(employerAddress);
             double pension = GetBalance(pensionFundAddress);
