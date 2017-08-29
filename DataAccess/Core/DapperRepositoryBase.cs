@@ -5,19 +5,11 @@ using System.Data.SqlClient;
 using System.Linq;
 using Dapper;
 using System.Reflection;
+using Auctus.Util.DapperAttributes;
+using MySql.Data.MySqlClient;
 
 namespace Auctus.DataAccess.Core
 {
-    [AttributeUsage(AttributeTargets.Property)]
-    public class DapperKey : Attribute
-    {
-    }
-
-    [AttributeUsage(AttributeTargets.Property)]
-    public class DapperIgnore : Attribute
-    {
-    }
-
     public abstract class DapperRepositoryBase
     {
         private readonly string _connectionString;
@@ -37,8 +29,7 @@ namespace Auctus.DataAccess.Core
 
         // Example: GetBySql<Activity>( "SELECT * 
         //FROM Activities WHERE Id = @activityId", new {activityId = 15} ).FirstOrDefault();
-        protected IEnumerable<T>
-        GetItems<T>(CommandType commandType, string sql, object parameters = null)
+        protected IEnumerable<T> GetItems<T>(CommandType commandType, string sql, object parameters = null)
         {
             using (var connection = GetOpenConnection())
             {
@@ -54,9 +45,9 @@ namespace Auctus.DataAccess.Core
             }
         }
 
-        protected SqlConnection GetOpenConnection()
+        protected MySqlConnection GetOpenConnection()
         {
-            var connection = new SqlConnection(_connectionString);
+            var connection = new MySqlConnection(_connectionString);
             connection.Open();
             return connection;
         }
@@ -69,14 +60,14 @@ namespace Auctus.DataAccess.Core
         {
             var properties = ParseProperties(criteria);
             var sqlPairs = GetSqlPairs(properties.AllNames, " AND ");
-            var sql = string.Format("SELECT * FROM [{0}] WHERE {1}", TableName, sqlPairs);
+            var sql = string.Format("SELECT * FROM {0} WHERE {1}", TableName, sqlPairs);
             return GetItems<T>(CommandType.Text, sql, properties.AllPairs);
         }
 
         protected void Insert<T>(T obj)
         {
             var propertyContainer = ParseProperties(obj);
-            var sql = string.Format("INSERT INTO [{0}] ({1}) VALUES(@{ 2}) SELECT CAST(scope_identity() AS int)",
+            var sql = string.Format("INSERT INTO {0} ({1}) VALUES(@{2}); SELECT LAST_INSERT_ID();",
                 TableName,
                 string.Join(", ", propertyContainer.ValueNames),
                 string.Join(", @", propertyContainer.ValueNames));
@@ -94,7 +85,7 @@ namespace Auctus.DataAccess.Core
             var propertyContainer = ParseProperties(obj);
             var sqlIdPairs = GetSqlPairs(propertyContainer.IdNames);
             var sqlValuePairs = GetSqlPairs(propertyContainer.ValueNames);
-            var sql = string.Format("UPDATE [{0}] SET { 1} WHERE { 2} ", TableName, sqlValuePairs, sqlIdPairs);
+            var sql = string.Format("UPDATE {0} SET {1} WHERE {2} ", TableName, sqlValuePairs, sqlIdPairs);
             Execute(CommandType.Text, sql, propertyContainer.AllPairs);
         }
 
@@ -102,7 +93,7 @@ namespace Auctus.DataAccess.Core
         {
             var propertyContainer = ParseProperties(obj);
             var sqlIdPairs = GetSqlPairs(propertyContainer.IdNames);
-            var sql = string.Format("DELETE FROM [{0}] WHERE { 1} ", TableName, sqlIdPairs);
+            var sql = string.Format("DELETE FROM {0} WHERE {1} ", TableName, sqlIdPairs);
             Execute(CommandType.Text, sql, propertyContainer.IdPairs);
         }
 
@@ -121,7 +112,7 @@ namespace Auctus.DataAccess.Core
             foreach (var property in properties)
             {
                 // Skip reference types (but still include string!)
-                if (property.PropertyType.GetTypeInfo().IsClass && property.PropertyType != typeof(string))
+                if (property.PropertyType.GetTypeInfo().IsInterface || (property.PropertyType.GetTypeInfo().IsClass && property.PropertyType != typeof(string)))
                     continue;
 
                 // Skip methods without a public setter
@@ -129,13 +120,13 @@ namespace Auctus.DataAccess.Core
                     continue;
 
                 // Skip methods specifically ignored
-                if (property.IsDefined(typeof(DapperIgnore), false))
+                if (property.IsDefined(typeof(DapperIgnoreAttribute), false))
                     continue;
 
                 var name = property.Name;
                 var value = typeof(T).GetProperty(property.Name).GetValue(obj, null);
 
-                if (property.IsDefined(typeof(DapperKey), false) || validKeyNames.Contains(name))
+                if (property.IsDefined(typeof(DapperKeyAttribute), false) || validKeyNames.Contains(name))
                 {
                     propertyContainer.AddId(name, value);
                 }

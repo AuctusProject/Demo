@@ -2,8 +2,8 @@
 {
     public class VestingRules
     {
-        public double Percentage { get; set; }
-        public double Period { get; set; }
+        public decimal Percentage { get; set; }
+        public int Period { get; set; }
     }
 }
 

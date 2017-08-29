@@ -17,5 +17,20 @@ namespace Auctus.Business.Accounts
             if (company.MaxBonusFee < 0 || company.MaxBonusFee > 100)
                 throw new ArgumentException("Max Bonus Fee should be a value between 0 and 100.");
         }
+
+        public Company Create(String address, String name, Decimal bonusRate, Decimal maxSalaryBonusRate, String pensionFundOptionAddress, IEnumerable<Model.VestingRules> vestingRules)
+        {
+            var company = new Company()
+            {
+                Address = address,
+                BonusRate = bonusRate,
+                MaxSalaryBonusRate = maxSalaryBonusRate,
+                PensionFundOptionAddress = pensionFundOptionAddress,
+                Name = name
+            };
+            Insert(company);
+            BonusDistributionBusiness.Create(company.Address, vestingRules);
+            return company;
+        }
     }
 }

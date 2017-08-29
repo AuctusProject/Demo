@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Auctus.DataAccess.Contracts
 {
-    public class ContractData : BaseData<Contract>
+    public class ContractData : BaseData<PensionFundContract>
     {
         public override string TableName => "Contract";
     }

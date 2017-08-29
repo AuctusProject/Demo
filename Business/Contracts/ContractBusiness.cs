@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Auctus.Business.Contracts
 {
-    public class ContractBusiness : BaseBusiness<Contract, ContractData>
+    public class ContractBusiness : BaseBusiness<PensionFundContract, ContractData>
     {
         internal static void Validate(Model.Contract contract)
         {

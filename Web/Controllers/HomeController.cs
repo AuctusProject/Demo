@@ -42,9 +42,7 @@ namespace Web.Controllers
 
         public IActionResult Save(Wizard model)
         {
-            var service = new AccountsService();
             new FundsServices().CreateCompleteEntry(model.Fund,model.Company,model.Employee,model.Contract);
-            
             return StatusCode(200); 
         }
     }
