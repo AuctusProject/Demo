@@ -8,7 +8,7 @@ using Auctus.EthereumProxy;
 
 namespace Auctus.Business.Contracts
 {
-    public class PensionFundContractBusiness : BaseBusiness<PensionFundContract, ContractData>
+    public class PensionFundContractBusiness : BaseBusiness<PensionFundContract, PensionFundContractData>
     {
         public PensionFundContract Create(String pensionFundAddress, String employerAddress, String employeeAddress, double pensionFundFee,
             double pensionFundLatePenalty,

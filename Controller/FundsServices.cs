@@ -1,4 +1,5 @@
 ﻿using Auctus.Business.Funds;
+using Auctus.DomainObjects.Contracts;
 using Auctus.DomainObjects.Funds;
 using Auctus.Model;
 using System;
@@ -22,9 +23,9 @@ namespace Auctus.Service
              options);
         }
 
-        public void CreateCompleteEntry(Fund fund, Company company, Employee employee)
+        public PensionFundContract CreateCompleteEntry(Fund fund, Company company, Employee employee)
         {
-            new PensionFundBusiness().CreateCompleteEntry(fund, company, employee);
+            return new PensionFundBusiness().CreateCompleteEntry(fund, company, employee);
         }
     }
 }
