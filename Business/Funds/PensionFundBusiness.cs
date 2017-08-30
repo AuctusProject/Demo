@@ -15,16 +15,7 @@ namespace Auctus.Business.Funds
 {
     public class PensionFundBusiness : BaseBusiness<PensionFund, PensionFundData>
     {
-        public string CreateCompleteEntry(Int32 userId,
-            string pensionFundName, string pensionFundDescription,
-            string companyName, string companyDescription, double bonusFee, double maxBonusFee,
-            string employeeName, string employeeSalary, string meployeeContributionPercentage,
-            IEnumerable<PensionFundOption> options)
-        {
-            //Insert();
-            return "";
-        }
-
+       
         public PensionFundContract CreateCompleteEntry(Fund fund, Company company, Employee employee)
         {
             Validate(fund, company, employee);
@@ -71,7 +62,8 @@ namespace Auctus.Business.Funds
                 throw new ArgumentException("Fee cannot be greater than 99.");
         }
 
-        public static bool DeployContract()
+        //TODO: REMOVE/REFACTOR AFTER IMPLEMENTATION
+        public bool DeployContract()
         {
             //Do Something
             //Call EthereumProxy if the "Something" is succeded

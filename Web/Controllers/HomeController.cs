@@ -43,7 +43,7 @@ namespace Web.Controllers
 
         public IActionResult Save()//Wizard model)
         {
-            var pensionFundContract = new FundsServices().CreateCompleteEntry(new Fund()
+            var pensionFundContract = FundsServices.CreateCompleteEntry(new Fund()
             {
                 Fee = 5,
                 LatePaymentFee = 5,
