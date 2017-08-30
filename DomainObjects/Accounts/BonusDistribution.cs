@@ -10,7 +10,7 @@ namespace Auctus.DomainObjects.Accounts
     {
         public String CompanyAddress { get; set; }
         public Int32 Period { get; set; }
-        public Decimal ReleasedBonus { get; set; }
+        public Double ReleasedBonus { get; set; }
 
         public Company Company { get; set; }
     }

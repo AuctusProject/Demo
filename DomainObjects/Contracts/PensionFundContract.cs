@@ -1,4 +1,5 @@
 ﻿using Auctus.DomainObjects.Accounts;
+using Auctus.Util.DapperAttributes;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,7 +16,10 @@ namespace Auctus.DomainObjects.Contracts
         public Int32 BlockNumber { get; set; }
         public Int32 SmartContractId { get; set; }
         public String PensionFundOptionAddress { get; set; }
-
+        
         public SmartContract SmartContract { get; set; }
+
+        [DapperIgnore]
+        public string SmartContractCode { get; set; }
     }
 }

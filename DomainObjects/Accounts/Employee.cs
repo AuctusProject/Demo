@@ -10,8 +10,8 @@ namespace Auctus.DomainObjects.Accounts
     {
         public String Address { get; set; }
         public String Name { get; set; }
-        public Decimal Salary { get; set; }
-        public Decimal Contribution { get; set; }
+        public Double Salary { get; set; }
+        public Double Contribution { get; set; }
         public String CompanyAddress { get; set; }
         
         public Company Company { get; set ; }

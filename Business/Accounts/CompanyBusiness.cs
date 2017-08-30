@@ -2,7 +2,7 @@
 using Auctus.DomainObjects.Accounts;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace Auctus.Business.Accounts
 {
@@ -16,9 +16,35 @@ namespace Auctus.Business.Accounts
                 throw new ArgumentException("Bonus Fee should be a value between 0 and 100.");
             if (company.MaxBonusFee < 0 || company.MaxBonusFee > 100)
                 throw new ArgumentException("Max Bonus Fee should be a value between 0 and 100.");
+
+            ValidateVestingRules(company.VestingRules);
         }
 
-        public Company Create(String address, String name, Decimal bonusRate, Decimal maxSalaryBonusRate, String pensionFundOptionAddress, IEnumerable<Model.VestingRules> vestingRules)
+
+        private static void ValidateVestingRules(IEnumerable<Model.VestingRules> vestingRules)
+        {
+            if (vestingRules != null && vestingRules.Any())
+            {
+                Model.VestingRules previousVestingRule = null;
+                foreach (var vestingRule in vestingRules)
+                {
+                    if (previousVestingRule != null)
+                    {
+                        if (vestingRule.Period <= previousVestingRule.Period)
+                        {
+                            throw new ArgumentException("Vesting Rules periods should be crescent");
+                        }
+                        if (vestingRule.Percentage <= previousVestingRule.Percentage)
+                        {
+                            throw new ArgumentException("Vesting Rules percentages should be crescent");
+                        }
+                    }
+                    previousVestingRule = vestingRule;
+                }
+            }
+        }
+
+        public Company Create(String address, String name, double bonusRate, double maxSalaryBonusRate, String pensionFundOptionAddress, IEnumerable<Model.VestingRules> vestingRules)
         {
             var company = new Company()
             {

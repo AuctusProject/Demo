@@ -19,7 +19,7 @@ namespace Auctus.Business.Accounts
                 throw new ArgumentException("Max Bonus Fee should be a value between 0 and 100.");
         }
 
-        public BonusDistribution Create(String companyAddress, Int32 period, decimal releasedBonus)
+        public BonusDistribution Create(String companyAddress, Int32 period, double releasedBonus)
         {
             var bonusDistribution = new BonusDistribution()
             {

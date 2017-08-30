@@ -60,7 +60,11 @@ namespace Auctus.DataAccess.Core
         {
             var properties = ParseProperties(criteria);
             var sqlPairs = GetSqlPairs(properties.AllNames, " AND ");
-            var sql = string.Format("SELECT * FROM {0} WHERE {1}", TableName, sqlPairs);
+            var sql = string.Format("SELECT * FROM {0} ", TableName);
+            if (!String.IsNullOrEmpty(sqlPairs))
+            {
+                sql += " WHERE " + sqlPairs;
+            }
             return GetItems<T>(CommandType.Text, sql, properties.AllPairs);
         }
 

@@ -2,10 +2,10 @@
 
 namespace Auctus.Model
 {
-    public class VestingRules
+    public class AssetAllocation
     {
+        public String ReferenceContractAddress { get; set; }
         public Double Percentage { get; set; }
-        public Int32 Period { get; set; }
     }
 }
 

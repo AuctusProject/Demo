@@ -11,7 +11,7 @@ namespace Auctus.Business.Funds
 {
     public class PensionFundOptionBusiness : BaseBusiness<PensionFundOption, PensionFundOptionData>
     {
-        public PensionFundOption Create(String address, Decimal Fee, Decimal LatePenalty, Int32 PensionFundId)
+        public PensionFundOption Create(String address, double Fee, double LatePenalty, Int32 PensionFundId)
         {
             PensionFundOption pensionFundOption = new PensionFundOption();
             pensionFundOption.Address = address;

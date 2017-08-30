@@ -11,13 +11,18 @@ namespace Auctus.UnitTest
     public class SaveCompleteEntryTest
     {
         [TestMethod]
-        public void Teste()
+        public void Test()
         {
             new PensionFundBusiness().CreateCompleteEntry(
-                new Fund() { Fee = 5, LatePaymentFee = 5 },
-                new Company() { BonusFee = 100, MaxBonusFee = 10 },
-                new Employee() { ContributionPercentage = 10, Salary = 2000 },
-                new Contract(){
+                new Fund() { Fee = 5, LatePaymentFee = 5,
+                    AssetAllocations = new List<AssetAllocation>() {
+                        new AssetAllocation(){
+                            Percentage =100,
+                            ReferenceContractAddress = "0x42a694a6587b9a14c766abfa15acdcca77c90405"
+                        }
+                    }
+                },
+                new Company() { BonusFee = 100, MaxBonusFee = 10,
                     VestingRules = new List<VestingRules>() {
                         new VestingRules() {
                             Percentage=20,
@@ -40,7 +45,8 @@ namespace Auctus.UnitTest
                             Period = 5
                         }
                     }
-                }
+                },
+                new Employee() { Name="EmployeeName", ContributionPercentage = 10, Salary = 2000 }
             );
         }
     }

@@ -89,7 +89,7 @@ namespace Auctus.EthereumProxy
         public class TransactionInfo
         {
             public string ContractAddress { get; set; }
-            public string BlockNumber { get; set; }
+            public int BlockNumber { get; set; }
             public string TransactionHash { get; set; }
             public string From { get; set; }
             public int GasUsed { get; set; }
