@@ -1,4 +1,6 @@
-﻿using Auctus.DomainObjects.Funds;
+﻿using Auctus.DomainObjects.Accounts;
+using Auctus.DomainObjects.Funds;
+using Auctus.DomainObjects.Security;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,15 +9,15 @@ namespace Auctus.DomainObjects.Accounts
 {
     public class Company
     {
-        public Int32 Id { get; set; }
-        public Int32 PensionId { get; set; }
+        public String Address { get; set; }
         public String Name { get; set; }
-        public String Description { get; set; }
-        public Decimal BonusFee { get; set; }
-        public Decimal MaxBonusFee { get; set; }
-        public String WalletAddress { get; set; }
+        public Double BonusRate { get; set; }
+        public Double MaxSalaryBonusRate { get; set; }
+        public String PensionFundOptionAddress { get; set; }
 
         public IEnumerable<Employee> Employees { get; set; }
-        public PensionFund Fund { get; set; }
+        public IEnumerable<BonusDistribution> BonusDistribution { get; set; }
+        public PensionFundOption PensionFundOption { get; set; }
+        public Wallet Wallet { get; set; }
     }
 }

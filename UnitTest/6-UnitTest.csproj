@@ -13,8 +13,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\8-Model\8-Model.csproj" />
     <ProjectReference Include="..\Business\2-Business.csproj" />
     <ProjectReference Include="..\DataAccess\4-DataAccess.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
   </ItemGroup>
 
 </Project>

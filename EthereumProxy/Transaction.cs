@@ -10,7 +10,7 @@ namespace Auctus.EthereumProxy
         [JsonProperty(PropertyName = "contractAddress")]
         public string ContractAddress { get; set; }
         [JsonProperty(PropertyName = "blockNumber")]
-        public string BlockNumber { get; set; }
+        public int BlockNumber { get; set; }
         [JsonProperty(PropertyName = "transactionHash")]
         public string TransactionHash { get; set; }
         [JsonProperty(PropertyName = "from")]

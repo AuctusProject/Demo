@@ -9,7 +9,6 @@ namespace Auctus.Web.Model.Home
         public Fund Fund { get; set; }
         public Company Company { get; set; }
         public Employee Employee { get; set; }
-        public Contract Contract { get; set; }
     }
 }
 

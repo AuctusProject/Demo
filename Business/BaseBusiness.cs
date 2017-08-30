@@ -7,7 +7,7 @@ namespace Auctus.Business
 {
     public abstract class BaseBusiness<T, D> where D : BaseData<T> , new()
     {
-        public D Data => new D();
+        protected D Data => new D();
 
         public IEnumerable<T> ListAll()
         {

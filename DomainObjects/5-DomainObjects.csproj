@@ -6,4 +6,8 @@
     <AssemblyName>DomainObjects</AssemblyName>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Util\7-Util.csproj" />
+  </ItemGroup>
+
 </Project>

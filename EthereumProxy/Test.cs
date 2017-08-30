@@ -89,7 +89,7 @@ namespace Auctus.EthereumProxy
         public class TransactionInfo
         {
             public string ContractAddress { get; set; }
-            public string BlockNumber { get; set; }
+            public int BlockNumber { get; set; }
             public string TransactionHash { get; set; }
             public string From { get; set; }
             public int GasUsed { get; set; }
@@ -101,6 +101,553 @@ namespace Auctus.EthereumProxy
             public string Address { get; set; }
             public string FileName { get; set; }
             public byte[] File { get; set; }
+        }
+        #endregion
+
+        #region Deploy Assets
+
+        #region Assets Contracts
+        private const string scGold = @"pragma solidity ^0.4.13;
+
+
+contract ReferenceValue {
+	mapping(uint64 => uint256) public values;
+	uint64 public pointsBetweenValues;
+
+	function ReferenceValue() {
+		pointsBetweenValues = 30;
+
+		values[1] = 159391;
+		values[2] = 162603;
+		values[3] = 174445;
+		values[4] = 174701;
+		values[5] = 172114;
+		values[6] = 168853;
+		values[7] = 167095;
+		values[8] = 162759;
+		values[9] = 159286;
+		values[10] = 148508;
+		values[11] = 141350;
+		values[12] = 134236;
+		values[13] = 128672;
+		values[14] = 134710;
+		values[15] = 134880;
+		values[16] = 131618;
+		values[17] = 127582;
+		values[18] = 122540;
+		values[19] = 124480;
+		values[20] = 130098;
+		values[21] = 133608;
+		values[22] = 129900;
+		values[23] = 128753;
+		values[24] = 127910;
+		values[25] = 131097;
+		values[26] = 129599;
+		values[27] = 123882;
+		values[28] = 122249;
+		values[29] = 117630;
+		values[30] = 120229;
+		values[31] = 125185;
+		values[32] = 122719;
+		values[33] = 117863;
+		values[34] = 119791;
+		values[35] = 119905;
+		values[36] = 118150;
+		values[37] = 113004;
+		values[38] = 111747;
+		values[39] = 112453;
+		values[40] = 115925;
+		values[41] = 108570;
+		values[42] = 106825;
+		values[43] = 109737;
+		values[44] = 119991;
+		values[45] = 124634;
+		values[46] = 124226;
+		values[47] = 125940;
+		values[48] = 127640;
+		values[49] = 133733;
+		values[50] = 134109;
+		values[51] = 132603;
+		values[52] = 126657;
+		values[53] = 123598;
+		values[54] = 115140;
+		values[55] = 119262;
+		values[56] = 123436;
+		values[57] = 123109;
+		values[58] = 126563;
+		values[59] = 124500;
+		values[60] = 126026;
+	}
+
+	function getValueAt(uint64 period, uint64 daysOverdue) constant returns (uint256) {
+		uint256 value = getBaseValue(period);
+		if(daysOverdue > 0) {
+			uint256 nextValue = getBaseValue(period + 1);
+			if(nextValue != value) {
+				uint256 difference;
+				if (nextValue > value) 
+					difference = nextValue - value;
+				else 
+					difference = value - nextValue;
+
+				uint256 weight = (difference * daysOverdue);
+				if(weight > pointsBetweenValues) {
+					if (nextValue > value) 
+						value = value + (weight / pointsBetweenValues);
+					else
+						value = value - (weight / pointsBetweenValues);
+				}
+				else
+					value = nextValue;
+			}
+		}
+		return value;
+	}
+	
+	function getBaseValue(uint64 period) constant internal returns (uint256) {
+		return (values[1] * 1 szabo) / values[period];
+	}
+}";
+
+        private const string scSP500 = @"pragma solidity ^0.4.13;
+
+
+contract ReferenceValue {
+	mapping(uint64 => uint256) public values;
+	uint64 public pointsBetweenValues;
+
+	function ReferenceValue() {
+		pointsBetweenValues = 30;
+
+		values[1] = 144067;
+		values[2] = 141216;
+		values[3] = 141618;
+		values[4] = 142619;
+		values[5] = 149811;
+		values[6] = 151468;
+		values[7] = 156919;
+		values[8] = 159757;
+		values[9] = 163074;
+		values[10] = 160628;
+		values[11] = 168573;
+		values[12] = 163297;
+		values[13] = 168155;
+		values[14] = 175654;
+		values[15] = 180581;
+		values[16] = 184836;
+		values[17] = 178259;
+		values[18] = 185945;
+		values[19] = 187234;
+		values[20] = 188395;
+		values[21] = 192357;
+		values[22] = 196023;
+		values[23] = 193067;
+		values[24] = 200337;
+		values[25] = 197229;
+		values[26] = 201805;
+		values[27] = 206756;
+		values[28] = 205890;
+		values[29] = 199499;
+		values[30] = 210450;
+		values[31] = 206789;
+		values[32] = 208551;
+		values[33] = 210739;
+		values[34] = 206311;
+		values[35] = 210384;
+		values[36] = 197218;
+		values[37] = 192003;
+		values[38] = 207936;
+		values[39] = 208041;
+		values[40] = 204394;
+		values[41] = 194024;
+		values[42] = 193223;
+		values[43] = 205974;
+		values[44] = 206530;
+		values[45] = 209695;
+		values[46] = 209886;
+		values[47] = 217360;
+		values[48] = 217095;
+		values[49] = 216827;
+		values[50] = 212615;
+		values[51] = 219881;
+		values[52] = 223883;
+		values[53] = 227887;
+		values[54] = 236364;
+		values[55] = 236272;
+		values[56] = 238420;
+		values[57] = 241180;
+		values[58] = 242341;
+		values[59] = 247030;
+		values[60] = 244424;
+	}
+
+	function getValueAt(uint64 period, uint64 daysOverdue) constant returns (uint256) {
+		uint256 value = getBaseValue(period);
+		if(daysOverdue > 0) {
+			uint256 nextValue = getBaseValue(period + 1);
+			if(nextValue != value) {
+				uint256 difference;
+				if (nextValue > value) 
+					difference = nextValue - value;
+				else 
+					difference = value - nextValue;
+
+				uint256 weight = (difference * daysOverdue);
+				if(weight > pointsBetweenValues) {
+					if (nextValue > value) 
+						value = value + (weight / pointsBetweenValues);
+					else
+						value = value - (weight / pointsBetweenValues);
+				}
+				else
+					value = nextValue;
+			}
+		}
+		return value;
+	}
+	
+	function getBaseValue(uint64 period) constant internal returns (uint256) {
+		return (values[1] * 1 szabo) / values[period];
+	}
+}";
+
+        private const string scBTC = @"pragma solidity ^0.4.13;
+
+
+contract ReferenceValue {
+	mapping(uint64 => uint256) public values;
+	uint64 public pointsBetweenValues;
+
+	function ReferenceValue() {
+		pointsBetweenValues = 30;
+
+		values[1] = 1162;
+		values[2] = 1173;
+		values[3] = 1149;
+		values[4] = 1336;
+		values[5] = 1561;
+		values[6] = 2604;
+		values[7] = 5750;
+		values[8] = 13034;
+		values[9] = 11996;
+		values[10] = 10782;
+		values[11] = 8565;
+		values[12] = 10363;
+		values[13] = 12340;
+		values[14] = 15072;
+		values[15] = 53500;
+		values[16] = 80174;
+		values[17] = 85718;
+		values[18] = 66216;
+		values[19] = 59121;
+		values[20] = 46023;
+		values[21] = 48483;
+		values[22] = 61234;
+		values[23] = 61557;
+		values[24] = 53535;
+		values[25] = 44294;
+		values[26] = 36153;
+		values[27] = 36501;
+		values[28] = 34050;
+		values[29] = 24829;
+		values[30] = 23390;
+		values[31] = 26823;
+		values[32] = 23497;
+		values[33] = 23688;
+		values[34] = 23799;
+		values[35] = 27871;
+		values[36] = 25039;
+		values[37] = 23350;
+		values[38] = 26513;
+		values[39] = 34884;
+		values[40] = 42452;
+		values[41] = 41014;
+		values[42] = 40349;
+		values[43] = 41476;
+		values[44] = 43452;
+		values[45] = 46167;
+		values[46] = 64348;
+		values[47] = 66148;
+		values[48] = 57874;
+		values[49] = 60455;
+		values[50] = 64116;
+		values[51] = 72472;
+		values[52] = 82478;
+		values[53] = 91126;
+		values[54] = 106438;
+		values[55] = 112979;
+		values[56] = 121832;
+		values[57] = 188428;
+		values[58] = 265755;
+		values[59] = 253326;
+		values[60] = 385360;
+	}
+
+	function getValueAt(uint64 period, uint64 daysOverdue) constant returns (uint256) {
+		uint256 value = getBaseValue(period);
+		if(daysOverdue > 0) {
+			uint256 nextValue = getBaseValue(period + 1);
+			if(nextValue != value) {
+				uint256 difference;
+				if (nextValue > value) 
+					difference = nextValue - value;
+				else 
+					difference = value - nextValue;
+
+				uint256 weight = (difference * daysOverdue);
+				if(weight > pointsBetweenValues) {
+					if (nextValue > value) 
+						value = value + (weight / pointsBetweenValues);
+					else
+						value = value - (weight / pointsBetweenValues);
+				}
+				else
+					value = nextValue;
+			}
+		}
+		return value;
+	}
+	
+	function getBaseValue(uint64 period) constant internal returns (uint256) {
+		return (values[1] * 1 szabo) / values[period];
+	}
+}";
+
+        private const string scMSCI = @"pragma solidity ^0.4.13;
+
+
+contract ReferenceValue {
+	mapping(uint64 => uint256) public values;
+	uint64 public pointsBetweenValues;
+
+	function ReferenceValue() {
+		pointsBetweenValues = 30;
+
+		values[1] = 131150;
+		values[2] = 130152;
+		values[3] = 131549;
+		values[4] = 133850;
+		values[5] = 140547;
+		values[6] = 140518;
+		values[7] = 143451;
+		values[8] = 147614;
+		values[9] = 147193;
+		values[10] = 143355;
+		values[11] = 150791;
+		values[12] = 147274;
+		values[13] = 154367;
+		values[14] = 160286;
+		values[15] = 162842;
+		values[16] = 166107;
+		values[17] = 159846;
+		values[18] = 167540;
+		values[19] = 167387;
+		values[20] = 168774;
+		values[21] = 171518;
+		values[22] = 174342;
+		values[23] = 171433;
+		values[24] = 174867;
+		values[25] = 169841;
+		values[26] = 170809;
+		values[27] = 173950;
+		values[28] = 170967;
+		values[29] = 167754;
+		values[30] = 177286;
+		values[31] = 174081;
+		values[32] = 177840;
+		values[33] = 177931;
+		values[34] = 173561;
+		values[35] = 176560;
+		values[36] = 164543;
+		values[37] = 158192;
+		values[38] = 170580;
+		values[39] = 169440;
+		values[40] = 166279;
+		values[41] = 156218;
+		values[42] = 154717;
+		values[43] = 164812;
+		values[44] = 167080;
+		values[45] = 167461;
+		values[46] = 165323;
+		values[47] = 172179;
+		values[48] = 171952;
+		values[49] = 172567;
+		values[50] = 169092;
+		values[51] = 171209;
+		values[52] = 175122;
+		values[53] = 179240;
+		values[54] = 183870;
+		values[55] = 185369;
+		values[56] = 187828;
+		values[57] = 191174;
+		values[58] = 191643;
+		values[59] = 196110;
+		values[60] = 194628;
+	}
+
+	function getValueAt(uint64 period, uint64 daysOverdue) constant returns (uint256) {
+		uint256 value = getBaseValue(period);
+		if(daysOverdue > 0) {
+			uint256 nextValue = getBaseValue(period + 1);
+			if(nextValue != value) {
+				uint256 difference;
+				if (nextValue > value) 
+					difference = nextValue - value;
+				else 
+					difference = value - nextValue;
+
+				uint256 weight = (difference * daysOverdue);
+				if(weight > pointsBetweenValues) {
+					if (nextValue > value) 
+						value = value + (weight / pointsBetweenValues);
+					else
+						value = value - (weight / pointsBetweenValues);
+				}
+				else
+					value = nextValue;
+			}
+		}
+		return value;
+	}
+	
+	function getBaseValue(uint64 period) constant internal returns (uint256) {
+		return (values[1] * 1 szabo) / values[period];
+	}
+}";
+
+        private const string scVWEHX = @"pragma solidity ^0.4.13;
+
+
+contract ReferenceValue {
+	mapping(uint64 => uint256) public values;
+	uint64 public pointsBetweenValues;
+
+	function ReferenceValue() {
+		pointsBetweenValues = 30;
+
+		values[1] = 598;
+		values[2] = 602;
+		values[3] = 605;
+		values[4] = 606;
+		values[5] = 611;
+		values[6] = 612;
+		values[7] = 611;
+		values[8] = 613;
+		values[9] = 620;
+		values[10] = 612;
+		values[11] = 591;
+		values[12] = 599;
+		values[13] = 590;
+		values[14] = 593;
+		values[15] = 605;
+		values[16] = 604;
+		values[17] = 603;
+		values[18] = 604;
+		values[19] = 613;
+		values[20] = 611;
+		values[21] = 612;
+		values[22] = 615;
+		values[23] = 616;
+		values[24] = 606;
+		values[25] = 613;
+		values[26] = 599;
+		values[27] = 608;
+		values[28] = 602;
+		values[29] = 597;
+		values[30] = 598;
+		values[31] = 607;
+		values[32] = 600;
+		values[33] = 603;
+		values[34] = 602;
+		values[35] = 591;
+		values[36] = 590;
+		values[37] = 582;
+		values[38] = 567;
+		values[39] = 580;
+		values[40] = 569;
+		values[41] = 554;
+		values[42] = 546;
+		values[43] = 546;
+		values[44] = 559;
+		values[45] = 571;
+		values[46] = 568;
+		values[47] = 570;
+		values[48] = 579;
+		values[49] = 586;
+		values[50] = 587;
+		values[51] = 586;
+		values[52] = 578;
+		values[53] = 583;
+		values[54] = 586;
+		values[55] = 592;
+		values[56] = 588;
+		values[57] = 593;
+		values[58] = 596;
+		values[59] = 595;
+		values[60] = 599;
+	}
+
+	function getValueAt(uint64 period, uint64 daysOverdue) constant returns (uint256) {
+		uint256 value = getBaseValue(period);
+		if(daysOverdue > 0) {
+			uint256 nextValue = getBaseValue(period + 1);
+			if(nextValue != value) {
+				uint256 difference;
+				if (nextValue > value) 
+					difference = nextValue - value;
+				else 
+					difference = value - nextValue;
+
+				uint256 weight = (difference * daysOverdue);
+				if(weight > pointsBetweenValues) {
+					if (nextValue > value) 
+						value = value + (weight / pointsBetweenValues);
+					else
+						value = value - (weight / pointsBetweenValues);
+				}
+				else
+					value = nextValue;
+			}
+		}
+		return value;
+	}
+	
+	function getBaseValue(uint64 period) constant internal returns (uint256) {
+		return (values[1] * 1 szabo) / values[period];
+	}
+}";
+        #endregion
+
+        public static Dictionary<string, string> DeployAssets(string account, string password)
+        {
+            KeyValuePair<string, string> owner = new KeyValuePair<string, string>(account, password);
+
+            string hashGold = DeployAsset(scGold, owner);
+            string hashSP500 = DeployAsset(scSP500, owner);
+            string hashBTC = DeployAsset(scBTC, owner);
+            string hashMSCI = DeployAsset(scMSCI, owner);
+            string hashVWEHX = DeployAsset(scVWEHX, owner);
+
+            Dictionary<string, string> result = new Dictionary<string, string>();
+            result["gold"] = GetContractAddress(hashGold);
+            result["sp500"] = GetContractAddress(hashSP500);
+            result["btc"] = GetContractAddress(hashBTC);
+            result["msci"] = GetContractAddress(hashMSCI);
+            result["vwehx"] = GetContractAddress(hashVWEHX);
+
+            return result;
+        }
+
+        private static string DeployAsset(string scStringified, KeyValuePair<string, string> owner)
+        {
+            SCCompiled sc = Solc.Compile("ReferenceValue", scStringified).Single(c => c.Name == "ReferenceValue");
+            return Web3.DeployContract(sc, 2500000, EthereumManager.GetGweiPrice(), owner);
+        }
+
+        private static string GetContractAddress(string transactionHash)
+        {
+            Transaction trans = Web3.GetTransaction(transactionHash, 10);
+            return trans?.ContractAddress;
         }
         #endregion
 
