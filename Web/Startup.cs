@@ -35,6 +35,9 @@ namespace Web
             // Add framework services.
             services.AddMvc();
 
+            services.AddSignalR();
+            
+
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }
 
@@ -43,6 +46,8 @@ namespace Web
         {
             loggerFactory.AddNLog();
             app.AddNLogWeb();
+            app.UseWebSockets();
+            app.UseSignalR();
             env.ConfigureNLog("nlog.config");
 
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));

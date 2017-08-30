@@ -6,6 +6,8 @@ using Auctus.Model;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Auctus.Business.Funds
 {
@@ -39,6 +41,16 @@ namespace Auctus.Business.Funds
                 throw new ArgumentException("Fee cannot be negative.");
             if (fund.Fee > 99)
                 throw new ArgumentException("Fee cannot be greater than 99.");
+        }
+
+        public static bool DeployContract()
+        {
+            //Do Something
+            //Call EthereumProxy if the "Something" is succeded
+
+            Thread.Sleep(3000); //Simulate blockchain processing time
+
+            return true;
         }
     }
 }
