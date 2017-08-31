@@ -5,11 +5,14 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using Auctus.EthereumProxy;
+using Auctus.Util;
 
 namespace Auctus.Business.Contracts
 {
     public class SmartContractBusiness : BaseBusiness<SmartContract, SmartContractData>
     {
+        public SmartContractBusiness(Cache cache) : base(cache) { }
+
         public SmartContract GetDefaultDemonstrationPensionFund()
         {
             return Get("Default Demonstration Pension Fund");

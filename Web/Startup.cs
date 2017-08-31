@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using NLog.Web;
 using Microsoft.AspNetCore.Http;
+using Auctus.Util;
 
 namespace Web
 {
@@ -39,6 +40,7 @@ namespace Web
             
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<Cache>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

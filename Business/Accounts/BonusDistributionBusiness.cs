@@ -4,11 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Auctus.Model;
+using Auctus.Util;
 
 namespace Auctus.Business.Accounts
 {
     public class BonusDistributionBusiness : BaseBusiness<BonusDistribution, BonusDistributionData>
     {
+        public BonusDistributionBusiness(Cache cache) : base(cache) { }
+
         internal static void Validate(Model.Company company)
         {
             if (company == null)
@@ -31,11 +34,11 @@ namespace Auctus.Business.Accounts
             return bonusDistribution;
         }
 
-        internal static void Create(string address, IEnumerable<VestingRules> vestingRules)
+        internal void Create(string address, IEnumerable<VestingRules> vestingRules)
         {
             foreach(var vestingRule in vestingRules)
             {
-                new BonusDistributionBusiness().Create(address, vestingRule.Period, vestingRule.Percentage);
+                Create(address, vestingRule.Period, vestingRule.Percentage);
             }
         }
     }

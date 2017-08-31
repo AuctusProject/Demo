@@ -1,16 +1,19 @@
 ﻿using Auctus.Business.Security;
 using Auctus.DomainObjects.Security;
+using Auctus.Util;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Auctus.Service
 {
-    public class SecurityServices
+    public class SecurityServices : BaseServices
     {
+        public SecurityServices(Cache cache) : base(cache) { }
+
         public User Login(string login, string password)
         {
-            return new UserBusiness().Login(login, password);
+            return UserBusiness.Login(login, password);
         }
 
         public bool ChangePassword(string newPassword, string validationToken)

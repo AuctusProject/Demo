@@ -1,5 +1,6 @@
 ﻿using Auctus.DataAccess.Accounts;
 using Auctus.DomainObjects.Accounts;
+using Auctus.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,8 @@ namespace Auctus.Business.Accounts
 {
     public class CompanyBusiness : BaseBusiness<Company, CompanyData>
     {
+        public CompanyBusiness(Cache cache) : base(cache) { }
+
         internal static void Validate(Model.Company company)
         {
             if (company == null)

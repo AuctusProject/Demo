@@ -5,11 +5,14 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using Auctus.EthereumProxy;
+using Auctus.Util;
 
 namespace Auctus.Business.Contracts
 {
     public class PensionFundContractBusiness : BaseBusiness<PensionFundContract, PensionFundContractData>
     {
+        public PensionFundContractBusiness(Cache cache) : base(cache) { }
+
         public PensionFundContract Create(String pensionFundAddress, String employerAddress, String employeeAddress, double pensionFundFee,
             double pensionFundLatePenalty,
             double maxSalaryBonus,
@@ -19,7 +22,7 @@ namespace Auctus.Business.Contracts
             Dictionary<string, double> referenceValues,
             Dictionary<int, double> bonusVestingDistribuition)
         {
-            var defaultDemonstrationPensionFundSmartContract = new SmartContractBusiness().GetDefaultDemonstrationPensionFund();
+            var defaultDemonstrationPensionFundSmartContract = SmartContractBusiness.GetDefaultDemonstrationPensionFund();
 
             KeyValuePair<string, string> demoTransaction = EthereumManager.DeployDefaultPensionFund(defaultDemonstrationPensionFundSmartContract.GasLimit, 
                 pensionFundAddress, employerAddress, employeeAddress,
@@ -33,7 +36,7 @@ namespace Auctus.Business.Contracts
             {
                 Address = demoContractTransaction.ContractAddress,
                 BlockNumber = demoContractTransaction.BlockNumber,
-                CreationDate = DateTime.Now,
+                CreationDate = DateTime.UtcNow,
                 GasUsed = demoContractTransaction.GasUsed,
                 PensionFundOptionAddress = pensionFundAddress,
                 TransactionHash = demoContractTransaction.TransactionHash,

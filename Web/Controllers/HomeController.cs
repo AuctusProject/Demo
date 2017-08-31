@@ -9,14 +9,15 @@ using Auctus.Web.Model.Home;
 using System.Net;
 using Microsoft.Extensions.Caching.Memory;
 using Auctus.Model;
+using Auctus.Util;
+using Microsoft.AspNetCore.SignalR.Infrastructure;
 
 namespace Web.Controllers
 {
     public class HomeController : BaseController
     {
-        public HomeController(IMemoryCache memoryCache, ILoggerFactory loggerFactory, IServiceProvider serviceProvider) : base (memoryCache, loggerFactory, serviceProvider)
-        { }
-
+        public HomeController(ILoggerFactory loggerFactory, IConnectionManager connection, Cache cache, IServiceProvider serviceProvider) : base (loggerFactory, connection, cache, serviceProvider) { }
+        
         public IActionResult Index()
         {
             return View();

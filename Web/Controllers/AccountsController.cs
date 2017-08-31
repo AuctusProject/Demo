@@ -6,13 +6,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Caching.Memory;
+using Auctus.Util;
+using Microsoft.AspNetCore.SignalR.Infrastructure;
 
 namespace Web.Controllers
 {
     public class AccountsController : BaseController
     {
-        public AccountsController(IMemoryCache memoryCache, ILoggerFactory loggerFactory, IServiceProvider serviceProvider) : base (memoryCache, loggerFactory, serviceProvider)
-        { }
+        public AccountsController(ILoggerFactory loggerFactory, IConnectionManager connection, Cache cache, IServiceProvider serviceProvider) : base (loggerFactory, connection, cache, serviceProvider) { }
 
         // GET: Accounts
         public ActionResult Index()

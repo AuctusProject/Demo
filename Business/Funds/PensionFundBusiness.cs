@@ -10,23 +10,25 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
+using Auctus.Util;
 
 namespace Auctus.Business.Funds
 {
     public class PensionFundBusiness : BaseBusiness<PensionFund, PensionFundData>
     {
-       
+        public PensionFundBusiness(Cache cache) : base(cache) { }
+
         public PensionFundContract CreateCompleteEntry(Fund fund, Company company, Employee employee)
         {
             Validate(fund, company, employee);
-            var pensionFund = new PensionFundBusiness().Create(fund.Name);
-            var pensionFundWallet = new WalletBusiness().Create();
-            var pensionFundOption = new PensionFundOptionBusiness().Create(pensionFundWallet.Address, fund.Fee, fund.LatePaymentFee, pensionFund.Id);
-            var companyWallet = new WalletBusiness().Create();
-            var domainCompany = new CompanyBusiness().Create(companyWallet.Address, company.Name, company.BonusFee, company.MaxBonusFee, pensionFundOption.Address, company.VestingRules);
-            var employeeWallet = new WalletBusiness().Create();
-            var domainEmployee = new EmployeeBusiness().Create(employeeWallet.Address, employee.Name, employee.Salary, employee.ContributionPercentage, domainCompany.Address);
-            var pensionFundContract = new PensionFundContractBusiness().Create(pensionFundOption.Address, domainCompany.Address, domainEmployee.Address,
+            var pensionFund = PensionFundBusiness.Create(fund.Name);
+            var pensionFundWallet = WalletBusiness.Create();
+            var pensionFundOption = PensionFundOptionBusiness.Create(pensionFundWallet.Address, fund.Fee, fund.LatePaymentFee, pensionFund.Id);
+            var companyWallet = WalletBusiness.Create();
+            var domainCompany = CompanyBusiness.Create(companyWallet.Address, company.Name, company.BonusFee, company.MaxBonusFee, pensionFundOption.Address, company.VestingRules);
+            var employeeWallet = WalletBusiness.Create();
+            var domainEmployee = EmployeeBusiness.Create(employeeWallet.Address, employee.Name, employee.Salary, employee.ContributionPercentage, domainCompany.Address);
+            var pensionFundContract = PensionFundContractBusiness.Create(pensionFundOption.Address, domainCompany.Address, domainEmployee.Address,
                 pensionFundOption.Fee, pensionFundOption.LatePenalty, domainCompany.MaxSalaryBonusRate, domainEmployee.Contribution,
                 domainCompany.BonusRate, domainEmployee.Salary, 
                 fund.AssetAllocations.ToDictionary(asset => asset.ReferenceContractAddress, asset => asset.Percentage),
