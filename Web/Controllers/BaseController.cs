@@ -13,20 +13,18 @@ namespace Web.Controllers
 {
     public abstract class BaseController : Controller
     {
-        protected readonly ILogger logger;
-        protected readonly IConnectionManager connectionManager;
-        protected readonly Cache memoryCache;
+        protected readonly ILogger Logger;
+        protected readonly Cache MemoryCache;
 
-        protected BaseController(ILoggerFactory loggerFactory, IConnectionManager connection, Cache cache, IServiceProvider serviceProvider)
+        protected BaseController(ILoggerFactory loggerFactory, Cache cache, IServiceProvider serviceProvider)
         {
-            memoryCache = cache;
-            connection = connectionManager;
-            logger = loggerFactory.CreateLogger(GetType().Namespace);
+            MemoryCache = cache;
+            Logger = loggerFactory.CreateLogger(GetType().Namespace);
         }
 
-        protected FundsServices FundsServices { get { return new FundsServices(memoryCache); } }
-        protected SecurityServices SecurityServices { get { return new SecurityServices(memoryCache); } }
-        protected ContractsServices ContractsServices { get { return new ContractsServices(memoryCache); } }
-        protected AccountsServices AccountsServices { get { return new AccountsServices(memoryCache); } }
+        protected FundsServices FundsServices { get { return new FundsServices(MemoryCache); } }
+        protected SecurityServices SecurityServices { get { return new SecurityServices(MemoryCache); } }
+        protected ContractsServices ContractsServices { get { return new ContractsServices(MemoryCache); } }
+        protected AccountsServices AccountsServices { get { return new AccountsServices(MemoryCache); } }
     }
 }

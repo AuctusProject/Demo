@@ -13,7 +13,7 @@ namespace Web.Controllers
 {
     public class AccountsController : BaseController
     {
-        public AccountsController(ILoggerFactory loggerFactory, IConnectionManager connection, Cache cache, IServiceProvider serviceProvider) : base (loggerFactory, connection, cache, serviceProvider) { }
+        public AccountsController(ILoggerFactory loggerFactory, Cache cache, IServiceProvider serviceProvider) : base (loggerFactory, cache, serviceProvider) { }
 
         // GET: Accounts
         public ActionResult Index()

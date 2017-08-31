@@ -8,12 +8,16 @@ using Auctus.Web.Hubs;
 using Auctus.Service;
 using Microsoft.Extensions.Logging;
 using Auctus.Util;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Web.Controllers
 {
-    public class SignalRPocController : BaseController
+    public class SignalRPocController : HubBaseController
     {
-        public SignalRPocController(ILoggerFactory loggerFactory, IConnectionManager connection, Cache cache, IServiceProvider serviceProvider) : base (loggerFactory, connection, cache, serviceProvider) { }
+        public SignalRPocController(ILoggerFactory loggerFactory, Cache cache, IServiceProvider serviceProvider, IConnectionManager connectionManager):
+            base(loggerFactory, cache, serviceProvider, connectionManager)
+        {
+        }
 
         public IActionResult Index()
         {
@@ -27,8 +31,8 @@ namespace Web.Controllers
                 var success = FundsServices.DeployContract();
                 var msg = success ? "Your contract has been deployed" : "Contract deploy failed";
 
-                var hubContext = connectionManager.GetHubContext<AuctusDemoHub>();
-                hubContext.Clients.All.deploy(msg);//Can also return a Json
+                var hubContext = HubConnectionManager.GetHubContext<AuctusDemoHub>();
+                hubContext.Clients.Client(ConnectionId).deploy(msg);//Can also return a Json
             });
 
             return Content("Deploying your contract...");

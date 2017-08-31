@@ -12,7 +12,7 @@ namespace Auctus.Business
 {
     public abstract class BaseBusiness<T, D> where D : BaseData<T> , new()
     {
-        protected readonly Cache memoryCache;
+        protected readonly Cache MemoryCache;
         protected D Data => new D();
 
         private PensionFundBusiness _pensionFundBusiness;
@@ -28,7 +28,7 @@ namespace Auctus.Business
 
         protected BaseBusiness(Cache cache)
         {
-            memoryCache = cache;
+            MemoryCache = cache;
         }
 
         public IEnumerable<T> ListAll()
@@ -51,15 +51,15 @@ namespace Auctus.Business
             Data.Delete(obj);
         }
 
-        protected PensionFundBusiness PensionFundBusiness { get { return _pensionFundBusiness ?? new PensionFundBusiness(memoryCache); } }
-        protected PensionFundOptionBusiness PensionFundOptionBusiness { get { return _pensionFundOptionBusiness ?? new PensionFundOptionBusiness(memoryCache); } }
-        protected SmartContractBusiness SmartContractBusiness { get { return _smartContractBusiness ?? new SmartContractBusiness(memoryCache); } }
-        protected PensionFundTransactionBusiness PensionFundTransactionBusiness { get { return _pensionFundTransactionBusiness ?? new PensionFundTransactionBusiness(memoryCache); } }
-        protected PensionFundContractBusiness PensionFundContractBusiness { get { return _pensionFundContractBusiness ?? new PensionFundContractBusiness(memoryCache); } }
-        protected WalletBusiness WalletBusiness { get { return _walletBusiness ?? new WalletBusiness(memoryCache); } }
-        protected EmployeeBusiness EmployeeBusiness { get { return _employeeBusiness ?? new EmployeeBusiness(memoryCache); } }
-        protected CompanyBusiness CompanyBusiness { get { return _companyBusiness ?? new CompanyBusiness(memoryCache); } }
-        protected BonusDistributionBusiness BonusDistributionBusiness { get { return _bonusDistributionBusiness ?? new BonusDistributionBusiness(memoryCache); } }
-        protected UserBusiness UserBusiness { get { return _userBusiness ?? new UserBusiness(memoryCache); } }
+        protected PensionFundBusiness PensionFundBusiness { get { return _pensionFundBusiness ?? new PensionFundBusiness(MemoryCache); } }
+        protected PensionFundOptionBusiness PensionFundOptionBusiness { get { return _pensionFundOptionBusiness ?? new PensionFundOptionBusiness(MemoryCache); } }
+        protected SmartContractBusiness SmartContractBusiness { get { return _smartContractBusiness ?? new SmartContractBusiness(MemoryCache); } }
+        protected PensionFundTransactionBusiness PensionFundTransactionBusiness { get { return _pensionFundTransactionBusiness ?? new PensionFundTransactionBusiness(MemoryCache); } }
+        protected PensionFundContractBusiness PensionFundContractBusiness { get { return _pensionFundContractBusiness ?? new PensionFundContractBusiness(MemoryCache); } }
+        protected WalletBusiness WalletBusiness { get { return _walletBusiness ?? new WalletBusiness(MemoryCache); } }
+        protected EmployeeBusiness EmployeeBusiness { get { return _employeeBusiness ?? new EmployeeBusiness(MemoryCache); } }
+        protected CompanyBusiness CompanyBusiness { get { return _companyBusiness ?? new CompanyBusiness(MemoryCache); } }
+        protected BonusDistributionBusiness BonusDistributionBusiness { get { return _bonusDistributionBusiness ?? new BonusDistributionBusiness(MemoryCache); } }
+        protected UserBusiness UserBusiness { get { return _userBusiness ?? new UserBusiness(MemoryCache); } }
     }
 }

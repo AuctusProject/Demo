@@ -72,6 +72,13 @@ Wizard.Components = {
     },
     Buttons: {
         Save: $('#wizard-save-button')
+    },
+    Modal: {
+        ContractDeploy: $('#modal-contract-deploy'),
+        NextButton: $('#btn-modal-contract-deploy-next'),
+        Title: $('#modal-contract-deploy-title'),
+        Icon: $('#modal-contract-deploy-icon'),
+        Code: $('#modal-contract-deploy-code')
     }
 };
 
@@ -81,8 +88,20 @@ Wizard.Operations = {
         model.Contract.VestingRules = GetVestingRules();
 
         if (Wizard.Operations.Validate(model)) {
-            $.post("Home/Save", model);
+            Wizard.Operations.OnSave();
+            //$.post("Home/Save", model, Wizard.Operations.OnSave);
         }
+    },
+    OnSave: function (data) {
+        Wizard.Components.Modal.ContractDeploy.modal('show');
+        Wizard.Components.Modal.Code.html(data.SmartContractCode);
+    },
+    OnDeployCompleted: function (data) {
+        Wizard.Components.Modal.Title.html("<i class='fa fa-check-circle-o'></i> Deploy Completed!");
+        Wizard.Components.Modal.Title.addClass("text-success");
+        Wizard.Components.Modal.Icon.html("Address: <a href='https://ropsten.etherscan.io/tx/" + data.Address + "'>" + data.Address + "</a>");
+        Wizard.Components.Modal.Icon.removeClass();
+        Wizard.Components.Modal.NextButton.removeAttr('disabled');
     },
     Validate: function (model) {
         var previousVestingRule = null;

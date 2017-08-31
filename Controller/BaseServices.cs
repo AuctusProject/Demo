@@ -12,22 +12,22 @@ namespace Auctus.Service
 {
     public abstract class BaseServices
     {
-        protected readonly Cache memoryCache;
+        protected readonly Cache MemoryCache;
         
         protected BaseServices(Cache cache)
         {
-            memoryCache = cache;
+            MemoryCache = cache;
         }
 
-        protected PensionFundBusiness PensionFundBusiness { get { return new PensionFundBusiness(memoryCache); } }
-        protected PensionFundOptionBusiness PensionFundOptionBusiness { get { return new PensionFundOptionBusiness(memoryCache); } }
-        protected SmartContractBusiness SmartContractBusiness { get { return new SmartContractBusiness(memoryCache); } }
-        protected PensionFundTransactionBusiness PensionFundTransactionBusiness { get { return new PensionFundTransactionBusiness(memoryCache); } }
-        protected PensionFundContractBusiness PensionFundContractBusiness { get { return new PensionFundContractBusiness(memoryCache); } }
-        protected WalletBusiness WalletBusiness { get { return new WalletBusiness(memoryCache); } }
-        protected EmployeeBusiness EmployeeBusiness { get { return new EmployeeBusiness(memoryCache); } }
-        protected CompanyBusiness CompanyBusiness { get { return new CompanyBusiness(memoryCache); } }
-        protected BonusDistributionBusiness BonusDistributionBusiness { get { return new BonusDistributionBusiness(memoryCache); } }
-        protected UserBusiness UserBusiness { get { return new UserBusiness(memoryCache); } }
+        protected PensionFundBusiness PensionFundBusiness { get { return new PensionFundBusiness(MemoryCache); } }
+        protected PensionFundOptionBusiness PensionFundOptionBusiness { get { return new PensionFundOptionBusiness(MemoryCache); } }
+        protected SmartContractBusiness SmartContractBusiness { get { return new SmartContractBusiness(MemoryCache); } }
+        protected PensionFundTransactionBusiness PensionFundTransactionBusiness { get { return new PensionFundTransactionBusiness(MemoryCache); } }
+        protected PensionFundContractBusiness PensionFundContractBusiness { get { return new PensionFundContractBusiness(MemoryCache); } }
+        protected WalletBusiness WalletBusiness { get { return new WalletBusiness(MemoryCache); } }
+        protected EmployeeBusiness EmployeeBusiness { get { return new EmployeeBusiness(MemoryCache); } }
+        protected CompanyBusiness CompanyBusiness { get { return new CompanyBusiness(MemoryCache); } }
+        protected BonusDistributionBusiness BonusDistributionBusiness { get { return new BonusDistributionBusiness(MemoryCache); } }
+        protected UserBusiness UserBusiness { get { return new UserBusiness(MemoryCache); } }
     }
 }
