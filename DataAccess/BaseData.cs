@@ -20,9 +20,14 @@ namespace Auctus.DataAccess
         //TODO: add to configuration manager like structure
         private readonly string connString = Config.DbConnString;
 
-        public new IEnumerable<T> Select<T>(object criteria = null)
+        public new IEnumerable<T> SelectByObject<T>(T criteria)
         {
-            return base.Select<T>(criteria);
+            return base.SelectByObject<T>(criteria);
+        }
+
+        public new IEnumerable<T> SelectAll<T>()
+        {
+            return base.SelectAll<T>();
         }
 
         public new void Insert<T>(T obj)

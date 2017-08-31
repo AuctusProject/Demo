@@ -11,7 +11,7 @@ namespace Auctus.Business
 
         public IEnumerable<T> ListAll()
         {
-            return Data.Select<T>();
+            return Data.SelectAll<T>();
         }
 
         public void Insert(T obj)
