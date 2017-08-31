@@ -152,3 +152,8 @@ span.round-tab:hover {
     text-align: center;
     margin-top: -0.1em;
 }
+
+.modal-body-fit {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+}

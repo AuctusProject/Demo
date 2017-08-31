@@ -1,0 +1,16 @@
+﻿<div class="modal fade" @RenderSection("ModalElements", required: false) tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header  @RenderSection("ModalHeaderClass", required:false)">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                @RenderSection("ModalHeader", required: false)
+            </div>
+            <div class="modal-body modal-body-fit">
+                @RenderSection("ModalBody", required: false)
+            </div>
+            <div class="modal-footer">
+                @RenderSection("ModalFooter", required: false)
+            </div>
+        </div>
+    </div>
+</div>

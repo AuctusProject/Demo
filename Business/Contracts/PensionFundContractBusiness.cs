@@ -23,25 +23,27 @@ namespace Auctus.Business.Contracts
 
             KeyValuePair<string, string> demoTransaction = EthereumManager.DeployDefaultPensionFund(defaultDemonstrationPensionFundSmartContract.GasLimit, 
                 pensionFundAddress, employerAddress, employeeAddress,
-                pensionFundFee, pensionFundLatePenalty, 3, maxSalaryBonus, employeeContribution, employeeContributionBonus, employeeSalary, 
-                referenceValues, bonusVestingDistribuition);
-            Transaction demoContractTransaction = EthereumManager.GetTransaction(demoTransaction.Key);
-            if (demoContractTransaction == null)
-                throw new InvalidOperationException();
+                pensionFundFee, pensionFundLatePenalty, 20, maxSalaryBonus, employeeContribution, employeeContributionBonus, employeeSalary, 
+                referenceValues, bonusVestingDistribuition);            
 
             var pensionFundContract = new PensionFundContract()
             {
-                Address = demoContractTransaction.ContractAddress,
-                BlockNumber = demoContractTransaction.BlockNumber,
                 CreationDate = DateTime.Now,
-                GasUsed = demoContractTransaction.GasUsed,
                 PensionFundOptionAddress = pensionFundAddress,
-                TransactionHash = demoContractTransaction.TransactionHash,
+                TransactionHash = demoTransaction.Key,
                 SmartContractId = defaultDemonstrationPensionFundSmartContract.Id,
                 SmartContractCode = demoTransaction.Value
             };
             Insert(pensionFundContract);
+
+            //TODO: Start process for polling transaction status;
+
             return pensionFundContract;
+        }
+
+        public PensionFundContract UpdateAfterMined(Int32 pensionFundContractId, Transaction contractTransaction)
+        {
+            throw new NotImplementedException();
         }
     }
 }
