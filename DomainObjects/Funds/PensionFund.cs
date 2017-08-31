@@ -8,8 +8,10 @@ namespace Auctus.DomainObjects.Funds
 {
     public class PensionFund
     {
-        [DapperKey]
+        [DapperKey(true)]
+        [DapperType(System.Data.DbType.UInt32)]
         public Int32 Id { get; set; }
+        [DapperType(System.Data.DbType.AnsiString)]
         public String Name { get; set; }
 
         public IEnumerable<PensionFundOption> Options { get; set; }

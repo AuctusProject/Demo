@@ -1,119 +1,183 @@
-﻿using System;
+﻿using Auctus.Util.DapperAttributes;
+using Dapper;
+using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
-using Dapper;
 using System.Reflection;
-using Auctus.Util.DapperAttributes;
-using MySql.Data.MySqlClient;
+using System.Text;
 
 namespace Auctus.DataAccess.Core
 {
     public abstract class DapperRepositoryBase
     {
         private readonly string _connectionString;
+        private const int _timeout = 30;
 
         public abstract string TableName { get; }
 
         #region Constructor
-
         protected DapperRepositoryBase(string connectionString)
         {
             _connectionString = connectionString;
         }
-
         #endregion
 
-        #region Standard Dapper functionality
-
-        // Example: GetBySql<Activity>( "SELECT * 
-        //FROM Activities WHERE Id = @activityId", new {activityId = 15} ).FirstOrDefault();
-        protected IEnumerable<T> GetItems<T>(CommandType commandType, string sql, object parameters = null)
-        {
-            using (var connection = GetOpenConnection())
-            {
-                return connection.Query<T>(sql, parameters, commandType: commandType);
-            }
-        }
-
-        protected int Execute(CommandType commandType, string sql, object parameters = null)
-        {
-            using (var connection = GetOpenConnection())
-            {
-                return connection.Execute(sql, parameters, commandType: commandType);
-            }
-        }
-
+        #region Connection
         protected MySqlConnection GetOpenConnection()
         {
             var connection = new MySqlConnection(_connectionString);
             connection.Open();
             return connection;
         }
-
         #endregion
 
-        #region Automated methods for: Insert, Update, Delete
-
-        protected IEnumerable<T> Select<T>(object criteria = null)
+        #region Query
+        protected IEnumerable<T> Query<T>(string sql, dynamic param = null, int commandTimeout = _timeout, IDbTransaction transaction = null)
         {
-            var properties = ParseProperties(criteria);
-            var sqlPairs = GetSqlPairs(properties.AllNames, " AND ");
-            var sql = string.Format("SELECT * FROM {0} ", TableName);
-            if (!String.IsNullOrEmpty(sqlPairs))
+            using (var connection = GetOpenConnection())
             {
-                sql += " WHERE " + sqlPairs;
+                return SqlMapper.Query<T>(connection, sql, param, transaction, true, commandTimeout, CommandType.Text);
             }
-            return GetItems<T>(CommandType.Text, sql, properties.AllPairs);
+        }
+
+        protected IEnumerable<IDictionary<string, object>> Query(string sql, dynamic param = null, int commandTimeout = _timeout, IDbTransaction transaction = null)
+        {
+            using (var connection = GetOpenConnection())
+            {
+                return SqlMapper.Query(connection, sql, param, transaction, true, commandTimeout, CommandType.Text);
+            }
+        }
+
+        protected SqlMapper.GridReader QueryMultiple(string sql, dynamic param = null, int commandTimeout = _timeout, IDbTransaction transaction = null)
+        {
+            using (var connection = GetOpenConnection())
+            {
+                return SqlMapper.QueryMultiple(connection, sql, param, transaction, commandTimeout, CommandType.Text);
+            }
+        }
+
+        protected IEnumerable<TReturn> Query<TFirst, TSecond, TReturn>(string sql, Func<TFirst, TSecond, TReturn> map, string splitOn, dynamic param = null, int commandTimeout = _timeout, IDbTransaction transaction = null)
+        {
+            using (var connection = GetOpenConnection())
+            {
+                return SqlMapper.Query<TFirst, TSecond, TReturn>(connection, sql, map, param, transaction, true, splitOn, commandTimeout, CommandType.Text);
+            }
+        }
+
+        protected IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TReturn>(string sql, Func<TFirst, TSecond, TThird, TReturn> map, string splitOn, dynamic param = null, int commandTimeout = _timeout, IDbTransaction transaction = null)
+        {
+            using (var connection = GetOpenConnection())
+            {
+                return SqlMapper.Query<TFirst, TSecond, TThird, TReturn>(connection, sql, map, param, transaction, true, splitOn, commandTimeout, CommandType.Text);
+            }
+        }
+
+        protected IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TFourth, TReturn>(string sql, Func<TFirst, TSecond, TThird, TFourth, TReturn> map, string splitOn, dynamic param = null, int commandTimeout = _timeout, IDbTransaction transaction = null)
+        {
+            using (var connection = GetOpenConnection())
+            {
+                return SqlMapper.Query<TFirst, TSecond, TThird, TFourth, TReturn>(connection, sql, map, param, transaction, true, splitOn, commandTimeout, CommandType.Text);
+            }
+        }
+        #endregion
+
+        #region Execute
+        protected int Execute(string sql, dynamic param = null, int commandTimeout = _timeout, IDbTransaction transaction = null)
+        {
+            using (var connection = GetOpenConnection())
+            {
+                return SqlMapper.Execute(connection, sql, param, transaction, commandTimeout, CommandType.Text);
+            }
+        }
+
+        protected int ExecuteReturningIdentity(string sql, dynamic param = null, int commandTimeout = _timeout, IDbTransaction transaction = null)
+        {
+            using (var connection = GetOpenConnection())
+            {
+                sql = string.Concat(sql, "; SELECT LAST_INSERT_ID();");
+                return SqlMapper.ExecuteScalar<int>(connection, sql, param, transaction, commandTimeout, CommandType.Text);
+            }
+        }
+        #endregion
+
+        protected IEnumerable<T> SelectAll<T>()
+        {
+            return Select<T>(null, null);
+        }
+
+        protected IEnumerable<T> SelectByObject<T>(T criteria)
+        {
+            string pairs = null;
+            PropertyContainer properties = null;
+            if (criteria != null)
+            {
+                properties = ParseProperties(criteria);
+                pairs = GetSqlPairs(properties.AllNames, " AND ");
+            }
+            return Select<T>(pairs, properties?.AllParameters);
+        }
+
+        protected IEnumerable<T> SelectByParameters<T>(DynamicParameters criteria)
+        {
+            string pairs = null;
+            if (criteria != null && criteria.ParameterNames.Count() > 0)
+                pairs = GetSqlPairs(criteria.ParameterNames, " AND ");
+
+            return Select<T>(pairs, criteria);
+        }
+
+        private IEnumerable<T> Select<T>(string pairs, DynamicParameters criteria)
+        {
+            string sql = string.Format("SELECT * FROM {0} ", TableName);
+            if (!string.IsNullOrEmpty(pairs))
+                sql += " WHERE " + pairs;
+
+            return Query<T>(sql, criteria);
         }
 
         protected void Insert<T>(T obj)
         {
-            var propertyContainer = ParseProperties(obj);
-            var sql = string.Format("INSERT INTO {0} ({1}) VALUES(@{2}); SELECT LAST_INSERT_ID();",
+            PropertyContainer propertyContainer = ParseProperties(obj);
+            bool identity = !string.IsNullOrEmpty(propertyContainer.Identity);
+            IEnumerable<string> columns = identity ? propertyContainer.ValueNames : propertyContainer.AllNames;
+            var sql = string.Format("INSERT INTO {0} ({1}) VALUES(@{2})",
                 TableName,
-                string.Join(", ", propertyContainer.ValueNames),
-                string.Join(", @", propertyContainer.ValueNames));
+                string.Join(", ", columns),
+                string.Join(", @", columns));
 
-            using (var connection = GetOpenConnection())
+            if (identity)
             {
-                var id = connection.Query<int>
-                (sql, propertyContainer.ValuePairs, commandType: CommandType.Text).First();
-                SetId(obj, id, propertyContainer.IdPairs);
+                int id = ExecuteReturningIdentity(sql, propertyContainer.ValueParameters);
+                SetIdentity<T>(obj, id, propertyContainer.Identity);
             }
+            else
+                Execute(sql, propertyContainer.AllParameters);
         }
 
         protected void Update<T>(T obj)
         {
-            var propertyContainer = ParseProperties(obj);
-            var sqlIdPairs = GetSqlPairs(propertyContainer.IdNames);
-            var sqlValuePairs = GetSqlPairs(propertyContainer.ValueNames);
-            var sql = string.Format("UPDATE {0} SET {1} WHERE {2} ", TableName, sqlValuePairs, sqlIdPairs);
-            Execute(CommandType.Text, sql, propertyContainer.AllPairs);
+            PropertyContainer propertyContainer = ParseProperties(obj);
+            string sqlKeyPairs = GetSqlPairs(propertyContainer.KeyNames, " AND ");
+            string sqlValuePairs = GetSqlPairs(propertyContainer.ValueNames, ", ");
+            string sql = string.Format("UPDATE {0} SET {1} WHERE {2} ", TableName, sqlValuePairs, sqlKeyPairs);
+            Execute(sql, propertyContainer.AllParameters);
         }
 
         protected void Delete<T>(T obj)
         {
-            var propertyContainer = ParseProperties(obj);
-            var sqlIdPairs = GetSqlPairs(propertyContainer.IdNames);
-            var sql = string.Format("DELETE FROM {0} WHERE {1} ", TableName, sqlIdPairs);
-            Execute(CommandType.Text, sql, propertyContainer.IdPairs);
+            PropertyContainer propertyContainer = ParseProperties(obj);
+            string sqlKeyPairs = GetSqlPairs(propertyContainer.KeyNames, " AND ");
+            string sql = string.Format("DELETE FROM {0} WHERE {1} ", TableName, sqlKeyPairs);
+            Execute(sql, propertyContainer.KeyParameters);
         }
-
-        #endregion
-
-        #region Reflection support
+        
         private static PropertyContainer ParseProperties<T>(T obj)
         {
-            var propertyContainer = new PropertyContainer();
-
-            var typeName = typeof(T).Name;
-            var validKeyNames = new[] { "Id",
-            string.Format("{0}Id", typeName), string.Format("{0}_Id", typeName) };
-
-            var properties = typeof(T).GetProperties();
-            foreach (var property in properties)
+            PropertyContainer propertyContainer = new PropertyContainer();
+            PropertyInfo[] properties = typeof(T).GetProperties();
+            foreach (PropertyInfo property in properties)
             {
                 // Skip reference types (but still include string!)
                 if (property.PropertyType.GetTypeInfo().IsInterface || (property.PropertyType.GetTypeInfo().IsClass && property.PropertyType != typeof(string)))
@@ -122,115 +186,109 @@ namespace Auctus.DataAccess.Core
                 // Skip methods without a public setter
                 if (property.GetSetMethod() == null)
                     continue;
-
-                // Skip methods specifically ignored
-                if (property.IsDefined(typeof(DapperIgnoreAttribute), false))
+                
+                // Skip methods without db type defined
+                if (!property.IsDefined(typeof(DapperTypeAttribute), false))
                     continue;
-
-                var name = property.Name;
-                var value = typeof(T).GetProperty(property.Name).GetValue(obj, null);
-
-                if (property.IsDefined(typeof(DapperKeyAttribute), false) || validKeyNames.Contains(name))
-                {
-                    propertyContainer.AddId(name, value);
-                }
+                
+                object value = typeof(T).GetProperty(property.Name).GetValue(obj, null);
+                DbType dbType = ((DapperTypeAttribute)property.GetCustomAttribute(typeof(DapperTypeAttribute))).DbType;
+                if (property.IsDefined(typeof(DapperKeyAttribute), false))
+                    propertyContainer.AddKey(property.Name, value, dbType, ((DapperKeyAttribute)property.GetCustomAttribute(typeof(DapperKeyAttribute))).Identity);
                 else
-                {
-                    propertyContainer.AddValue(name, value);
-                }
+                    propertyContainer.AddValue(property.Name, value, dbType);
             }
-
             return propertyContainer;
         }
-
-        /// <summary>
-        /// Create a commaseparated list of value pairs on 
-        /// the form: "key1=@value1, key2=@value2, ..."
-        /// </summary>
-        private static string GetSqlPairs
-        (IEnumerable<string> keys, string separator = ", ")
+        
+        private static string GetSqlPairs(IEnumerable<string> keys, string separator)
         {
-            var pairs = keys.Select(key => string.Format("{0}=@{0}", key)).ToList();
-            return string.Join(separator, pairs);
+            return string.Join(separator, keys.Select(key => string.Format("{0}=@{0}", key)));
         }
 
-        private void SetId<T>(T obj, int id, IDictionary<string, object> propertyPairs)
+        private void SetIdentity<T>(T obj, int id, string identity)
         {
-            if (propertyPairs.Count == 1)
+            if (!string.IsNullOrEmpty(identity))
             {
-                var propertyName = propertyPairs.Keys.First();
-                var propertyInfo = obj.GetType().GetProperty(propertyName);
+                PropertyInfo propertyInfo = obj.GetType().GetProperty(identity);
                 if (propertyInfo.PropertyType == typeof(int))
                 {
                     propertyInfo.SetValue(obj, id, null);
                 }
             }
         }
-
-        #endregion
-
+        
         private class PropertyContainer
         {
-            private readonly Dictionary<string, object> _ids;
-            private readonly Dictionary<string, object> _values;
+            private string _identity;
+            private readonly DynamicParameters _keyParameters;
+            private readonly DynamicParameters _valueParameters;
+            private readonly DynamicParameters _allParameters;
 
-            #region Properties
-
-            internal IEnumerable<string> IdNames
+            internal PropertyContainer()
             {
-                get { return _ids.Keys; }
+                _keyParameters = new DynamicParameters();
+                _valueParameters = new DynamicParameters();
+                _allParameters = new DynamicParameters();
+            }
+
+            internal string Identity
+            {
+                get { return _identity; }
+            }
+
+            internal IEnumerable<string> KeyNames
+            {
+                get { return _keyParameters.ParameterNames; }
             }
 
             internal IEnumerable<string> ValueNames
             {
-                get { return _values.Keys; }
+                get { return _valueParameters.ParameterNames; }
             }
 
             internal IEnumerable<string> AllNames
             {
-                get { return _ids.Keys.Union(_values.Keys); }
+                get { return _allParameters.ParameterNames; }
             }
 
-            internal IDictionary<string, object> IdPairs
+            internal DynamicParameters KeyParameters
             {
-                get { return _ids; }
+                get { return _keyParameters; }
             }
 
-            internal IDictionary<string, object> ValuePairs
+            internal DynamicParameters ValueParameters
             {
-                get { return _values; }
+                get { return _valueParameters; }
             }
 
-            internal IEnumerable<KeyValuePair<string, object>> AllPairs
+            internal DynamicParameters AllParameters
             {
-                get { return _ids.Concat(_values); }
+                get { return _allParameters; }
             }
-
-            #endregion
-
-            #region Constructor
-
-            internal PropertyContainer()
+            
+            internal void AddKey(string name, object value, DbType type, bool identity)
             {
-                _ids = new Dictionary<string, object>();
-                _values = new Dictionary<string, object>();
+                if (identity)
+                {
+                    if (!string.IsNullOrEmpty(_identity))
+                        throw new Exception("Incorrect identity parameter.");
+                    _identity = name;
+                }
+                Add(_keyParameters, name, value, type);
+                Add(_allParameters, name, value, type);
             }
 
-            #endregion
-
-            #region Methods
-
-            internal void AddId(string name, object value)
+            internal void AddValue(string name, object value, DbType type)
             {
-                _ids.Add(name, value);
+                Add(_valueParameters, name, value, type);
+                Add(_allParameters, name, value, type);
             }
 
-            internal void AddValue(string name, object value)
+            private void Add(DynamicParameters param, string name, object value, DbType type)
             {
-                _values.Add(name, value);
+                param.Add(name, value, type);
             }
-
-            #endregion
         }
     }
 }
