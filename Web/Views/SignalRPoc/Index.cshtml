@@ -40,21 +40,23 @@
 
 @section Scripts {
         <script src="~/lib/jquery/dist/jquery.min.js"></script>
-        <script src="~/lib/signalr/jquery.signalR.min.js"></script>
+        <script src="~/lib/signalr/jquery.signalR.js"></script>
         <script src="signalr/hubs"></script>
 
         <script>
-            $('.deploy-button').on('click', function addToCart(id)
-            {
+            $('.deploy-button').on('click', function addToCart(id) {
                 $.ajax({
-                url: '@Url.Action("Deploy")',
-                data: { id: id },
-                success: function (data) {
-                    $('.deploy-message').text(data);
-                },
-                error:function (xhr, ajaxOptions, thrownError){
-                                alert(xhr.responseText);
-                            }
+                    url: '@Url.Action("Deploy")',
+                    beforeSend: function (request) {
+                        request.setRequestHeader("HubConnectionId", hub.connection.id);
+                    },
+                    data: { id: id },
+                    success: function (data) {
+                        $('.deploy-message').text(data);
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert(xhr.responseText);
+                    }
                 });
             });
 

@@ -6,16 +6,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR.Infrastructure;
 using Auctus.Web.Hubs;
 using Auctus.Service;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 
 namespace Web.Controllers
 {
-    public class SignalRPocController : Controller
+    public class SignalRPocController : HubBaseController
     {
-        private readonly IConnectionManager _connectionManager;
-
-        public SignalRPocController(IConnectionManager connectionManager)
+       
+        public SignalRPocController(IMemoryCache memoryCache, ILoggerFactory loggerFactory, IServiceProvider serviceProvider, IConnectionManager connectionManager):
+            base(memoryCache, loggerFactory, serviceProvider, connectionManager)
         {
-            _connectionManager = connectionManager;
         }
 
         public IActionResult Index()
@@ -30,8 +32,8 @@ namespace Web.Controllers
                 var success = FundsServices.DeployContract();
                 var msg = success ? "Your contract has been deployed" : "Contract deploy failed";
 
-                var hubContext = _connectionManager.GetHubContext<AuctusDemoHub>();
-                hubContext.Clients.All.deploy(msg);//Can also return a Json
+                var hubContext = HubConnectionManager.GetHubContext<AuctusDemoHub>();
+                hubContext.Clients.Client(ConnectionId).deploy(msg);//Can also return a Json
             });
 
             return Content("Deploying your contract...");
