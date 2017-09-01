@@ -18,6 +18,11 @@ namespace Auctus.Service
             return PensionFundBusiness.CreateCompleteEntry(fund, company, employee);
         }
 
+        public PensionFundContract CheckContractCreationTransaction(String transactionHash, Int32 pensionFundContractId)
+        {
+            return PensionFundContractBusiness.CheckContractCreationTransaction(transactionHash, pensionFundContractId);
+        }
+
         //TODO: REMOVE/REFACTOR AFTER IMPLEMENTATION
         public bool DeployContract()
         {

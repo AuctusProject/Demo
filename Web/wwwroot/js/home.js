@@ -78,7 +78,8 @@ Wizard.Components = {
         NextButton: $('#btn-modal-contract-deploy-next'),
         Title: $('#modal-contract-deploy-title'),
         Icon: $('#modal-contract-deploy-icon'),
-        Code: $('#modal-contract-deploy-code')
+        Code: $('#modal-contract-deploy-code'),
+        TransactionId: $('#modal-contract-deploy-tx-id')
     }
 };
 
@@ -88,20 +89,38 @@ Wizard.Operations = {
         model.Contract.VestingRules = GetVestingRules();
 
         if (Wizard.Operations.Validate(model)) {
-            Wizard.Operations.OnSave();
-            //$.post("Home/Save", model, Wizard.Operations.OnSave);
+            $.ajax({
+                url: "Home/Save",
+                beforeSend: function (request) {
+                    request.setRequestHeader("HubConnectionId", hub.connection.id);
+                },
+                data: model,
+                success: Wizard.Operations.OnSave,
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert(xhr.responseText);
+                }
+            });
         }
     },
     OnSave: function (data) {
+        Wizard.Components.Modal.TransactionId.attr("href", "https://ropsten.etherscan.io/tx/" + data.TransactionHash);
+        Wizard.Components.Modal.TransactionId.html(data.TransactionHash);
+        Wizard.Components.Modal.Code.html(data.smartContractCode);
+        Wizard.Components.Modal.Code.each(function (i, block) {
+            hljs.highlightBlock(block);
+        });
         Wizard.Components.Modal.ContractDeploy.modal('show');
-        Wizard.Components.Modal.Code.html(data.SmartContractCode);
     },
     OnDeployCompleted: function (data) {
         Wizard.Components.Modal.Title.html("<i class='fa fa-check-circle-o'></i> Deploy Completed!");
         Wizard.Components.Modal.Title.addClass("text-success");
-        Wizard.Components.Modal.Icon.html("Address: <a href='https://ropsten.etherscan.io/tx/" + data.Address + "'>" + data.Address + "</a>");
+        Wizard.Components.Modal.Icon.html("Address: <a href='https://ropsten.etherscan.io/address/" + data.Address + "'>" + data.Address + "</a>");
         Wizard.Components.Modal.Icon.removeClass();
         Wizard.Components.Modal.NextButton.removeAttr('disabled');
+        Wizard.Components.Modal.NextButton.click(function () { Wizard.Components.Modal.GoToDashBoard(data.PensionFundOptionAddress); });
+    },
+    GoToDashBoard: function (PensionFundOptionAddress) {
+        alert('Go to dashboard: ' + PensionFundOptionAddress);
     },
     Validate: function (model) {
         var previousVestingRule = null;

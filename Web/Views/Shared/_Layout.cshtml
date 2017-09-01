@@ -10,6 +10,8 @@
         <link rel="stylesheet" href="~/lib/jquery-ui-min/themes/base/jquery-ui.min.css">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/site.css" />
+        <link rel="stylesheet"
+              href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.12.0/build/styles/default.min.css">
         <script src="https://use.fontawesome.com/04d62b0ee0.js"></script>
     </environment>
     <environment names="Staging,Production">
@@ -61,6 +63,9 @@
             $.widget.bridge('uitooltip', $.ui.tooltip);
         </script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.12.0/build/highlight.min.js"></script>
+        <script src="~/lib/signalr/jquery.signalR.js"></script>
+        <script src="signalr/hubs"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
     </environment>
     <environment names="Staging,Production">
@@ -91,7 +96,9 @@
                 crossorigin="anonymous"
                 integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
         </script>
-
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/go.min.js"></script>
+        <script src="~/lib/signalr/jquery.signalR.js"></script>
+        <script src="signalr/hubs"></script>
         <script src="~/js/site.min.js" asp-append-version="true"></script>
     </environment>
 

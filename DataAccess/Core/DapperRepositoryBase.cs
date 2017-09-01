@@ -119,10 +119,10 @@ namespace Auctus.DataAccess.Core
             return Select<T>(pairs, properties?.AllParameters);
         }
 
-        protected IEnumerable<T> SelectByParameters<T>(DynamicParameters criteria)
+        public IEnumerable<T> SelectByParameters<T>(DynamicParameters criteria)
         {
             string pairs = null;
-            if (criteria != null && criteria.ParameterNames.Count() > 0)
+            if (criteria != null && criteria.ParameterNames.Any())
                 pairs = GetSqlPairs(criteria.ParameterNames, " AND ");
 
             return Select<T>(pairs, criteria);

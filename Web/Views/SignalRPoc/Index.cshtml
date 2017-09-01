@@ -71,6 +71,8 @@
                       
             hub.on('deploy', deploy);
 
+            hub.on('deployCompleted', Wizard.Operations.OnDeployCompleted);
+
             connection.start();
         </script>
     }

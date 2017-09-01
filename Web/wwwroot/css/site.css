@@ -154,6 +154,10 @@ span.round-tab:hover {
 }
 
 .modal-body-fit {
-    max-height: calc(100vh - 200px);
+    max-height: calc(100vh - 280px);
     overflow-y: auto;
+}
+
+#modal-contract-deploy-code {
+    max-height: calc(100vh - 310px);
 }

@@ -11,13 +11,14 @@ using Microsoft.Extensions.Caching.Memory;
 using Auctus.Model;
 using Auctus.Util;
 using Microsoft.AspNetCore.SignalR.Infrastructure;
+using Auctus.Web.Hubs;
 
 namespace Web.Controllers
 {
-    public class HomeController : BaseController
+    public class HomeController : HubBaseController
     {
-        public HomeController(ILoggerFactory loggerFactory, Cache cache, IServiceProvider serviceProvider) : base (loggerFactory, cache, serviceProvider) { }
-        
+        public HomeController(ILoggerFactory loggerFactory, Cache cache, IServiceProvider serviceProvider, IConnectionManager connectionManager) : base(loggerFactory, cache, serviceProvider, connectionManager) { }
+
         public IActionResult Index()
         {
             return View();
@@ -83,7 +84,21 @@ namespace Web.Controllers
                     }
                 },
                 new Employee() { Name = "EmployeeName", ContributionPercentage = 10, Salary = 2000 });
-            return Json(pensionFundContract); 
+
+
+            CheckContractCreationTransaction(pensionFundContract.TransactionHash, pensionFundContract.Id);
+
+            return Json(pensionFundContract);
+        }
+
+        private void CheckContractCreationTransaction(String transactionHash, int pensionFundContractId)
+        {
+            Task.Run(() =>
+            {
+                var pensionFundContract = FundsServices.CheckContractCreationTransaction(transactionHash, pensionFundContractId);
+                var hubContext = HubConnectionManager.GetHubContext<AuctusDemoHub>();
+                hubContext.Clients.Client(ConnectionId).deployCompleted(pensionFundContract);//Can also return a Json
+            });
         }
     }
 }

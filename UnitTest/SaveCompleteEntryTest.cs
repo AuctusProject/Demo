@@ -1,4 +1,5 @@
-﻿using Auctus.Business.Funds;
+﻿using Auctus.Business.Contracts;
+using Auctus.Business.Funds;
 using Auctus.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -10,6 +11,12 @@ namespace Auctus.UnitTest
     [TestClass]
     public class SaveCompleteEntryTest
     {
+        [TestMethod]
+        public void Test2()
+        {
+            new PensionFundContractBusiness(null).UpdateAfterMined(1, null);
+        }
+
         [TestMethod]
         public void Test()
         {

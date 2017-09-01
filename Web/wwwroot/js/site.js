@@ -17,4 +17,20 @@ $(document).ready(function () {
             }
         }
     });
+
+    hljs.configure({ useBR: true });
+
+    var deploy = function (msg) {
+        $('.deploy-message').text(msg);
+    };
+
+    hub.on('deploy', deploy);
+
+    hub.on('deployCompleted', Wizard.Operations.OnDeployCompleted);
+
+    connection.start();
 });
+
+var connection = $.hubConnection();
+var hub = connection.createHubProxy("AuctusDemo");
+

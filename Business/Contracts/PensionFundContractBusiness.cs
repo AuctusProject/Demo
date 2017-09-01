@@ -6,6 +6,7 @@ using System.Text;
 using System.Linq;
 using Auctus.EthereumProxy;
 using Auctus.Util;
+using System.Threading.Tasks;
 
 namespace Auctus.Business.Contracts
 {
@@ -39,14 +40,29 @@ namespace Auctus.Business.Contracts
             };
             Insert(pensionFundContract);
 
-            //TODO: Start process for polling transaction status;
+            return pensionFundContract;
+        }
+
+        public PensionFundContract CheckContractCreationTransaction(String transactionHash, Int32 pensionFundContractId)
+        {
+            Transaction demoContractTransaction = EthereumManager.GetTransaction(transactionHash);
+            if (demoContractTransaction == null)
+                throw new InvalidOperationException();
+
+            var pensionFundContract = UpdateAfterMined(pensionFundContractId, demoContractTransaction);
 
             return pensionFundContract;
         }
 
         public PensionFundContract UpdateAfterMined(Int32 pensionFundContractId, Transaction contractTransaction)
         {
-            throw new NotImplementedException();
+            var pensionFundContract = Data.GetPensionFundContract(pensionFundContractId);
+            pensionFundContract.Address = contractTransaction.ContractAddress;
+            pensionFundContract.BlockNumber = contractTransaction.BlockNumber;
+            pensionFundContract.GasUsed = contractTransaction.GasUsed;
+            pensionFundContract.TransactionHash = contractTransaction.TransactionHash;
+            Update(pensionFundContract);
+            return pensionFundContract;
         }
     }
 }
