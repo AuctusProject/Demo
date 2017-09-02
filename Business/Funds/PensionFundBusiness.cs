@@ -18,6 +18,36 @@ namespace Auctus.Business.Funds
     {
         public PensionFundBusiness(Cache cache) : base(cache) { }
 
+        public PensionFund Get(string contractAddress)
+        {
+            if (!EthereumProxy.EthereumManager.IsValidAddress(contractAddress))
+                throw new Exception("Invalid contract address.");
+
+            string cacheKey = string.Format("PensionFund{0}", contractAddress);
+            PensionFund pensionFund = MemoryCache.Get<PensionFund>(cacheKey);
+            if (pensionFund == null)
+                MemoryCache.Create<PensionFund>(cacheKey, GetFromDatabase(contractAddress));
+
+            return pensionFund;
+        }
+
+        private PensionFund GetFromDatabase(string contractAddress)
+        {
+            PensionFund pensionFund = Data.Get(contractAddress);
+            if (pensionFund == null || pensionFund.Option.Company == null || pensionFund.Option.Company.Employee == null)
+                throw new Exception("Pension fund cannot be found.");
+
+            pensionFund.Option.PensionFundContract.PensionFundReferenceContract = PensionFundReferenceContractBusiness.List(pensionFund.Option.PensionFundContract.Id);
+            if (!pensionFund.Option.PensionFundContract.PensionFundReferenceContract.Any())
+                throw new Exception("Reference contract cannot be found.");
+
+            pensionFund.Option.Company.BonusDistribution = BonusDistributionBusiness.List(pensionFund.Option.Company.Address);
+            if (!pensionFund.Option.Company.BonusDistribution.Any())
+                throw new Exception("Bonus distribution cannot be found.");
+
+            return pensionFund;
+        }
+
         public PensionFundContract CreateCompleteEntry(Fund fund, Company company, Employee employee)
         {
             Validate(fund, company, employee);
@@ -33,6 +63,8 @@ namespace Auctus.Business.Funds
                 domainCompany.BonusRate, domainEmployee.Salary, 
                 fund.AssetAllocations.ToDictionary(asset => asset.ReferenceContractAddress, asset => asset.Percentage),
                 company.VestingRules.ToDictionary(bonus => bonus.Period, bonus => bonus.Percentage));
+            foreach (AssetAllocation asset in fund.AssetAllocations)
+                PensionFundReferenceContractBusiness.Create(pensionFundContract.Id, asset.ReferenceContractAddress, asset.Percentage);
 
             return pensionFundContract;
         }

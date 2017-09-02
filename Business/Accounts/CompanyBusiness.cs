@@ -10,7 +10,7 @@ namespace Auctus.Business.Accounts
     public class CompanyBusiness : BaseBusiness<Company, CompanyData>
     {
         public CompanyBusiness(Cache cache) : base(cache) { }
-
+        
         internal static void Validate(Model.Company company)
         {
             if (company == null)
@@ -22,8 +22,7 @@ namespace Auctus.Business.Accounts
 
             ValidateVestingRules(company.VestingRules);
         }
-
-
+        
         private static void ValidateVestingRules(IEnumerable<Model.VestingRules> vestingRules)
         {
             if (vestingRules != null && vestingRules.Any())

@@ -25,6 +25,11 @@ namespace Auctus.EthereumProxy
             return Web3.GetTransaction(transactionHash);
         }
 
+        public static bool IsValidAddress(string address)
+        {
+            return Web3.IsValidAddress(address);
+        }
+
         public static KeyValuePair<string, string> DeployDefaultPensionFund(
             int gasLimit,
             string pensionFundAddress, 

@@ -50,6 +50,31 @@ namespace Auctus.DataAccess.Core
             }
         }
 
+        protected IEnumerable<TParent> QueryParentChild<TParent, TChild, TParentKey>(string sql, Func<TParent, TParentKey> parentKeySelector, 
+            Func<TParent, IList<TChild>> childSelector, string splitOn, dynamic param = null, int commandTimeout = _timeout, IDbTransaction transaction = null)
+        {
+            Dictionary<TParentKey, TParent> cache = new Dictionary<TParentKey, TParent>();
+            using (var connection = GetOpenConnection())
+            {
+                connection.Query<TParent, TChild, TParent>(sql,
+                (parent, child) =>
+                {
+                    if (!cache.ContainsKey(parentKeySelector(parent)))
+                        cache.Add(parentKeySelector(parent), parent);
+                    
+                    TParent cachedParent = cache[parentKeySelector(parent)];
+                    if (child != null)
+                    {
+                        IList<TChild> children = childSelector(cachedParent);
+                        children.Add(child);
+                    }
+                    return cachedParent;
+                },
+                param as object, transaction, true, splitOn, commandTimeout, CommandType.Text);
+            }
+            return cache.Values;
+        }
+
         protected SqlMapper.GridReader QueryMultiple(string sql, dynamic param = null, int commandTimeout = _timeout, IDbTransaction transaction = null)
         {
             using (var connection = GetOpenConnection())
@@ -79,6 +104,14 @@ namespace Auctus.DataAccess.Core
             using (var connection = GetOpenConnection())
             {
                 return SqlMapper.Query<TFirst, TSecond, TThird, TFourth, TReturn>(connection, sql, map, param, transaction, true, splitOn, commandTimeout, CommandType.Text);
+            }
+        }
+
+        protected IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TFourth, TFifth, TReturn>(string sql, Func<TFirst, TSecond, TThird, TFourth, TFifth, TReturn> map, string splitOn, dynamic param = null, int commandTimeout = _timeout, IDbTransaction transaction = null)
+        {
+            using (var connection = GetOpenConnection())
+            {
+                return SqlMapper.Query<TFirst, TSecond, TThird, TFourth, TFifth, TReturn>(connection, sql, map, param, transaction, true, splitOn, commandTimeout, CommandType.Text);
             }
         }
         #endregion

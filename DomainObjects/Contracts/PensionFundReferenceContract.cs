@@ -11,11 +11,12 @@ namespace Auctus.DomainObjects.Contracts
         [DapperKey(true)]
         [DapperType(System.Data.DbType.UInt32)]
         public Int32 PensionFundContractId { get; set; }
+        [DapperKey]
         [DapperType(System.Data.DbType.AnsiStringFixedLength)]
         public String ReferenceContractAddress { get; set; }
         [DapperType(System.Data.DbType.Double)]
         public Double Percentage { get; set; }
 
-        public SmartContract SmartContract { get; set; }
+        public ReferenceType ReferenceType { get { return ReferenceType.Get(ReferenceContractAddress); } }
     }
 }

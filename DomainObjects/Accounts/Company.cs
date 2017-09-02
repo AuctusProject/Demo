@@ -22,9 +22,7 @@ namespace Auctus.DomainObjects.Accounts
         [DapperType(System.Data.DbType.AnsiStringFixedLength)]
         public String PensionFundOptionAddress { get; set; }
 
-        public IEnumerable<Employee> Employees { get; set; }
+        public Employee Employee { get; set; }
         public IEnumerable<BonusDistribution> BonusDistribution { get; set; }
-        public PensionFundOption PensionFundOption { get; set; }
-        public Wallet Wallet { get; set; }
     }
 }

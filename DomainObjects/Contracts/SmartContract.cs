@@ -18,5 +18,6 @@ namespace Auctus.DomainObjects.Contracts
         public String ABI { get; set; }
 
         public SmartContractType SmartContractType { get { return SmartContractType.Get(Id); } }
-    }
+        public List<ContractFunction> ContractFunctions { get; set; } = new List<ContractFunction>();
+    } 
 }

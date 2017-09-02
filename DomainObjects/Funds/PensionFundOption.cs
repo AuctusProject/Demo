@@ -1,4 +1,5 @@
 ﻿using Auctus.DomainObjects.Accounts;
+using Auctus.DomainObjects.Contracts;
 using Auctus.DomainObjects.Security;
 using Auctus.Util.DapperAttributes;
 using System;
@@ -18,7 +19,8 @@ namespace Auctus.DomainObjects.Funds
         public Double LatePenalty { get; set; }
         [DapperType(System.Data.DbType.UInt32)]
         public Int32 PensionFundId { get; set; }
-
-        public Wallet Wallet { get; set; }
-    }
+        
+        public PensionFundContract PensionFundContract { get; set; }
+        public Company Company { get; set; }
+}
 }

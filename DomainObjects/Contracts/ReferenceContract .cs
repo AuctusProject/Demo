@@ -16,7 +16,7 @@ namespace Auctus.DomainObjects.Contracts
         [DapperType(System.Data.DbType.UInt32)]
         public Int32 SmartContractId { get; set; }
 
-        public SmartContract SmartContract { get; set; }
+        public List<ReferenceValue> ReferenceValue { get; set; } = new List<Contracts.ReferenceValue>();
         public ReferenceType ReferenceType { get { return ReferenceType.Get(Address); } }
     }
 }

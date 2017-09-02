@@ -11,11 +11,10 @@ namespace Auctus.DomainObjects.Contracts
         [DapperKey]
         [DapperType(System.Data.DbType.AnsiStringFixedLength)]
         public String ReferenceContractAddress { get; set; }
+        [DapperKey]
         [DapperType(System.Data.DbType.UInt32)]
         public Int32 Period { get; set; }
         [DapperType(System.Data.DbType.Double)]
         public Double Value { get; set; }
-
-        public ReferenceContract ReferenceContract { get; set; }
     }
 }

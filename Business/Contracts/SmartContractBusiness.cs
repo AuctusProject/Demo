@@ -15,17 +15,25 @@ namespace Auctus.Business.Contracts
 
         public SmartContract GetDefaultDemonstrationPensionFund()
         {
-            return Get("Default Demonstration Pension Fund");
+            return Get(SmartContractType.PensionFund.Type);
         }
 
         public SmartContract GetDefaultReferenceValue()
         {
-            return Get("Default Reference Value");
+            return Get(SmartContractType.ReferenceValue.Type);
         }
-
-        private SmartContract Get(String name)
+        
+        private SmartContract Get(int id)
         {
-            return ListAll().First(sc => sc.Name == name);
+            string cacheKey = string.Format("SmartContract{0}", id);
+            SmartContract sc = MemoryCache.Get<SmartContract>(cacheKey);
+            if (sc == null)
+            {
+                sc = Data.Get(id);
+                if (sc != null)
+                    MemoryCache.Create<SmartContract>(cacheKey, sc, 1440);
+            }
+            return sc;
         }
     }
 }

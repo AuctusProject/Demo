@@ -14,6 +14,6 @@ namespace Auctus.DomainObjects.Funds
         [DapperType(System.Data.DbType.AnsiString)]
         public String Name { get; set; }
 
-        public IEnumerable<PensionFundOption> Options { get; set; }
+        public PensionFundOption Option { get; set; }
     }
 }

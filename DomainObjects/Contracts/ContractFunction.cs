@@ -16,8 +16,7 @@ namespace Auctus.DomainObjects.Contracts
         public Int32 GasLimit { get; set; }
         [DapperType(System.Data.DbType.UInt32)]
         public Int32 SmartContractId { get; set; }
-
-        public SmartContract SmartContract { get; set; }
+        
         public FunctionType FunctionType { get { return FunctionType.Get(Id); } }
     }
 }

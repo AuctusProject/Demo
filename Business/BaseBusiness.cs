@@ -20,11 +20,13 @@ namespace Auctus.Business
         private SmartContractBusiness _smartContractBusiness;
         private PensionFundTransactionBusiness _pensionFundTransactionBusiness;
         private PensionFundContractBusiness _pensionFundContractBusiness;
+        private PensionFundReferenceContractBusiness _pensionFundReferenceContractBusiness;
         private WalletBusiness _walletBusiness;
         private EmployeeBusiness _employeeBusiness;
         private CompanyBusiness _companyBusiness;
         private BonusDistributionBusiness _bonusDistributionBusiness;
         private UserBusiness _userBusiness;
+        private ReferenceContractBusiness _referenceContractBusiness;
 
         protected BaseBusiness(Cache cache)
         {
@@ -56,10 +58,12 @@ namespace Auctus.Business
         protected SmartContractBusiness SmartContractBusiness { get { return _smartContractBusiness ?? new SmartContractBusiness(MemoryCache); } }
         protected PensionFundTransactionBusiness PensionFundTransactionBusiness { get { return _pensionFundTransactionBusiness ?? new PensionFundTransactionBusiness(MemoryCache); } }
         protected PensionFundContractBusiness PensionFundContractBusiness { get { return _pensionFundContractBusiness ?? new PensionFundContractBusiness(MemoryCache); } }
+        protected PensionFundReferenceContractBusiness PensionFundReferenceContractBusiness { get { return _pensionFundReferenceContractBusiness ?? new PensionFundReferenceContractBusiness(MemoryCache); } }
         protected WalletBusiness WalletBusiness { get { return _walletBusiness ?? new WalletBusiness(MemoryCache); } }
         protected EmployeeBusiness EmployeeBusiness { get { return _employeeBusiness ?? new EmployeeBusiness(MemoryCache); } }
         protected CompanyBusiness CompanyBusiness { get { return _companyBusiness ?? new CompanyBusiness(MemoryCache); } }
         protected BonusDistributionBusiness BonusDistributionBusiness { get { return _bonusDistributionBusiness ?? new BonusDistributionBusiness(MemoryCache); } }
         protected UserBusiness UserBusiness { get { return _userBusiness ?? new UserBusiness(MemoryCache); } }
+        protected ReferenceContractBusiness ReferenceContractBusiness { get { return _referenceContractBusiness ?? new ReferenceContractBusiness(MemoryCache); } }
     }
 }

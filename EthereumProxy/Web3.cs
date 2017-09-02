@@ -34,14 +34,19 @@ namespace Auctus.EthereumProxy
 
         private Web3() { }
 
-        #region External Methods
+        #region External 
+        internal static bool IsValidAddress(string address)
+        {
+            return IS_ADDRESS.IsMatch(address);
+        }
+
         internal static Wallet CreateAccount(string encryptedPassword)
         {
             if (string.IsNullOrEmpty(encryptedPassword))
                 throw new Web3Exception("Invalid password.");
 
             ConsoleOutput output = new Web3().Execute(string.Format("personal.newAccount(\"{0}\")", Security.Decrypt(encryptedPassword)));
-            if (!output.Ok || !IS_ADDRESS.IsMatch(output.Output))
+            if (!output.Ok || !IsValidAddress(output.Output))
                 throw new Web3Exception(string.Format("Fail to create account.\n\n{0}", output.Output));
             
             Wallet account = new Wallet();
@@ -623,7 +628,7 @@ namespace Auctus.EthereumProxy
 
         private static void ValidateAddress(string address)
         {
-            if (string.IsNullOrEmpty(address) || !IS_ADDRESS.IsMatch(address))
+            if (string.IsNullOrEmpty(address) || !IsValidAddress(address))
                 throw new Web3Exception("Invalid adresss.");
         }
 

@@ -12,6 +12,11 @@ namespace Auctus.Business.Accounts
     {
         public BonusDistributionBusiness(Cache cache) : base(cache) { }
 
+        public List<BonusDistribution> List(string companyAddress)
+        {
+            return Data.List(companyAddress);
+        }
+
         internal static void Validate(Model.Company company)
         {
             if (company == null)

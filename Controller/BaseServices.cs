@@ -24,10 +24,12 @@ namespace Auctus.Service
         protected SmartContractBusiness SmartContractBusiness { get { return new SmartContractBusiness(MemoryCache); } }
         protected PensionFundTransactionBusiness PensionFundTransactionBusiness { get { return new PensionFundTransactionBusiness(MemoryCache); } }
         protected PensionFundContractBusiness PensionFundContractBusiness { get { return new PensionFundContractBusiness(MemoryCache); } }
+        protected PensionFundReferenceContractBusiness PensionFundReferenceContractBusiness { get { return new PensionFundReferenceContractBusiness(MemoryCache); } }
         protected WalletBusiness WalletBusiness { get { return new WalletBusiness(MemoryCache); } }
         protected EmployeeBusiness EmployeeBusiness { get { return new EmployeeBusiness(MemoryCache); } }
         protected CompanyBusiness CompanyBusiness { get { return new CompanyBusiness(MemoryCache); } }
         protected BonusDistributionBusiness BonusDistributionBusiness { get { return new BonusDistributionBusiness(MemoryCache); } }
         protected UserBusiness UserBusiness { get { return new UserBusiness(MemoryCache); } }
+        protected ReferenceContractBusiness ReferenceContractBusiness { get { return new ReferenceContractBusiness(MemoryCache); } }
     }
 }

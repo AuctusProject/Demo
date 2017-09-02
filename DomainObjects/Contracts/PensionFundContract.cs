@@ -26,7 +26,7 @@ namespace Auctus.DomainObjects.Contracts
         [DapperType(System.Data.DbType.AnsiStringFixedLength)]
         public String PensionFundOptionAddress { get; set; }
         
-        public SmartContract SmartContract { get; set; }
+        public List<PensionFundReferenceContract> PensionFundReferenceContract { get; set; }
         public string SmartContractCode { get; set; }
     }
 }
