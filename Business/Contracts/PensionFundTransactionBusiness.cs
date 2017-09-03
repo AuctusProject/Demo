@@ -49,9 +49,7 @@ namespace Auctus.Business.Contracts
             SmartContract smartContract = SmartContractBusiness.GetDefaultDemonstrationPensionFund();
             List<PensionFundTransaction> transactions = Data.List(pensionFund.Option.PensionFundContract.TransactionHash);
             IEnumerable<PensionFundTransaction> pendingTransactions = transactions.Where(c => !c.BlockNumber.HasValue && c.FunctionType == FunctionType.CompleteWithdrawal);
-            if (pendingTransactions.Count() == 0)
-                return null;
-
+ 
             WithdrawalInfo withdrawalInfo = EthereumManager.ReadWithdrawalFromDefaultPensionFund(contractAddress);
             List<BaseEventInfo> baseInfo = new List<BaseEventInfo>();
             if (withdrawalInfo != null)
