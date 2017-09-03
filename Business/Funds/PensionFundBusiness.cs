@@ -26,7 +26,7 @@ namespace Auctus.Business.Funds
             string cacheKey = string.Format("PensionFund{0}", contractAddress);
             PensionFund pensionFund = MemoryCache.Get<PensionFund>(cacheKey);
             if (pensionFund == null)
-                MemoryCache.Create<PensionFund>(cacheKey, GetFromDatabase(contractAddress));
+                MemoryCache.Set<PensionFund>(cacheKey, GetFromDatabase(contractAddress));
 
             return pensionFund;
         }

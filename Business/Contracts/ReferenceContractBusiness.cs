@@ -49,7 +49,7 @@ namespace Auctus.Business.Contracts
             {
                 reference = Data.Get(address);
                 if (reference != null)
-                    MemoryCache.Create<ReferenceContract>(cacheKey, reference, 1440);
+                    MemoryCache.Set<ReferenceContract>(cacheKey, reference, 1440);
             }
             return reference;
         }

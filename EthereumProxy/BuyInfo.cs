@@ -4,10 +4,8 @@ using System.Text;
 
 namespace Auctus.EthereumProxy
 {
-    public class BuyInfo
+    public class BuyInfo : BaseEventInfo
     {
-        public string TransactionHash { get; set; }
-        public int BlockNumber { get; set; }
         public int Period { get; set; }
         public string Responsable { get; set; }
         public double TokenAmount { get; set; }

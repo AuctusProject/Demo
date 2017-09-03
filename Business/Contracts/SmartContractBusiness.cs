@@ -31,7 +31,7 @@ namespace Auctus.Business.Contracts
             {
                 sc = Data.Get(id);
                 if (sc != null)
-                    MemoryCache.Create<SmartContract>(cacheKey, sc, 1440);
+                    MemoryCache.Set<SmartContract>(cacheKey, sc, 1440);
             }
             return sc;
         }

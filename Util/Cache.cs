@@ -20,7 +20,7 @@ namespace Auctus.Util
             return _cache.Get<T>(key);
         }
 
-        public void Create<T>(string key, T value, int minutesTimeout = baseTimeout)
+        public void Set<T>(string key, T value, int minutesTimeout = baseTimeout)
         {
             _cache.Set<T>(key, value, TimeSpan.FromMinutes(minutesTimeout));
         }
