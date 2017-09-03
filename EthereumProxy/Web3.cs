@@ -40,6 +40,19 @@ namespace Auctus.EthereumProxy
             return IS_ADDRESS.IsMatch(address);
         }
 
+        internal static PoolInfo GetPoolInfo()
+        {
+            ConsoleOutput output = new Web3().Execute("txpool.content");
+            if (!output.Ok || !output.Output.StartsWith("{") || !output.Output.EndsWith("}"))
+                throw new Web3Exception(string.Format("Error to read pool content.\n\n{0}", output.Output));
+
+            PoolInfo info = new PoolInfo();
+            string[] parseContent = output.Output.Split(new string[] { "queued: " }, StringSplitOptions.RemoveEmptyEntries);
+            info.Pending = parseContent[0].Split(new string[] { "hash: \"" }, StringSplitOptions.RemoveEmptyEntries).Where(c => c.StartsWith("0x")).Select(c => c.Substring(0, 66)).ToList();
+            info.Queued = parseContent[1].Split(new string[] { "hash: \"" }, StringSplitOptions.RemoveEmptyEntries).Where(c => c.StartsWith("0x")).Select(c => c.Substring(0, 66)).ToList();
+            return info;
+        }
+
         internal static Wallet CreateAccount(string encryptedPassword)
         {
             if (string.IsNullOrEmpty(encryptedPassword))

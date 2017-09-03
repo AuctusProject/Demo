@@ -43,24 +43,23 @@ namespace Auctus.Business.Contracts
             return pensionFundContract;
         }
 
-        public PensionFundContract CheckContractCreationTransaction(String transactionHash, Int32 pensionFundContractId)
+        public PensionFundContract CheckContractCreationTransaction(String transactionHash)
         {
             Transaction demoContractTransaction = EthereumManager.GetTransaction(transactionHash);
             if (demoContractTransaction == null)
                 throw new InvalidOperationException();
 
-            var pensionFundContract = UpdateAfterMined(pensionFundContractId, demoContractTransaction);
+            var pensionFundContract = UpdateAfterMined(demoContractTransaction);
 
             return pensionFundContract;
         }
 
-        public PensionFundContract UpdateAfterMined(Int32 pensionFundContractId, Transaction contractTransaction)
+        public PensionFundContract UpdateAfterMined(Transaction contractTransaction)
         {
-            var pensionFundContract = Data.GetPensionFundContract(pensionFundContractId);
+            var pensionFundContract = Data.GetPensionFundContract(contractTransaction.TransactionHash);
             pensionFundContract.Address = contractTransaction.ContractAddress;
             pensionFundContract.BlockNumber = contractTransaction.BlockNumber;
             pensionFundContract.GasUsed = contractTransaction.GasUsed;
-            pensionFundContract.TransactionHash = contractTransaction.TransactionHash;
             Update(pensionFundContract);
             return pensionFundContract;
         }

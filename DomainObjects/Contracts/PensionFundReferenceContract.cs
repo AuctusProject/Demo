@@ -8,9 +8,9 @@ namespace Auctus.DomainObjects.Contracts
 {
     public class PensionFundReferenceContract
     {
-        [DapperKey(true)]
-        [DapperType(System.Data.DbType.UInt32)]
-        public Int32 PensionFundContractId { get; set; }
+        [DapperKey]
+        [DapperType(System.Data.DbType.AnsiStringFixedLength)]
+        public String PensionFundContractHash { get; set; }
         [DapperKey]
         [DapperType(System.Data.DbType.AnsiStringFixedLength)]
         public String ReferenceContractAddress { get; set; }

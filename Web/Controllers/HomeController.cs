@@ -12,6 +12,7 @@ using Auctus.Model;
 using Auctus.Util;
 using Microsoft.AspNetCore.SignalR.Infrastructure;
 using Auctus.Web.Hubs;
+using Auctus.DomainObjects.Contracts;
 
 namespace Web.Controllers
 {
@@ -86,16 +87,16 @@ namespace Web.Controllers
                 new Employee() { Name = "EmployeeName", ContributionPercentage = 10, Salary = 2000 });
 
 
-            CheckContractCreationTransaction(pensionFundContract.TransactionHash, pensionFundContract.Id);
+            CheckContractCreationTransaction(pensionFundContract.TransactionHash);
 
             return Json(pensionFundContract);
         }
 
-        private void CheckContractCreationTransaction(String transactionHash, int pensionFundContractId)
+        private void CheckContractCreationTransaction(String transactionHash)
         {
             Task.Run(() =>
             {
-                var pensionFundContract = FundsServices.CheckContractCreationTransaction(transactionHash, pensionFundContractId);
+                var pensionFundContract = FundsServices.CheckContractCreationTransaction(transactionHash);
                 var hubContext = HubConnectionManager.GetHubContext<AuctusDemoHub>();
                 hubContext.Clients.Client(ConnectionId).deployCompleted(pensionFundContract);//Can also return a Json
             });

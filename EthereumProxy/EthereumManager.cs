@@ -30,6 +30,11 @@ namespace Auctus.EthereumProxy
             return Web3.IsValidAddress(address);
         }
 
+        public static PoolInfo GetPoolInfo()
+        {
+            return Web3.GetPoolInfo();
+        }
+
         public static KeyValuePair<string, string> DeployDefaultPensionFund(
             int gasLimit,
             string pensionFundAddress, 

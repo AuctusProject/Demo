@@ -37,7 +37,7 @@ namespace Auctus.Business.Funds
             if (pensionFund == null || pensionFund.Option.Company == null || pensionFund.Option.Company.Employee == null)
                 throw new Exception("Pension fund cannot be found.");
 
-            pensionFund.Option.PensionFundContract.PensionFundReferenceContract = PensionFundReferenceContractBusiness.List(pensionFund.Option.PensionFundContract.Id);
+            pensionFund.Option.PensionFundContract.PensionFundReferenceContract = PensionFundReferenceContractBusiness.List(pensionFund.Option.PensionFundContract.TransactionHash);
             if (!pensionFund.Option.PensionFundContract.PensionFundReferenceContract.Any())
                 throw new Exception("Reference contract cannot be found.");
 
@@ -64,7 +64,7 @@ namespace Auctus.Business.Funds
                 fund.AssetAllocations.ToDictionary(asset => asset.ReferenceContractAddress, asset => asset.Percentage),
                 company.VestingRules.ToDictionary(bonus => bonus.Period, bonus => bonus.Percentage));
             foreach (AssetAllocation asset in fund.AssetAllocations)
-                PensionFundReferenceContractBusiness.Create(pensionFundContract.Id, asset.ReferenceContractAddress, asset.Percentage);
+                PensionFundReferenceContractBusiness.Create(pensionFundContract.TransactionHash, asset.ReferenceContractAddress, asset.Percentage);
 
             return pensionFundContract;
         }

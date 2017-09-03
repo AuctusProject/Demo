@@ -11,11 +11,11 @@ namespace Auctus.DataAccess.Contracts
     {
         public override string TableName => "PensionFundContract";
 
-        public PensionFundContract GetPensionFundContract(int pensionFundContractId)
+        public PensionFundContract GetPensionFundContract(string transactionHash)
         {
             DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("@Id", pensionFundContractId, DbType.UInt32);
-            return SelectByParameters<PensionFundContract>(parameters).FirstOrDefault();
+            parameters.Add("@TransactionHash", transactionHash, DbType.AnsiStringFixedLength);
+            return SelectByParameters<PensionFundContract>(parameters).SingleOrDefault();
         }
     }
 }

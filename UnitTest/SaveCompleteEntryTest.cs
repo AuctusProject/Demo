@@ -1,5 +1,6 @@
 ﻿using Auctus.Business.Contracts;
 using Auctus.Business.Funds;
+using Auctus.DomainObjects.Contracts;
 using Auctus.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -14,18 +15,24 @@ namespace Auctus.UnitTest
         [TestMethod]
         public void Test2()
         {
-            new PensionFundContractBusiness(null).UpdateAfterMined(1, null);
+            new PensionFundContractBusiness(null).UpdateAfterMined(null);
         }
 
         [TestMethod]
         public void Test()
         {
             new PensionFundBusiness(null).CreateCompleteEntry(
-                new Fund() { Fee = 5, LatePaymentFee = 5,
+                new Fund() { Fee = 5, LatePaymentFee = 0.08,
                     AssetAllocations = new List<AssetAllocation>() {
-                        new AssetAllocation(){
-                            Percentage =100,
-                            ReferenceContractAddress = "0x42a694a6587b9a14c766abfa15acdcca77c90405"
+                        new AssetAllocation()
+                        {
+                            Percentage =80,
+                            ReferenceContractAddress = ReferenceType.MSCIWorld.Address
+                        },
+                        new AssetAllocation()
+                        {
+                            Percentage =20,
+                            ReferenceContractAddress = ReferenceType.VWEHX.Address
                         }
                     }
                 },

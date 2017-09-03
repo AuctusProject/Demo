@@ -11,16 +11,16 @@ namespace Auctus.Business.Contracts
     {
         public PensionFundReferenceContractBusiness(Cache cache) : base(cache) { }
 
-        internal List<PensionFundReferenceContract> List(int pensionFundContractId)
+        internal List<PensionFundReferenceContract> List(String pensionFundContractHash)
         {
-            return Data.List(pensionFundContractId);
+            return Data.List(pensionFundContractHash);
         }
 
-        internal PensionFundReferenceContract Create(int pensionFundContractId, String referenceContractAddress, double percentage)
+        internal PensionFundReferenceContract Create(String pensionFundContractHash, String referenceContractAddress, double percentage)
         {
             var pensionFundReferenceContract = new PensionFundReferenceContract
             {
-                PensionFundContractId = pensionFundContractId,
+                PensionFundContractHash = pensionFundContractHash,
                 ReferenceContractAddress = referenceContractAddress,
                 Percentage = percentage
             };

@@ -1,6 +1,7 @@
 ﻿using Auctus.Business.Funds;
 using Auctus.DomainObjects.Contracts;
 using Auctus.DomainObjects.Funds;
+using Auctus.EthereumProxy;
 using Auctus.Model;
 using Auctus.Util;
 using System;
@@ -18,9 +19,9 @@ namespace Auctus.Service
             return PensionFundBusiness.CreateCompleteEntry(fund, company, employee);
         }
 
-        public PensionFundContract CheckContractCreationTransaction(String transactionHash, Int32 pensionFundContractId)
+        public PensionFundContract CheckContractCreationTransaction(String transactionHash)
         {
-            return PensionFundContractBusiness.CheckContractCreationTransaction(transactionHash, pensionFundContractId);
+            return PensionFundContractBusiness.CheckContractCreationTransaction(transactionHash);
         }
 
         //TODO: REMOVE/REFACTOR AFTER IMPLEMENTATION

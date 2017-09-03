@@ -10,14 +10,12 @@ namespace Auctus.DataAccess.Contracts
     public class PensionFundReferenceContractData : BaseData<PensionFundReferenceContract>
     {
         public override string TableName => "PensionFundReferenceContract";
-
-        private const string SQL_REFERENCE_CONTRACT = @"select * from PensionFundReferenceContract where PensionFundContractId = @id";
-
-        public List<PensionFundReferenceContract> List(int pensionFundContractId)
+        
+        public List<PensionFundReferenceContract> List(string pensionFundContractHash)
         {
             DynamicParameters param = new DynamicParameters();
-            param.Add("id", pensionFundContractId, System.Data.DbType.UInt32);
-            return Query<PensionFundReferenceContract>(SQL_REFERENCE_CONTRACT, param).ToList();
+            param.Add("PensionFundContractHash", pensionFundContractHash, System.Data.DbType.AnsiStringFixedLength);
+            return SelectByParameters<PensionFundReferenceContract>(param).ToList();
         }
     }
 }
