@@ -76,6 +76,8 @@ namespace Auctus.Business.Contracts
                 throw new Exception("All payments already been made.");
             else if (payments + (monthsAmount * 2) > 120)
                 throw new Exception("Too many payments.");
+            else if (transactions.Any(c => c.FunctionType == FunctionType.CompleteWithdrawal))
+                throw new Exception("Withdrawal already made.");
 
             List<string> transactionsHash = new List<string>();
             Parallel.ForEach(Enumerable.Range(1, monthsAmount), new ParallelOptions() { MaxDegreeOfParallelism = 5 },
