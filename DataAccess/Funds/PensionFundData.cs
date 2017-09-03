@@ -33,7 +33,7 @@ namespace Auctus.DataAccess.Funds
                         p.Option.Company = c;
                         p.Option.Company.Employee = e;
                         return p;
-                    }, "Address,Id,Address,Address", param).SingleOrDefault();
+                    }, "Address,TransactionHash,Address,Address", param).SingleOrDefault();
         }
     }
 }
