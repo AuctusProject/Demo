@@ -10,7 +10,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Globalization;
-using System.Diagnostics;
 
 namespace Auctus.EthereumProxy
 {
@@ -67,7 +66,6 @@ namespace Auctus.EthereumProxy
                 .Replace("{BONUS_DISTRIBUTION}", string.Join("\n\t\t", bonusVestingDistribuition.Select(c => string.Format("bonusDistribution.push(BonusVesting({0}, {1}));", c.Key.ToString(), Web3.GetNumberFormatted(c.Value, rateDecimals)))));
 
             SCCompiled scCompiled = Solc.Compile("CompanyContract", smartContractStringified).Single(c => c.Name == "CompanyContract");
-            Debug.Write($"Chamada deploy: {DateTime.Now}");
             string transactionHash = Web3.DeployContract(scCompiled, gasLimit, GetGweiPrice());
             return new KeyValuePair<string, string>(transactionHash, smartContractStringified);
         }
