@@ -15,13 +15,13 @@ namespace Auctus.UnitTest
         [TestMethod]
         public void Test2()
         {
-            new PensionFundContractBusiness(null).UpdateAfterMined(null);
+            new PensionFundContractBusiness(null, null).UpdateAfterMined(null, null);
         }
 
         [TestMethod]
         public void Test()
         {
-            new PensionFundBusiness(null).CreateCompleteEntry(
+            new PensionFundBusiness(null, null).CreateCompleteEntry(
                 new Fund() { Fee = 5, LatePaymentFee = 0.08,
                     AssetAllocations = new List<AssetAllocation>() {
                         new AssetAllocation()

@@ -6,12 +6,13 @@ using System.Text;
 using System.Linq;
 using Auctus.EthereumProxy;
 using Auctus.Util;
+using Microsoft.Extensions.Logging;
 
 namespace Auctus.Business.Contracts
 {
     public class SmartContractBusiness : BaseBusiness<SmartContract, SmartContractData>
     {
-        public SmartContractBusiness(Cache cache) : base(cache) { }
+        public SmartContractBusiness(ILoggerFactory loggerFactory, Cache cache) : base(loggerFactory, cache) { }
 
         public SmartContract GetDefaultDemonstrationPensionFund()
         {

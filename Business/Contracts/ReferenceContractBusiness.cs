@@ -1,6 +1,7 @@
 ﻿using Auctus.DataAccess.Contracts;
 using Auctus.DomainObjects.Contracts;
 using Auctus.Util;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,7 +10,7 @@ namespace Auctus.Business.Contracts
 {
     public class ReferenceContractBusiness : BaseBusiness<ReferenceContract, ReferenceContractData>
     {
-        public ReferenceContractBusiness(Cache cache) : base(cache) { }
+        public ReferenceContractBusiness(ILoggerFactory loggerFactory, Cache cache) : base(loggerFactory, cache) { }
 
         public ReferenceContract GetGoldReference()
         {

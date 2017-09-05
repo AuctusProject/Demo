@@ -1,6 +1,7 @@
 ﻿using Auctus.DataAccess.Accounts;
 using Auctus.DomainObjects.Accounts;
 using Auctus.Util;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,7 +10,7 @@ namespace Auctus.Business.Accounts
 {
     public class WalletBusiness : BaseBusiness<Wallet, WalletData>
     {
-        public WalletBusiness(Cache cache) : base(cache) { }
+        public WalletBusiness(ILoggerFactory loggerFactory, Cache cache) : base(loggerFactory, cache) { }
 
         internal Wallet Create()
         {

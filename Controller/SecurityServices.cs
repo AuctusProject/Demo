@@ -1,6 +1,7 @@
 ﻿using Auctus.Business.Security;
 using Auctus.DomainObjects.Security;
 using Auctus.Util;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,7 +10,7 @@ namespace Auctus.Service
 {
     public class SecurityServices : BaseServices
     {
-        public SecurityServices(Cache cache) : base(cache) { }
+        public SecurityServices(ILoggerFactory loggerFactory, Cache cache) : base(loggerFactory, cache) { }
 
         public User Login(string login, string password)
         {

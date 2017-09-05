@@ -5,6 +5,7 @@ using Auctus.DomainObjects.Funds;
 using Auctus.EthereumProxy;
 using Auctus.Model;
 using Auctus.Util;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 
@@ -12,7 +13,7 @@ namespace Auctus.Business.Funds
 {
     public class PensionFundOptionBusiness : BaseBusiness<PensionFundOption, PensionFundOptionData>
     {
-        public PensionFundOptionBusiness(Cache cache) : base(cache) { }
+        public PensionFundOptionBusiness(ILoggerFactory loggerFactory, Cache cache) : base(loggerFactory, cache) { }
 
         public PensionFundOption Create(String address, double Fee, double LatePenalty, Int32 PensionFundId)
         {

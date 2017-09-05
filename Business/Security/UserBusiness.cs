@@ -2,6 +2,7 @@
 using Auctus.DataAccess.Security;
 using Auctus.DomainObjects.Security;
 using Auctus.Util;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -11,7 +12,7 @@ namespace Auctus.Business.Security
 {
     public class UserBusiness : BaseBusiness<User, UserData>
     {
-        public UserBusiness(Cache cache) : base(cache) { }
+        public UserBusiness(ILoggerFactory loggerFactory, Cache cache) : base(loggerFactory, cache) { }
 
         public User Login(string login, string password)
         {

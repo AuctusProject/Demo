@@ -19,13 +19,26 @@ namespace Auctus.DataAccess.Funds
                                                         inner join PensionFundContract pfc on pfc.PensionFundOptionAddress = pfo.Address
                                                         inner join Company c on c.PensionFundOptionAddress = pfo.Address
                                                         inner join Employee e on e.CompanyAddress = c.Address
-                                                        where pfc.Address = @address";
+                                                        where {0}";
 
-        public PensionFund Get(string contractAddress)
+
+        public PensionFund GetByContract(string pensionFundContractAddress)
         {
             DynamicParameters param = new DynamicParameters();
-            param.Add("address", contractAddress, System.Data.DbType.AnsiStringFixedLength);
-            return Query<PensionFund, PensionFundOption, PensionFundContract, Company, Employee, PensionFund>(SQL_PENSION_FUND_DATA,
+            param.Add("address", pensionFundContractAddress, System.Data.DbType.AnsiStringFixedLength);
+            return Get(string.Format(SQL_PENSION_FUND_DATA, "pfc.Address = @address"), param);
+        }
+
+        public PensionFund GetByTransaction(string pensionFundContractHash)
+        {
+            DynamicParameters param = new DynamicParameters();
+            param.Add("hash", pensionFundContractHash, System.Data.DbType.AnsiStringFixedLength);
+            return Get(string.Format(SQL_PENSION_FUND_DATA, "pfc.TransactionHash = @hash"), param);
+        }
+
+        private PensionFund Get(string sql, DynamicParameters param)
+        {
+            return Query<PensionFund, PensionFundOption, PensionFundContract, Company, Employee, PensionFund>(sql,
                     (p, pfo, pfc, c, e) =>
                     {
                         p.Option = pfo;

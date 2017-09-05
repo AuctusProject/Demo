@@ -4,6 +4,7 @@ using Auctus.DomainObjects.Funds;
 using Auctus.EthereumProxy;
 using Auctus.Model;
 using Auctus.Util;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,7 +13,7 @@ namespace Auctus.Service
 {
     public class FundsServices : BaseServices
     {
-        public FundsServices(Cache cache) : base(cache) { }
+        public FundsServices(ILoggerFactory loggerFactory, Cache cache) : base(loggerFactory, cache) { }
 
         public PensionFundContract CreateCompleteEntry(Fund fund, Company company, Employee employee)
         {

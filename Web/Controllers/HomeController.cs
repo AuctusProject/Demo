@@ -44,6 +44,7 @@ namespace Web.Controllers
             return View();
         }
 
+        [HttpPost]
         public IActionResult Save()//Wizard model)
         {
             var pensionFundContract = FundsServices.CreateCompleteEntry(new Fund()
@@ -92,19 +93,22 @@ namespace Web.Controllers
             return Json(pensionFundContract);
         }
 
-        private void CheckContractCreationTransaction(String transactionHash)
+        [HttpPost]
+        public void CheckContractCreationTransaction(String transactionHash)
         {
             Task.Run(() =>
             {
+                var hubContext = HubConnectionManager.GetHubContext<AuctusDemoHub>();
                 try
                 {
                     var pensionFundContract = FundsServices.CheckContractCreationTransaction(transactionHash);
-                    var hubContext = HubConnectionManager.GetHubContext<AuctusDemoHub>();
-                    hubContext.Clients.Client(ConnectionId).deployCompleted(Json(pensionFundContract));
+                    if (pensionFundContract.BlockNumber.HasValue)
+                        hubContext.Clients.Client(ConnectionId).deployCompleted(Json(pensionFundContract));
+                    else
+                        hubContext.Clients.Client(ConnectionId).deployUncompleted(pensionFundContract.TransactionHash);
                 }
                 catch
                 {
-                    var hubContext = HubConnectionManager.GetHubContext<AuctusDemoHub>();
                     hubContext.Clients.Client(ConnectionId).deployError();
                 }
             });

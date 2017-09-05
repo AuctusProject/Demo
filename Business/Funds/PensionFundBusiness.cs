@@ -11,29 +11,35 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
 using Auctus.Util;
+using Microsoft.Extensions.Logging;
 
 namespace Auctus.Business.Funds
 {
     public class PensionFundBusiness : BaseBusiness<PensionFund, PensionFundData>
     {
-        public PensionFundBusiness(Cache cache) : base(cache) { }
+        public PensionFundBusiness(ILoggerFactory loggerFactory, Cache cache) : base(loggerFactory, cache) { }
 
-        public PensionFund Get(string contractAddress)
+        public PensionFund GetByTransaction(string pensionFundContractHash)
         {
-            if (!EthereumProxy.EthereumManager.IsValidAddress(contractAddress))
+            return GetByTransaction(pensionFundContractHash);
+        }
+
+        public PensionFund GetByContract(string pensionFundContractAddress)
+        {
+            if (!EthereumProxy.EthereumManager.IsValidAddress(pensionFundContractAddress))
                 throw new ArgumentException("Invalid contract address.");
 
-            string cacheKey = string.Format("PensionFund{0}", contractAddress);
+            string cacheKey = string.Format("PensionFund{0}", pensionFundContractAddress);
             PensionFund pensionFund = MemoryCache.Get<PensionFund>(cacheKey);
             if (pensionFund == null)
-                MemoryCache.Set<PensionFund>(cacheKey, GetFromDatabase(contractAddress));
+                MemoryCache.Set<PensionFund>(cacheKey, GetFromDatabase(pensionFundContractAddress));
 
             return pensionFund;
         }
 
-        private PensionFund GetFromDatabase(string contractAddress)
+        private PensionFund GetFromDatabase(string pensionFundContractAddress)
         {
-            PensionFund pensionFund = Data.Get(contractAddress);
+            PensionFund pensionFund = Data.GetByContract(pensionFundContractAddress);
             if (pensionFund == null || pensionFund.Option.Company == null || pensionFund.Option.Company.Employee == null)
                 throw new ArgumentException("Pension fund cannot be found.");
 

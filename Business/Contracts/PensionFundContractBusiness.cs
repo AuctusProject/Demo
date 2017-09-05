@@ -7,12 +7,14 @@ using System.Linq;
 using Auctus.EthereumProxy;
 using Auctus.Util;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Auctus.DomainObjects.Funds;
 
 namespace Auctus.Business.Contracts
 {
     public class PensionFundContractBusiness : BaseBusiness<PensionFundContract, PensionFundContractData>
     {
-        public PensionFundContractBusiness(Cache cache) : base(cache) { }
+        public PensionFundContractBusiness(ILoggerFactory loggerFactory, Cache cache) : base(loggerFactory, cache) { }
 
         public PensionFundContract Create(String pensionFundAddress, String employerAddress, String employeeAddress, double pensionFundFee,
             double pensionFundLatePenalty,
@@ -45,18 +47,53 @@ namespace Auctus.Business.Contracts
 
         public PensionFundContract CheckContractCreationTransaction(String transactionHash)
         {
+            var pensionFundContract = Data.GetPensionFundContract(transactionHash);
+            if (pensionFundContract == null)
+                throw new ArgumentException("Invalid transaction hash.");
+
             Transaction demoContractTransaction = EthereumManager.GetTransaction(transactionHash);
             if (demoContractTransaction == null)
-                throw new InvalidOperationException();
+            {
+                if (pensionFundContract.CreationDate < DateTime.UtcNow.AddMinutes(-2))
+                {
+                    PoolInfo poolInfo = GetPoolInfo();
+                    if (!poolInfo.Pending.Contains(pensionFundContract.TransactionHash) && !poolInfo.Queued.Contains(pensionFundContract.TransactionHash))
+                    {
+                        Logger.LogError(string.Format("Transaction for creation contract {0} is lost.", pensionFundContract.TransactionHash));
+                        List<PensionFundReferenceContract> referenceDistribution = PensionFundReferenceContractBusiness.List(pensionFundContract.TransactionHash);
+                        if (!referenceDistribution.Any())
+                            throw new Exception("Reference contract cannot be found.");
 
-            var pensionFundContract = UpdateAfterMined(demoContractTransaction);
+                        PensionFund pensionFund = PensionFundBusiness.GetByTransaction(pensionFundContract.TransactionHash);
+                        if (pensionFund == null)
+                            throw new Exception("Pension fund cannot be found.");
+
+                        pensionFund.Option.Company.BonusDistribution = BonusDistributionBusiness.List(pensionFund.Option.Company.Address);
+                        if (!pensionFund.Option.Company.BonusDistribution.Any())
+                            throw new ArgumentException("Bonus distribution cannot be found.");
+
+                        PensionFundReferenceContractBusiness.Delete(pensionFundContract.TransactionHash);
+                        Delete(pensionFundContract);
+                        pensionFundContract = Create(pensionFund.Option.Address, pensionFund.Option.Company.Address,
+                            pensionFund.Option.Company.Employee.Address, pensionFund.Option.Fee, pensionFund.Option.LatePenalty,
+                            pensionFund.Option.Company.MaxSalaryBonusRate, pensionFund.Option.Company.Employee.Contribution,
+                            pensionFund.Option.Company.BonusRate, pensionFund.Option.Company.Employee.Salary,
+                            referenceDistribution.ToDictionary(c => c.ReferenceContractAddress, c => c.Percentage),
+                            pensionFund.Option.Company.BonusDistribution.ToDictionary(c => c.Period, c => c.ReleasedBonus));
+                        foreach (PensionFundReferenceContract reference in referenceDistribution)
+                            PensionFundReferenceContractBusiness.Create(pensionFundContract.TransactionHash, reference.ReferenceContractAddress, reference.Percentage);
+                    }
+                }
+                return pensionFundContract;
+            }
+            else
+                pensionFundContract = UpdateAfterMined(pensionFundContract, demoContractTransaction);
 
             return pensionFundContract;
         }
 
-        public PensionFundContract UpdateAfterMined(Transaction contractTransaction)
+        public PensionFundContract UpdateAfterMined(PensionFundContract pensionFundContract, Transaction contractTransaction)
         {
-            var pensionFundContract = Data.GetPensionFundContract(contractTransaction.TransactionHash);
             pensionFundContract.Address = contractTransaction.ContractAddress;
             pensionFundContract.BlockNumber = contractTransaction.BlockNumber;
             pensionFundContract.GasUsed = contractTransaction.GasUsed;

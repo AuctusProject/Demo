@@ -103,6 +103,7 @@ Wizard.Operations = {
 
             $.ajax({
                 url: "Home/Save",
+                method: "POST",
                 beforeSend: function (request) {
                     request.setRequestHeader("HubConnectionId", hub.connection.id);
                 },
@@ -139,8 +140,21 @@ Wizard.Operations = {
         Wizard.Components.ContractDeploy.Icon.html("Address: <a target='_blank' href='https://ropsten.etherscan.io/address/" + data.address + "'>" + data.address + "</a>");
         Wizard.Components.ContractDeploy.Icon.removeClass();
         Wizard.Components.ContractDeploy.NextButton.removeAttr('disabled');
-        Wizard.Components.ContractDeploy.NextButton.unbind('click').click(function () { Wizard.Operations.GoToDashBoard(data.transactionHash); });
+        Wizard.Components.ContractDeploy.NextButton.unbind('click').click(function () { Wizard.Operations.GoToDashBoard(data.address); });
         Wizard.Components.ContractDeploy.NextButton.show();
+    },
+    OnDeployUncompleted: function (response) {
+        $.ajax({
+            url: "Home/CheckContractCreationTransaction",
+            method: "POST",
+            data: { transactionHash: response },
+            beforeSend: function (request) {
+                request.setRequestHeader("HubConnectionId", hub.connection.id);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                Wizard.Operations.OnDeployError();
+            }
+        });
     },
     OnDeployError: function () {
         Wizard.Components.ContractDeploy.Title.html("Sorry, something unexpected happened.");
@@ -150,8 +164,8 @@ Wizard.Operations = {
         Wizard.Components.ContractDeploy.TryAgain.unbind('click').click(function () { Wizard.Operations.Save();});
         Wizard.Components.ContractDeploy.TryAgain.show();
     },
-    GoToDashBoard: function (PensionFundOptionAddress) {
-        alert('Go to dashboard: ' + PensionFundOptionAddress);
+    GoToDashBoard: function (ContractAddress) {
+        alert('Go to dashboard: ' + ContractAddress);
     },
     Validate: function (model) {
         var previousVestingRule = null;

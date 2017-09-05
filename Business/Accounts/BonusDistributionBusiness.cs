@@ -4,12 +4,13 @@ using System;
 using System.Collections.Generic;
 using Auctus.Model;
 using Auctus.Util;
+using Microsoft.Extensions.Logging;
 
 namespace Auctus.Business.Accounts
 {
     public class BonusDistributionBusiness : BaseBusiness<BonusDistribution, BonusDistributionData>
     {
-        public BonusDistributionBusiness(Cache cache) : base(cache) { }
+        public BonusDistributionBusiness(ILoggerFactory loggerFactory, Cache cache) : base(loggerFactory, cache) { }
 
         public List<BonusDistribution> List(string companyAddress)
         {
