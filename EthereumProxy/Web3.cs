@@ -64,7 +64,7 @@ namespace Auctus.EthereumProxy
             
             Wallet account = new Wallet();
             account.Address = output.Output;
-            string completePath = Directory.EnumerateFiles(string.Format("{0}keystore", Config.GETH_PATH)).Where(c => c.Split(new string[] { "Z--" }, StringSplitOptions.RemoveEmptyEntries).Last() == account.Address.Substring(2)).Single();
+            string completePath = Directory.EnumerateFiles(string.Format("{0}keystore", Config.GETH_PATH)).Single(c => c.Split(new string[] { "Z--" }, StringSplitOptions.RemoveEmptyEntries).Last() == account.Address.Substring(2));
             account.File = Security.Encrypt(File.ReadAllText(completePath));
             char splitCharacter = Config.IS_WINDOWS ? '\\' : '/';
             account.FileName = completePath.Split(splitCharacter).Last();
@@ -101,7 +101,7 @@ namespace Auctus.EthereumProxy
 
         internal static List<Variable> CallConstFunction(IEnumerable<CompleteVariableType> returnTypes, string scAddress, string abi, string functionName, params Variable[] parameters)
         {
-            if (returnTypes == null || returnTypes.Count() == 0)
+            if (returnTypes == null || !returnTypes.Any())
                 throw new Web3Exception("Return type must be filled.");
             ValidateContractData(scAddress, abi, functionName);
             return new Web3().InternalCallConstFunction(returnTypes, scAddress, abi, functionName, parameters);
@@ -132,7 +132,7 @@ namespace Auctus.EthereumProxy
             if (string.IsNullOrEmpty(eventName))
                 throw new Web3Exception("Event name must be filled.");
             if ((eventParameters == null && filterParameters != null && filterParameters.Length > 0) ||
-                (eventParameters != null && filterParameters != null && eventParameters.Where(c => c.Indexed).Count() < filterParameters.Length))
+                (eventParameters != null && filterParameters != null && eventParameters.Count(c => c.Indexed) < filterParameters.Length))
                 throw new Web3Exception("Filter parameters must match with indexed event parameters.");
             
             return new Web3().InternalReadEvent(scAddress, eventName, eventParameters, filterParameters);
@@ -531,7 +531,7 @@ namespace Auctus.EthereumProxy
                 else
                 {
                     if ((eventParameters == null && events[0].Topics.Length > 1) ||
-                        (eventParameters != null && eventParameters.Where(c => c.Indexed).Count() != (events[0].Topics.Length - 1)))
+                        (eventParameters != null && eventParameters.Count(c => c.Indexed) != (events[0].Topics.Length - 1)))
                         throw new Web3Exception("Wrong information for event indexed parameters.");
 
                     int chunkData = 0;
@@ -539,7 +539,7 @@ namespace Auctus.EthereumProxy
                         chunkData = events[0].Data.Substring(2).Length / 64;
                     
                     if ((eventParameters == null && chunkData > 0) ||
-                        (eventParameters != null && eventParameters.Where(c => !c.Indexed).Count() != chunkData))
+                        (eventParameters != null && eventParameters.Count(c => !c.Indexed) != chunkData))
                         throw new Web3Exception("Wrong information for event not indexed parameters.");
 
                     List<Event> parsedEvents = new List<Event>();

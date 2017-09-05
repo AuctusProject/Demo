@@ -12,9 +12,6 @@ namespace Auctus.Web.Hubs
     {   
         public override Task OnConnected()
         {
-          //  string userid = Context.User.Identity.Name;
-          //  Clients.ToString();
-          //  Groups.Add(Context.ConnectionId, userid);
             return base.OnConnected();
         }
     }

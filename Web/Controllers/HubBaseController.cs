@@ -22,12 +22,12 @@ namespace Web.Controllers
             HubConnectionManager = connectionManager;
         }
 
-        public override void OnActionExecuting(ActionExecutingContext filterContext)
+        public override void OnActionExecuting(ActionExecutingContext context)
         {
             string connectionId = HttpContext.Request.Headers["HubConnectionId"];
             if (!string.IsNullOrEmpty(connectionId) && connectionId != "undefined" )
                 ConnectionId = connectionId;
-            base.OnActionExecuting(filterContext);
+            base.OnActionExecuting(context);
         }
     }
 }

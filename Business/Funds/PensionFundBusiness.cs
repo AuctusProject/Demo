@@ -21,7 +21,7 @@ namespace Auctus.Business.Funds
         public PensionFund Get(string contractAddress)
         {
             if (!EthereumProxy.EthereumManager.IsValidAddress(contractAddress))
-                throw new Exception("Invalid contract address.");
+                throw new ArgumentException("Invalid contract address.");
 
             string cacheKey = string.Format("PensionFund{0}", contractAddress);
             PensionFund pensionFund = MemoryCache.Get<PensionFund>(cacheKey);
@@ -35,15 +35,15 @@ namespace Auctus.Business.Funds
         {
             PensionFund pensionFund = Data.Get(contractAddress);
             if (pensionFund == null || pensionFund.Option.Company == null || pensionFund.Option.Company.Employee == null)
-                throw new Exception("Pension fund cannot be found.");
+                throw new ArgumentException("Pension fund cannot be found.");
 
             pensionFund.Option.PensionFundContract.PensionFundReferenceContract = PensionFundReferenceContractBusiness.List(pensionFund.Option.PensionFundContract.TransactionHash);
             if (!pensionFund.Option.PensionFundContract.PensionFundReferenceContract.Any())
-                throw new Exception("Reference contract cannot be found.");
+                throw new ArgumentException("Reference contract cannot be found.");
 
             pensionFund.Option.Company.BonusDistribution = BonusDistributionBusiness.List(pensionFund.Option.Company.Address);
             if (!pensionFund.Option.Company.BonusDistribution.Any())
-                throw new Exception("Bonus distribution cannot be found.");
+                throw new ArgumentException("Bonus distribution cannot be found.");
 
             return pensionFund;
         }

@@ -10,7 +10,7 @@ using System.Text;
 
 namespace Auctus.Business
 {
-    public abstract class BaseBusiness<T, D> where D : BaseData<T> , new()
+    public abstract class BaseBusiness<T, D> where D : BaseData<T>, new()
     {
         protected readonly Cache MemoryCache;
         protected D Data => new D();
@@ -35,7 +35,7 @@ namespace Auctus.Business
 
         public IEnumerable<T> ListAll()
         {
-            return Data.SelectAll<T>();
+            return Data.SelectAll();
         }
 
         public void Insert(T obj)
@@ -53,17 +53,124 @@ namespace Auctus.Business
             Data.Delete(obj);
         }
 
-        protected PensionFundBusiness PensionFundBusiness { get { return _pensionFundBusiness ?? new PensionFundBusiness(MemoryCache); } }
-        protected PensionFundOptionBusiness PensionFundOptionBusiness { get { return _pensionFundOptionBusiness ?? new PensionFundOptionBusiness(MemoryCache); } }
-        protected SmartContractBusiness SmartContractBusiness { get { return _smartContractBusiness ?? new SmartContractBusiness(MemoryCache); } }
-        protected PensionFundTransactionBusiness PensionFundTransactionBusiness { get { return _pensionFundTransactionBusiness ?? new PensionFundTransactionBusiness(MemoryCache); } }
-        protected PensionFundContractBusiness PensionFundContractBusiness { get { return _pensionFundContractBusiness ?? new PensionFundContractBusiness(MemoryCache); } }
-        protected PensionFundReferenceContractBusiness PensionFundReferenceContractBusiness { get { return _pensionFundReferenceContractBusiness ?? new PensionFundReferenceContractBusiness(MemoryCache); } }
-        protected WalletBusiness WalletBusiness { get { return _walletBusiness ?? new WalletBusiness(MemoryCache); } }
-        protected EmployeeBusiness EmployeeBusiness { get { return _employeeBusiness ?? new EmployeeBusiness(MemoryCache); } }
-        protected CompanyBusiness CompanyBusiness { get { return _companyBusiness ?? new CompanyBusiness(MemoryCache); } }
-        protected BonusDistributionBusiness BonusDistributionBusiness { get { return _bonusDistributionBusiness ?? new BonusDistributionBusiness(MemoryCache); } }
-        protected UserBusiness UserBusiness { get { return _userBusiness ?? new UserBusiness(MemoryCache); } }
-        protected ReferenceContractBusiness ReferenceContractBusiness { get { return _referenceContractBusiness ?? new ReferenceContractBusiness(MemoryCache); } }
+        protected PensionFundBusiness PensionFundBusiness
+        {
+            get
+            {
+                if (_pensionFundBusiness == null)
+                    _pensionFundBusiness = new PensionFundBusiness(MemoryCache);
+                return _pensionFundBusiness;
+            }
+        }
+
+        protected PensionFundOptionBusiness PensionFundOptionBusiness
+        {
+            get
+            {
+                if (_pensionFundOptionBusiness == null)
+                    _pensionFundOptionBusiness = new PensionFundOptionBusiness(MemoryCache);
+                return _pensionFundOptionBusiness;
+            }
+        }
+
+        protected SmartContractBusiness SmartContractBusiness
+        {
+            get
+            {
+                if (_smartContractBusiness == null)
+                    _smartContractBusiness = new SmartContractBusiness(MemoryCache);
+                return _smartContractBusiness;
+            }
+        }
+
+        protected PensionFundTransactionBusiness PensionFundTransactionBusiness
+        {
+            get
+            {
+                if (_pensionFundTransactionBusiness == null)
+                    _pensionFundTransactionBusiness = new PensionFundTransactionBusiness(MemoryCache);
+                return new PensionFundTransactionBusiness(MemoryCache);
+            }
+        }
+
+        protected PensionFundContractBusiness PensionFundContractBusiness
+        {
+            get
+            {
+                if (_pensionFundContractBusiness == null)
+                    _pensionFundContractBusiness = new PensionFundContractBusiness(MemoryCache);
+                return _pensionFundContractBusiness;
+            }
+        }
+
+        protected PensionFundReferenceContractBusiness PensionFundReferenceContractBusiness
+        {
+            get
+            {
+                if (_pensionFundReferenceContractBusiness == null)
+                    _pensionFundReferenceContractBusiness = new PensionFundReferenceContractBusiness(MemoryCache);
+                return _pensionFundReferenceContractBusiness;
+            }
+        }
+
+        protected WalletBusiness WalletBusiness
+        {
+            get
+            {
+                if (_walletBusiness == null)
+                    _walletBusiness = new WalletBusiness(MemoryCache);
+                return _walletBusiness;
+            }
+        }
+
+        protected EmployeeBusiness EmployeeBusiness
+        {
+            get
+            {
+                if (_employeeBusiness == null)
+                    _employeeBusiness = new EmployeeBusiness(MemoryCache);
+                return _employeeBusiness;
+            }
+        }
+
+        protected CompanyBusiness CompanyBusiness
+        {
+            get
+            {
+                if (_companyBusiness == null)
+                    _companyBusiness = new CompanyBusiness(MemoryCache);
+                return _companyBusiness;
+            }
+        }
+
+        protected BonusDistributionBusiness BonusDistributionBusiness
+        {
+            get
+            {
+                if (_bonusDistributionBusiness == null)
+                    _bonusDistributionBusiness = new BonusDistributionBusiness(MemoryCache);
+                return new BonusDistributionBusiness(MemoryCache);
+            }
+        }
+
+        protected UserBusiness UserBusiness
+        {
+            get
+            {
+                if (_userBusiness == null)
+                    _userBusiness = new UserBusiness(MemoryCache);
+                return _userBusiness;
+            }
+        }
+
+        protected ReferenceContractBusiness ReferenceContractBusiness
+        {
+            get
+            {
+                if (_referenceContractBusiness == null)
+                    _referenceContractBusiness = new ReferenceContractBusiness(MemoryCache);
+                return _referenceContractBusiness;
+            }
+        }
     }
 }

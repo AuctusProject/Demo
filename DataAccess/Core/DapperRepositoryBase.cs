@@ -305,7 +305,7 @@ namespace Auctus.DataAccess.Core
                 if (identity)
                 {
                     if (!string.IsNullOrEmpty(_identity))
-                        throw new Exception("Incorrect identity parameter.");
+                        throw new ArgumentException("Incorrect identity parameter.");
                     _identity = name;
                 }
                 Add(_keyParameters, name, value, type);

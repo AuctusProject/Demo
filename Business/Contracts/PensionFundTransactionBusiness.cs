@@ -27,7 +27,7 @@ namespace Auctus.Business.Contracts
             List<PensionFundTransaction> transactions = Data.List(pensionFund.Option.PensionFundContract.TransactionHash);
             IEnumerable<PensionFundTransaction> pendingTransactions = transactions.Where(c => !c.BlockNumber.HasValue && 
                                                                         (c.FunctionType == FunctionType.EmployeeBuy || c.FunctionType == FunctionType.CompanyBuy));
-            if (pendingTransactions.Count() == 0 && cachedBuy != null && cachedBuy.Count == transactions.Count)
+            if (!pendingTransactions.Any() && cachedBuy != null && cachedBuy.Count == transactions.Count)
                 return cachedBuy;
 
             List<BuyInfo> buyEvents = EthereumManager.ReadBuyFromDefaultPensionFund(contractAddress);
@@ -65,7 +65,7 @@ namespace Auctus.Business.Contracts
         public List<string> GeneratePaymentContractTransaction(string contractAddress, int monthsAmount)
         {
             if (monthsAmount < 1 || monthsAmount > 60)
-                throw new Exception("Invalid months amount.");
+                throw new InvalidOperationException("Invalid months amount.");
 
             PensionFund pensionFund = PensionFundBusiness.Get(contractAddress);
             SmartContract smartContract = SmartContractBusiness.GetDefaultDemonstrationPensionFund();
@@ -73,11 +73,11 @@ namespace Auctus.Business.Contracts
 
             int payments = transactions.Count(c => c.ContractFunctionId == FunctionType.CompanyBuy.Type || c.ContractFunctionId == FunctionType.EmployeeBuy.Type);
             if (payments == 120)
-                throw new Exception("All payments already been made.");
+                throw new InvalidOperationException("All payments already been made.");
             else if (payments + (monthsAmount * 2) > 120)
-                throw new Exception("Too many payments.");
+                throw new InvalidOperationException("Too many payments.");
             else if (transactions.Any(c => c.FunctionType == FunctionType.CompleteWithdrawal))
-                throw new Exception("Withdrawal already made.");
+                throw new InvalidOperationException("Withdrawal already made.");
 
             List<string> transactionsHash = new List<string>();
             Parallel.ForEach(Enumerable.Range(1, monthsAmount), new ParallelOptions() { MaxDegreeOfParallelism = 5 },
@@ -100,7 +100,7 @@ namespace Auctus.Business.Contracts
             List<PensionFundTransaction> transactions = Data.List(pensionFund.Option.PensionFundContract.TransactionHash);
             
             if (transactions.Any(c => !c.BlockNumber.HasValue))
-                throw new Exception("Wait for unfinished payment transactions.");
+                throw new InvalidOperationException("Wait for unfinished payment transactions.");
 
             return GenerateContractTransaction(pensionFund.Option.PensionFundContract.TransactionHash, FunctionType.CompleteWithdrawal,
                         pensionFund.Option.Company.Employee.Address, pensionFund.Option.PensionFundContract.Address, pensionFund.Option.Company.Employee.Address,
@@ -112,7 +112,7 @@ namespace Auctus.Business.Contracts
         {
             IEnumerable<PensionFundTransaction> completed = pendingTransactions.Where(c => events.Any(k => k.TransactionHash == c.TransactionHash));
             DateTime tolerance = DateTime.UtcNow.AddMinutes(-3);
-            if (completed.Count() == 0 && pendingTransactions.Count() > completed.Count() && pendingTransactions.Any(c => c.CreationDate < tolerance))
+            if (!completed.Any() && pendingTransactions.Count() > completed.Count() && pendingTransactions.Any(c => c.CreationDate < tolerance))
             {
                 PoolInfo poolInfo = EthereumManager.GetPoolInfo();
                 IEnumerable<PensionFundTransaction> lostTransactions = pendingTransactions.Where(c => c.CreationDate < tolerance &&
@@ -147,7 +147,7 @@ namespace Auctus.Business.Contracts
             else if (functionType == FunctionType.CompleteWithdrawal)
                 transactionHash = EthereumManager.WithdrawalFromDefaultPensionFund(employeeAddress, contractAddress, abi, gasLimit);
             else
-                throw new Exception("Invalid function type for payment transaction.");
+                throw new ArgumentException("Invalid function type for payment transaction.");
 
             Insert(new PensionFundTransaction()
             {

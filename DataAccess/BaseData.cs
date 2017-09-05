@@ -15,32 +15,32 @@ namespace Auctus.DataAccess
 {
     public abstract class BaseData<T> : DapperRepositoryBase
     {
-        public BaseData() : base(Config.DbConnString)
+        protected BaseData() : base(Config.DbConnString)
         { }
         //TODO: add to configuration manager like structure
         private readonly string connString = Config.DbConnString;
 
-        public new IEnumerable<T> SelectByObject<T>(T criteria)
+        public IEnumerable<T> SelectByObject(T criteria)
         {
             return base.SelectByObject<T>(criteria);
         }
 
-        public new IEnumerable<T> SelectAll<T>()
+        public IEnumerable<T> SelectAll()
         {
             return base.SelectAll<T>();
         }
 
-        public new void Insert<T>(T obj)
+        public void Insert(T obj)
         {
             base.Insert<T>(obj);
         }
 
-        public new void Update<T>(T obj)
+        public void Update(T obj)
         {
-            base.Update<T>(obj);
+            base.Update(obj);
         }
 
-        public new void Delete<T>(T obj)
+        public void Delete(T obj)
         {
             base.Delete<T>(obj);
         }
