@@ -96,9 +96,17 @@ namespace Web.Controllers
         {
             Task.Run(() =>
             {
-                var pensionFundContract = FundsServices.CheckContractCreationTransaction(transactionHash);
-                var hubContext = HubConnectionManager.GetHubContext<AuctusDemoHub>();
-                hubContext.Clients.Client(ConnectionId).deployCompleted(pensionFundContract);//Can also return a Json
+                try
+                {
+                    var pensionFundContract = FundsServices.CheckContractCreationTransaction(transactionHash);
+                    var hubContext = HubConnectionManager.GetHubContext<AuctusDemoHub>();
+                    hubContext.Clients.Client(ConnectionId).deployCompleted(Json(pensionFundContract));
+                }
+                catch
+                {
+                    var hubContext = HubConnectionManager.GetHubContext<AuctusDemoHub>();
+                    hubContext.Clients.Client(ConnectionId).deployError();
+                }
             });
         }
     }

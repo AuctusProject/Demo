@@ -87,6 +87,7 @@ Wizard.Components = {
         Code: $('#contract-deploy-code'),
         TransactionIdLink: $('#contract-deploy-tx-id-link'),
         TransactionIdTitle: $('#contract-deploy-tx-id-title'),
+        TryAgain: $('#try-again')
     },
     WizardRow: $('#wizard-row')
 };
@@ -108,7 +109,7 @@ Wizard.Operations = {
                 data: model,
                 success: Wizard.Operations.OnSave,
                 error: function (xhr, ajaxOptions, thrownError) {
-                    alert(xhr.responseText);
+                    Wizard.Operations.OnDeployError();
                 }
             });
         }
@@ -116,6 +117,9 @@ Wizard.Operations = {
     ShowGeneratingContract: function (model) {
         Wizard.Components.ContractDeploy.ContractCodeWrapper.hide();
         Wizard.Components.ContractDeploy.Title.html("Generating Smart Contract...");
+        Wizard.Components.ContractDeploy.Icon.addClass("fa fa-spinner fa-spin fa-fw");
+        Wizard.Components.ContractDeploy.TryAgain.hide();
+        Wizard.Components.ContractDeploy.TransactionIdTitle.hide();
         Wizard.Components.WizardRow.hide();
         Wizard.Components.ContractDeploy.NextButton.hide();
         Wizard.Components.ContractDeploy.ContractDeployRow.show();
@@ -132,11 +136,19 @@ Wizard.Operations = {
     OnDeployCompleted: function (data) {
         Wizard.Components.ContractDeploy.Title.html("<i class='fa fa-check-circle-o'></i> Deploy Completed!");
         Wizard.Components.ContractDeploy.Title.addClass("text-success");
-        Wizard.Components.ContractDeploy.Icon.html("Address: <a target='_blank' href='https://ropsten.etherscan.io/address/" + data.Address + "'>" + data.Address + "</a>");
+        Wizard.Components.ContractDeploy.Icon.html("Address: <a target='_blank' href='https://ropsten.etherscan.io/address/" + data.address + "'>" + data.address + "</a>");
         Wizard.Components.ContractDeploy.Icon.removeClass();
         Wizard.Components.ContractDeploy.NextButton.removeAttr('disabled');
-        Wizard.Components.ContractDeploy.NextButton.click(function () { Wizard.Operations.GoToDashBoard(data.TransactionHash); });
+        Wizard.Components.ContractDeploy.NextButton.unbind('click').click(function () { Wizard.Operations.GoToDashBoard(data.transactionHash); });
         Wizard.Components.ContractDeploy.NextButton.show();
+    },
+    OnDeployError: function () {
+        Wizard.Components.ContractDeploy.Title.html("Sorry, something unexpected happened.");
+        Wizard.Components.ContractDeploy.Title.removeClass();
+        Wizard.Components.ContractDeploy.Icon.removeClass();
+        Wizard.Components.ContractDeploy.TransactionIdTitle.hide();
+        Wizard.Components.ContractDeploy.TryAgain.unbind('click').click(function () { Wizard.Operations.Save();});
+        Wizard.Components.ContractDeploy.TryAgain.show();
     },
     GoToDashBoard: function (PensionFundOptionAddress) {
         alert('Go to dashboard: ' + PensionFundOptionAddress);
