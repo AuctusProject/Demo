@@ -38,11 +38,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Accounts\" />
-    <Folder Include="Views\SignalRPoc\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\8-Model\8-Model.csproj" />
     <ProjectReference Include="..\Controller\1-Service.csproj" />
+    <ProjectReference Include="..\Model\8-Model.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="nlog.config">

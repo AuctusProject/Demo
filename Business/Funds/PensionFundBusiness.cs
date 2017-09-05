@@ -95,16 +95,5 @@ namespace Auctus.Business.Funds
             if (fund.Fee > 99)
                 throw new ArgumentException("Fee cannot be greater than 99.");
         }
-
-        //TODO: REMOVE/REFACTOR AFTER IMPLEMENTATION
-        public bool DeployContract()
-        {
-            //Do Something
-            //Call EthereumProxy if the "Something" is succeded
-
-            Thread.Sleep(3000); //Simulate blockchain processing time
-
-            return true;
-        }
     }
 }

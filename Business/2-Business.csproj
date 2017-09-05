@@ -7,10 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\8-Model\8-Model.csproj" />
     <ProjectReference Include="..\DataAccess\4-DataAccess.csproj" />
     <ProjectReference Include="..\DomainObjects\5-DomainObjects.csproj" />
     <ProjectReference Include="..\EthereumProxy\3-EthereumProxy.csproj" />
+    <ProjectReference Include="..\Model\8-Model.csproj" />
     <ProjectReference Include="..\Util\7-Util.csproj" />
   </ItemGroup>
 

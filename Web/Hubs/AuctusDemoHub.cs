@@ -9,7 +9,7 @@ namespace Auctus.Web.Hubs
 {
     [HubName("AuctusDemo")]
     public class AuctusDemoHub : Hub
-    {
+    {   
         public override Task OnConnected()
         {
           //  string userid = Context.User.Identity.Name;
@@ -17,6 +17,5 @@ namespace Auctus.Web.Hubs
           //  Groups.Add(Context.ConnectionId, userid);
             return base.OnConnected();
         }
-
     }
 }

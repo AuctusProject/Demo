@@ -28,6 +28,11 @@ $(document).ready(function () {
 
     hub.on('deployCompleted', Wizard.Operations.OnDeployCompleted);
 
+    $.connection.hub.disconnected(function () {
+        if ($.connection.hub.lastError)
+        { alert("Disconnected. Reason: " + $.connection.hub.lastError.message); }
+    });
+
     connection.start();
 });
 

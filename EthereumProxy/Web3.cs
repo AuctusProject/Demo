@@ -197,13 +197,19 @@ namespace Auctus.EthereumProxy
             return double.Parse(string.Format("{0}.{1}", strNonDecimals, strDecimals), CultureInfo.InvariantCulture);
         }
 
-        internal static Transaction GetTransaction(string transactionHash, int amountAttempts = 3, int waitingTime = 5000)
+        internal static Transaction GetTransaction(string transactionHash, int amountAttempts = 10, int waitingTime = 5000)
         {
             string transactionData = GetTransactionCompleted(transactionHash, amountAttempts, waitingTime);
             if (!string.IsNullOrEmpty(transactionData))
+            {
+                Debug.Write($"Transação encontrada: {DateTime.Now}");
                 return Newtonsoft.Json.JsonConvert.DeserializeObject<Transaction>(transactionData);
+            }
             else
+            {
+                Debug.Write($"Transação não encontrada: {DateTime.Now}");
                 return null;
+            }
         }
 
         internal static CompleteVariableType EtherType

@@ -23,11 +23,5 @@ namespace Auctus.Service
         {
             return PensionFundContractBusiness.CheckContractCreationTransaction(transactionHash);
         }
-
-        //TODO: REMOVE/REFACTOR AFTER IMPLEMENTATION
-        public bool DeployContract()
-        {
-            return PensionFundBusiness.DeployContract();
-        }
     }
 }

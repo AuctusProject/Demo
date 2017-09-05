@@ -11,8 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\8-Model\8-Model.csproj" />
     <ProjectReference Include="..\Business\2-Business.csproj" />
+    <ProjectReference Include="..\Model\8-Model.csproj" />
   </ItemGroup>
 
 </Project>
