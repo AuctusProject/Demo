@@ -29,6 +29,11 @@
     Wizard.Components.Buttons.Save.click(Wizard.Operations.Save);
 
     $('form').validate();
+
+    Wizard.Components.ContractDeploy.CodeMirror = CodeMirror.fromTextArea(Wizard.Components.ContractDeploy.Code[0], {
+        lineNumbers: true,
+        mode: "text/javascript"
+    });
 });
 
 function nextTab(elem) {
@@ -73,14 +78,17 @@ Wizard.Components = {
     Buttons: {
         Save: $('#wizard-save-button')
     },
-    Modal: {
-        ContractDeploy: $('#modal-contract-deploy'),
-        NextButton: $('#btn-modal-contract-deploy-next'),
-        Title: $('#modal-contract-deploy-title'),
-        Icon: $('#modal-contract-deploy-icon'),
-        Code: $('#modal-contract-deploy-code'),
-        TransactionId: $('#modal-contract-deploy-tx-id')
-    }
+    ContractDeploy: {
+        ContractDeployRow: $('#contract-deploy-row'),
+        NextButton: $('#btn-contract-deploy-next'),        
+        Title: $('#contract-deploy-title'),
+        Icon: $('#contract-deploy-icon'),
+        ContractCodeWrapper: $('#contract-deploy-code-wrapper'),
+        Code: $('#contract-deploy-code'),
+        TransactionIdLink: $('#contract-deploy-tx-id-link'),
+        TransactionIdTitle: $('#contract-deploy-tx-id-title'),
+    },
+    WizardRow: $('#wizard-row')
 };
 
 Wizard.Operations = {
@@ -89,6 +97,9 @@ Wizard.Operations = {
         model.Contract.VestingRules = GetVestingRules();
 
         if (Wizard.Operations.Validate(model)) {
+
+            Wizard.Operations.ShowGeneratingContract(model);
+
             $.ajax({
                 url: "Home/Save",
                 beforeSend: function (request) {
@@ -102,22 +113,30 @@ Wizard.Operations = {
             });
         }
     },
+    ShowGeneratingContract: function (model) {
+        Wizard.Components.ContractDeploy.ContractCodeWrapper.hide();
+        Wizard.Components.ContractDeploy.Title.html("Generating Smart Contract...");
+        Wizard.Components.WizardRow.hide();
+        Wizard.Components.ContractDeploy.NextButton.hide();
+        Wizard.Components.ContractDeploy.ContractDeployRow.show();
+    },
     OnSave: function (data) {
-        Wizard.Components.Modal.TransactionId.attr("href", "https://ropsten.etherscan.io/tx/" + data.TransactionHash);
-        Wizard.Components.Modal.TransactionId.html(data.TransactionHash);
-        Wizard.Components.Modal.Code.html(data.smartContractCode);
-        Wizard.Components.Modal.Code.each(function (i, block) {
-            hljs.highlightBlock(block);
-        });
-        Wizard.Components.Modal.ContractDeploy.modal('show');
+        Wizard.Components.ContractDeploy.Title.html("Deploying Smart Contract...");
+        Wizard.Components.ContractDeploy.TransactionIdLink.attr("href", "https://ropsten.etherscan.io/tx/" + data.transactionHash);
+        Wizard.Components.ContractDeploy.TransactionIdLink.html(data.transactionHash);
+        Wizard.Components.ContractDeploy.TransactionIdTitle.show();
+        Wizard.Components.ContractDeploy.CodeMirror.setValue(js_beautify(data.smartContractCode, { indent_size: 4 }));
+        setTimeout(function () { Wizard.Components.ContractDeploy.CodeMirror.refresh(); },1);
+        Wizard.Components.ContractDeploy.ContractCodeWrapper.show();
     },
     OnDeployCompleted: function (data) {
-        Wizard.Components.Modal.Title.html("<i class='fa fa-check-circle-o'></i> Deploy Completed!");
-        Wizard.Components.Modal.Title.addClass("text-success");
-        Wizard.Components.Modal.Icon.html("Address: <a href='https://ropsten.etherscan.io/address/" + data.Address + "'>" + data.Address + "</a>");
-        Wizard.Components.Modal.Icon.removeClass();
-        Wizard.Components.Modal.NextButton.removeAttr('disabled');
-        Wizard.Components.Modal.NextButton.click(function () { Wizard.Components.Modal.GoToDashBoard(data.PensionFundOptionAddress); });
+        Wizard.Components.ContractDeploy.Title.html("<i class='fa fa-check-circle-o'></i> Deploy Completed!");
+        Wizard.Components.ContractDeploy.Title.addClass("text-success");
+        Wizard.Components.ContractDeploy.Icon.html("Address: <a target='_blank' href='https://ropsten.etherscan.io/address/" + data.Address + "'>" + data.Address + "</a>");
+        Wizard.Components.ContractDeploy.Icon.removeClass();
+        Wizard.Components.ContractDeploy.NextButton.removeAttr('disabled');
+        Wizard.Components.ContractDeploy.NextButton.click(function () { Wizard.Operations.GoToDashBoard(data.TransactionHash); });
+        Wizard.Components.ContractDeploy.NextButton.show();
     },
     GoToDashBoard: function (PensionFundOptionAddress) {
         alert('Go to dashboard: ' + PensionFundOptionAddress);

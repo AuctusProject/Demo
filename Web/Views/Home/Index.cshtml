@@ -1,5 +1,5 @@
 ﻿
-<div class="row">
+<div id="wizard-row" class="row">
     <section>
         <div class="wizard">
             <div class="wizard-inner">
@@ -57,7 +57,17 @@
         </div>
     </section>
 </div>
+<div id="contract-deploy-row" class="row" style="display:none">
+    @Html.Partial("~/Views/Home/_ContractDeploy.cshtml")
+</div>
+
+
+@section style{
+    <link rel=stylesheet href="~/lib/codemirror/codemirror.css">
+}
 
 @section scripts{
+    <script src="~/lib/codemirror/codemirror.js"></script>
+    <script src="~/lib/codemirror/mode/javascript.js"></script>
     <script type="text/javascript" src="~/js/home.js"></script>
 }
