@@ -30,7 +30,7 @@ namespace Auctus.Business.Contracts
             KeyValuePair<string, string> demoTransaction = EthereumManager.DeployDefaultPensionFund(defaultDemonstrationPensionFundSmartContract.GasLimit, 
                 pensionFundAddress, employerAddress, employeeAddress,
                 pensionFundFee, pensionFundLatePenalty, 20, maxSalaryBonus, employeeContribution, employeeContributionBonus, employeeSalary, 
-                referenceValues, bonusVestingDistribuition);            
+                referenceValues, bonusVestingDistribuition.ToDictionary(c => c.Key * 12, c => c.Value));            
 
             var pensionFundContract = new PensionFundContract()
             {

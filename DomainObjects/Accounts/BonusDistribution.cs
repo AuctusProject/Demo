@@ -1,5 +1,4 @@
 ﻿using Auctus.DomainObjects.Funds;
-using Auctus.DomainObjects.Security;
 using Auctus.Util.DapperAttributes;
 using System;
 using System.Collections.Generic;
@@ -17,7 +16,5 @@ namespace Auctus.DomainObjects.Accounts
         public Int32 Period { get; set; }
         [DapperType(System.Data.DbType.Double)]
         public Double ReleasedBonus { get; set; }
-
-        public Company Company { get; set; }
     }
 }

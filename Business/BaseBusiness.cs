@@ -1,7 +1,6 @@
 ﻿using Auctus.Business.Accounts;
 using Auctus.Business.Contracts;
 using Auctus.Business.Funds;
-using Auctus.Business.Security;
 using Auctus.DataAccess;
 using Auctus.EthereumProxy;
 using Auctus.Util;
@@ -30,7 +29,6 @@ namespace Auctus.Business
         private EmployeeBusiness _employeeBusiness;
         private CompanyBusiness _companyBusiness;
         private BonusDistributionBusiness _bonusDistributionBusiness;
-        private UserBusiness _userBusiness;
         private ReferenceContractBusiness _referenceContractBusiness;
 
         protected BaseBusiness(ILoggerFactory loggerFactory, Cache cache)
@@ -167,16 +165,6 @@ namespace Auctus.Business
                 if (_bonusDistributionBusiness == null)
                     _bonusDistributionBusiness = new BonusDistributionBusiness(LoggerFactory, MemoryCache);
                 return _bonusDistributionBusiness;
-            }
-        }
-
-        protected UserBusiness UserBusiness
-        {
-            get
-            {
-                if (_userBusiness == null)
-                    _userBusiness = new UserBusiness(LoggerFactory, MemoryCache);
-                return _userBusiness;
             }
         }
 

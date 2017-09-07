@@ -1,6 +1,5 @@
 ﻿using Auctus.DomainObjects.Accounts;
 using Auctus.DomainObjects.Funds;
-using Auctus.DomainObjects.Security;
 using Auctus.Util.DapperAttributes;
 using System;
 using System.Collections.Generic;

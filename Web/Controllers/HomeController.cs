@@ -24,30 +24,12 @@ namespace Web.Controllers
         {
             return View();
         }
-
-        public IActionResult About()
-        {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
-        }
-
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
-        }
-
-        public IActionResult Error()
-        {
-            return View();
-        }
-
+        
         [HttpPost]
+        //[ValidateAntiForgeryToken]
         public IActionResult Save()//Wizard model)
         {
-            var pensionFundContract = FundsServices.CreateCompleteEntry(new Fund()
+            var pensionFundContract = PensionFundsServices.CreateCompleteEntry(new Fund()
             {
                 Fee = 5,
                 LatePaymentFee = 5,
@@ -96,19 +78,23 @@ namespace Web.Controllers
         [HttpPost]
         public void CheckContractCreationTransaction(String transactionHash)
         {
-            Task.Run(() =>
+            Task.Factory.StartNew(() =>
             {
                 var hubContext = HubConnectionManager.GetHubContext<AuctusDemoHub>();
                 try
                 {
-                    var pensionFundContract = FundsServices.CheckContractCreationTransaction(transactionHash);
+                    var pensionFundContract = PensionFundsServices.CheckContractCreationTransaction(transactionHash);
                     if (pensionFundContract.BlockNumber.HasValue)
-                        hubContext.Clients.Client(ConnectionId).deployCompleted(Json(pensionFundContract));
+                        hubContext.Clients.Client(ConnectionId).deployCompleted(Json(
+                            new { Address = pensionFundContract.Address,
+                                BlockNumber = pensionFundContract.BlockNumber,
+                                TransactionHash = pensionFundContract.TransactionHash }));
                     else
                         hubContext.Clients.Client(ConnectionId).deployUncompleted(pensionFundContract.TransactionHash);
                 }
-                catch
+                catch(Exception ex)
                 {
+                    Logger.LogError(new EventId(1), ex, string.Format("Erro on CheckContractCreationTransaction {0}.", transactionHash));
                     hubContext.Clients.Client(ConnectionId).deployError();
                 }
             });

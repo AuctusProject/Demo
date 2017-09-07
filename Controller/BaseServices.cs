@@ -1,7 +1,6 @@
 ﻿using Auctus.Business.Accounts;
 using Auctus.Business.Contracts;
 using Auctus.Business.Funds;
-using Auctus.Business.Security;
 using Auctus.Util;
 using Microsoft.Extensions.Logging;
 using System;
@@ -31,7 +30,6 @@ namespace Auctus.Service
         protected EmployeeBusiness EmployeeBusiness { get { return new EmployeeBusiness(Logger, MemoryCache); } }
         protected CompanyBusiness CompanyBusiness { get { return new CompanyBusiness(Logger, MemoryCache); } }
         protected BonusDistributionBusiness BonusDistributionBusiness { get { return new BonusDistributionBusiness(Logger, MemoryCache); } }
-        protected UserBusiness UserBusiness { get { return new UserBusiness(Logger, MemoryCache); } }
         protected ReferenceContractBusiness ReferenceContractBusiness { get { return new ReferenceContractBusiness(Logger, MemoryCache); } }
     }
 }

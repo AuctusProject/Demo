@@ -265,7 +265,7 @@ contract CompanyContract is DemoPensionFund {
         if (employeeSzaboCashback > 0)
             employee.transfer(employeeSzaboCashback);
 
-        Withdrawal(investedPeriods[employee], employee, employerBonus, employerAbsoluteBonus, employerTokenCashback, employeeTokenCashback, employerSzaboCashback, employeeSzaboCashback);
+        Withdrawal(investedPeriods[employee] + 1, employee, employerBonus, employerAbsoluteBonus, employerTokenCashback, employeeTokenCashback, employerSzaboCashback, employeeSzaboCashback);
     }
 
     function executeBuy(address responsable, uint256 baseInvestment, uint256 requiredInvestment, uint64 daysOverdue) private {

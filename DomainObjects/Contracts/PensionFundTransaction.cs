@@ -8,7 +8,9 @@ namespace Auctus.DomainObjects.Contracts
 {
     public class PensionFundTransaction
     {
-        [DapperKey]
+        [DapperKey(true)]
+        [DapperType(System.Data.DbType.UInt32)]
+        public Int32 Id { get; set; }
         [DapperType(System.Data.DbType.AnsiStringFixedLength)]
         public String TransactionHash { get; set; }
         [DapperType(System.Data.DbType.DateTime)]

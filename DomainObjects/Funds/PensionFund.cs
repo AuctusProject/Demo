@@ -1,5 +1,4 @@
-﻿using Auctus.DomainObjects.Security;
-using Auctus.Util.DapperAttributes;
+﻿using Auctus.Util.DapperAttributes;
 using System;
 using System.Collections.Generic;
 using System.Text;

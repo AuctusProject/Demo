@@ -24,9 +24,7 @@ namespace Web.Controllers
             Logger = loggerFactory.CreateLogger(GetType().Namespace);
         }
 
-        protected FundsServices FundsServices { get { return new FundsServices(LoggerFactory, MemoryCache); } }
-        protected SecurityServices SecurityServices { get { return new SecurityServices(LoggerFactory, MemoryCache); } }
+        protected PensionFundsServices PensionFundsServices { get { return new PensionFundsServices(LoggerFactory, MemoryCache); } }
         protected ContractsServices ContractsServices { get { return new ContractsServices(LoggerFactory, MemoryCache); } }
-        protected AccountsServices AccountsServices { get { return new AccountsServices(LoggerFactory, MemoryCache); } }
     }
 }

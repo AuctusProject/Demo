@@ -1,5 +1,4 @@
 ﻿using Auctus.DomainObjects.Contracts;
-using Auctus.DomainObjects.Security;
 using Auctus.Util.DapperAttributes;
 using System;
 using System.Collections.Generic;
@@ -20,8 +19,5 @@ namespace Auctus.DomainObjects.Accounts
         public Double Contribution { get; set; }
         [DapperType(System.Data.DbType.AnsiStringFixedLength)]
         public String CompanyAddress { get; set; }
-        
-        public Company Company { get; set ; }
-        public Wallet Wallet { get; set; }
     }
 }
