@@ -6,11 +6,11 @@ namespace Auctus.DomainObjects.Contracts
 {
     public class ReferenceType 
     {
-        public static readonly ReferenceType Gold = new ReferenceType("0x42a694a6587b9a14c766abfa15acdcca77c90405");
-        public static readonly ReferenceType SP500 = new ReferenceType("0xd221c95b9b800fc84a061715fc91574df17610bb");
-        public static readonly ReferenceType MSCIWorld = new ReferenceType("0x5cdf2373a02362fef0e035edfc64292cb7ea33ea");
-        public static readonly ReferenceType VWEHX = new ReferenceType("0x3af1be6f13a840f60de22d1441fd66cac567722a");
-        public static readonly ReferenceType Bitcoin = new ReferenceType("0x4e69dac3a9d4b91c48d17f805bf9237484f9e040");
+        public static readonly ReferenceType Gold = new ReferenceType("0x2121b20c077b7de1cb9fd3ec184408f246d0f12a");
+        public static readonly ReferenceType SP500 = new ReferenceType("0xd9340654db260f5f69df1a6dd64ffe6be3632844");
+        public static readonly ReferenceType MSCIWorld = new ReferenceType("0x62e77625fd1ea74eefa35e040574c723d2275cd1");
+        public static readonly ReferenceType VWEHX = new ReferenceType("0xce4b9b40a88cf1cbd8958b153cbe25325e4ce4f2");
+        public static readonly ReferenceType Bitcoin = new ReferenceType("0x3fabbaa13605b47823690de0f84d16ffaba05ba2");
 
         public string Address { get; private set; }
 
@@ -23,15 +23,15 @@ namespace Auctus.DomainObjects.Contracts
         {
             switch (address)
             {
-                case "0x42a694a6587b9a14c766abfa15acdcca77c90405":
+                case "0x2121b20c077b7de1cb9fd3ec184408f246d0f12a":
                     return Gold;
-                case "0xd221c95b9b800fc84a061715fc91574df17610bb":
+                case "0xd9340654db260f5f69df1a6dd64ffe6be3632844":
                     return SP500;
-                case "0x5cdf2373a02362fef0e035edfc64292cb7ea33ea":
+                case "0x62e77625fd1ea74eefa35e040574c723d2275cd1":
                     return MSCIWorld;
-                case "0x3af1be6f13a840f60de22d1441fd66cac567722a":
+                case "0xce4b9b40a88cf1cbd8958b153cbe25325e4ce4f2":
                     return VWEHX;
-                case "0x4e69dac3a9d4b91c48d17f805bf9237484f9e040":
+                case "0x3fabbaa13605b47823690de0f84d16ffaba05ba2":
                     return Bitcoin;
                 default:
                     throw new Exception("Invalid reference type.");

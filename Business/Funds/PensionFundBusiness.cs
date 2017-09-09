@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using Auctus.Util;
 using Microsoft.Extensions.Logging;
+using Auctus.EthereumProxy;
 
 namespace Auctus.Business.Funds
 {
@@ -19,10 +20,26 @@ namespace Auctus.Business.Funds
     {
         public PensionFundBusiness(ILoggerFactory loggerFactory, Cache cache) : base(loggerFactory, cache) { }
 
+        public Withdrawal GetWithdrawalInfo(string pensionFundContractAddress)
+        {
+            PensionFund pensionFund = GetByContract(pensionFundContractAddress);
+            SmartContract smartContract = SmartContractBusiness.GetDefaultDemonstrationPensionFund();
+            WithdrawalInfo withdrawalInfo = EthereumManager.GetWithdrawalInfo(pensionFund.Option.Company.Employee.Address, pensionFundContractAddress, smartContract.ABI);
+            return new Withdrawal()
+            {
+                EmployeeAbsoluteBonus = withdrawalInfo.EmployeeAbsoluteBonus,
+                EmployeeBonus = withdrawalInfo.EmployeeBonus,
+                EmployeeSzaboCashback = withdrawalInfo.EmployeeSzaboCashback,
+                EmployeeTokenCashback = withdrawalInfo.EmployeeTokenCashback,
+                EmployerSzaboCashback = withdrawalInfo.EmployerSzaboCashback,
+                EmployerTokenCashback = withdrawalInfo.EmployerTokenCashback
+            };
+        }
+
         public PensionFundInfo GetPensionFundInfo(string pensionFundContractAddress)
         {
             PensionFund pensionFund = GetByContract(pensionFundContractAddress);
-            AssetsReferenceValue[] assetReference = new AssetsReferenceValue[60];
+            AssetsReferenceValue[] assetReference = new AssetsReferenceValue[61];
             List<Asset> assets = new List<Asset>();
             foreach (PensionFundReferenceContract reference in pensionFund.Option.PensionFundContract.PensionFundReferenceContract)
             {
@@ -201,12 +218,12 @@ namespace Auctus.Business.Funds
             return possiblePayment;
         }
 
-        public PensionFund GetByTransaction(string pensionFundContractHash)
+        internal PensionFund GetByTransaction(string pensionFundContractHash)
         {
             return GetByTransaction(pensionFundContractHash);
         }
 
-        public PensionFund GetByContract(string pensionFundContractAddress)
+        internal PensionFund GetByContract(string pensionFundContractAddress)
         {
             if (!EthereumProxy.EthereumManager.IsValidAddress(pensionFundContractAddress))
                 throw new ArgumentException("Invalid contract address.");
@@ -257,7 +274,7 @@ namespace Auctus.Business.Funds
             return pensionFundContract;
         }
 
-        public PensionFund Create(String name)
+        internal PensionFund Create(String name)
         {
             var pensionFund = new PensionFund();
             pensionFund.Name = name;

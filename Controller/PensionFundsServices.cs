@@ -20,6 +20,11 @@ namespace Auctus.Service
             return PensionFundBusiness.GetPensionFundInfo(contractAddress);
         }
 
+        public Withdrawal GetWithdrawalInfo(string contractAddress)
+        {
+            return PensionFundBusiness.GetWithdrawalInfo(contractAddress);
+        }
+
         public PensionFundContract CreateCompleteEntry(Fund fund, Company company, Employee employee)
         {
             return PensionFundBusiness.CreateCompleteEntry(fund, company, employee);

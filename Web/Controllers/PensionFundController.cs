@@ -27,6 +27,12 @@ namespace Web.Controllers
         }
 
         [HttpPost]
+        public IActionResult GetWithdrawalInfo(string contractAddress)
+        {
+            return Json(PensionFundsServices.GetWithdrawalInfo(contractAddress));
+        }
+
+        [HttpPost]
         public IActionResult GeneratePayment(string contractAddress, int monthsAmount)
         {
             Progress progress = PensionFundsServices.GeneratePayment(contractAddress, monthsAmount);

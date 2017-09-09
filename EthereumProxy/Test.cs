@@ -177,6 +177,7 @@ contract ReferenceValue {
 		values[58] = 126563;
 		values[59] = 124500;
 		values[60] = 126026;
+        values[61] = 127241;
 	}
 
 	function getValueAt(uint64 period, uint64 daysOverdue) constant returns (uint256) {
@@ -279,6 +280,7 @@ contract ReferenceValue {
 		values[58] = 242341;
 		values[59] = 247030;
 		values[60] = 244424;
+        values[61] = 246139;
 	}
 
 	function getValueAt(uint64 period, uint64 daysOverdue) constant returns (uint256) {
@@ -381,6 +383,7 @@ contract ReferenceValue {
 		values[58] = 265755;
 		values[59] = 253326;
 		values[60] = 385360;
+        values[61] = 390925;
 	}
 
 	function getValueAt(uint64 period, uint64 daysOverdue) constant returns (uint256) {
@@ -483,6 +486,7 @@ contract ReferenceValue {
 		values[58] = 191643;
 		values[59] = 196110;
 		values[60] = 194628;
+        values[61] = 197326;
 	}
 
 	function getValueAt(uint64 period, uint64 daysOverdue) constant returns (uint256) {
@@ -585,6 +589,7 @@ contract ReferenceValue {
 		values[58] = 596;
 		values[59] = 595;
 		values[60] = 599;
+        values[61] = 603;
 	}
 
 	function getValueAt(uint64 period, uint64 daysOverdue) constant returns (uint256) {

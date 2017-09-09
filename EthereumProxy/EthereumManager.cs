@@ -72,6 +72,13 @@ namespace Auctus.EthereumProxy
 
         public static string WithdrawalFromDefaultPensionFund(string employeeAddress, string smartContractAddress, string abi, int gasLimit)
         {
+            WithdrawalInfo withdrawalInfo = GetWithdrawalInfo(employeeAddress, smartContractAddress, abi);
+            return Web3.CallFunction(smartContractAddress, abi, "sell", Web3.ETHER(withdrawalInfo.EmployeeSzaboCashback + withdrawalInfo.EmployerSzaboCashback), 
+                gasLimit, GetGweiPrice(), default(KeyValuePair<string, string>), new Variable(VariableType.Address, employeeAddress));
+        }
+
+        public static WithdrawalInfo GetWithdrawalInfo(string employeeAddress, string smartContractAddress, string abi)
+        {
             List<CompleteVariableType> returnTypes = new List<CompleteVariableType>();
             returnTypes.Add(new CompleteVariableType(VariableType.BigNumber, 4));
             returnTypes.Add(new CompleteVariableType(VariableType.BigNumber));
@@ -80,10 +87,15 @@ namespace Auctus.EthereumProxy
             returnTypes.Add(new CompleteVariableType(VariableType.BigNumber));
             returnTypes.Add(new CompleteVariableType(VariableType.BigNumber));
             List<Variable> withdrawalValues = Web3.CallConstFunction(returnTypes, smartContractAddress, abi, "getWithdrawalValues", new Variable(VariableType.Address, employeeAddress));
-            double requiredValue = ((BigNumber)withdrawalValues.ElementAt(4).Value).Value + ((BigNumber)withdrawalValues.ElementAt(5).Value).Value;
-
-            return Web3.CallFunction(smartContractAddress, abi, "sell", Web3.ETHER(requiredValue), gasLimit, GetGweiPrice(),
-                default(KeyValuePair<string, string>), new Variable(VariableType.Address, employeeAddress));
+            return new WithdrawalInfo()
+            {
+                EmployeeBonus = ((BigNumber)withdrawalValues.ElementAt(0).Value).Value,
+                EmployeeAbsoluteBonus = ((BigNumber)withdrawalValues.ElementAt(1).Value).Value,
+                EmployerTokenCashback = ((BigNumber)withdrawalValues.ElementAt(2).Value).Value,
+                EmployeeTokenCashback = ((BigNumber)withdrawalValues.ElementAt(3).Value).Value,
+                EmployerSzaboCashback = ((BigNumber)withdrawalValues.ElementAt(4).Value).Value,
+                EmployeeSzaboCashback = ((BigNumber)withdrawalValues.ElementAt(5).Value).Value
+            };
         }
 
         public static string EmployeeBuyFromDefaultPensionFund(string employeeAddress, string smartContractAddress, string abi, int daysOverdue, int gasLimit)
