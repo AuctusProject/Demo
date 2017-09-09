@@ -14,6 +14,8 @@ namespace Auctus.Business.Contracts
 {
     public class PensionFundContractBusiness : BaseBusiness<PensionFundContract, PensionFundContractData>
     {
+        internal const double AUCTUS_FEE = 20;
+
         public PensionFundContractBusiness(ILoggerFactory loggerFactory, Cache cache) : base(loggerFactory, cache) { }
 
         public PensionFundContract Create(String pensionFundAddress, String employerAddress, String employeeAddress, double pensionFundFee,
@@ -29,7 +31,7 @@ namespace Auctus.Business.Contracts
 
             KeyValuePair<string, string> demoTransaction = EthereumManager.DeployDefaultPensionFund(defaultDemonstrationPensionFundSmartContract.GasLimit, 
                 pensionFundAddress, employerAddress, employeeAddress,
-                pensionFundFee, pensionFundLatePenalty, 20, maxSalaryBonus, employeeContribution, employeeContributionBonus, employeeSalary, 
+                pensionFundFee, pensionFundLatePenalty, AUCTUS_FEE, maxSalaryBonus, employeeContribution, employeeContributionBonus, employeeSalary, 
                 referenceValues, bonusVestingDistribuition.ToDictionary(c => c.Key * 12, c => c.Value));            
 
             var pensionFundContract = new PensionFundContract()

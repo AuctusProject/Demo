@@ -15,6 +15,11 @@ namespace Auctus.Service
     {
         public PensionFundsServices(ILoggerFactory loggerFactory, Cache cache) : base(loggerFactory, cache) { }
 
+        public PensionFundInfo GetPensionFundInfo(string contractAddress)
+        {
+            return PensionFundBusiness.GetPensionFundInfo(contractAddress);
+        }
+
         public PensionFundContract CreateCompleteEntry(Fund fund, Company company, Employee employee)
         {
             return PensionFundBusiness.CreateCompleteEntry(fund, company, employee);
@@ -25,7 +30,7 @@ namespace Auctus.Service
             return PensionFundContractBusiness.CheckContractCreationTransaction(transactionHash);
         }
 
-        public List<Payment> GeneratePayment(string contractAddress, int monthsAmount)
+        public Progress GeneratePayment(string contractAddress, int monthsAmount)
         {
             return PensionFundTransactionBusiness.GeneratePayment(contractAddress, monthsAmount);
         }
@@ -35,7 +40,7 @@ namespace Auctus.Service
             return PensionFundTransactionBusiness.GenerateWithdrawal(contractAddress);
         }
 
-        public List<Payment> ReadPayments(string contractAddress)
+        public Progress ReadPayments(string contractAddress)
         {
             return PensionFundTransactionBusiness.ReadPayments(contractAddress);
         }

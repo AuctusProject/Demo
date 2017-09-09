@@ -20,17 +20,18 @@ namespace Web.Controllers
     {
         public PensionFundController(ILoggerFactory loggerFactory, Cache cache, IServiceProvider serviceProvider, IConnectionManager connectionManager) : base(loggerFactory, cache, serviceProvider, connectionManager) { }
 
-        public IActionResult Index()
+        [Route("/PensionFund/{contractAddress}")]
+        public IActionResult Index(string contractAddress)
         {
-            return View();
+            return View(PensionFundsServices.GetPensionFundInfo(contractAddress));
         }
 
         [HttpPost]
         public IActionResult GeneratePayment(string contractAddress, int monthsAmount)
         {
-            List<Payment> payments = PensionFundsServices.GeneratePayment(contractAddress, monthsAmount);
+            Progress progress = PensionFundsServices.GeneratePayment(contractAddress, monthsAmount);
             ReadPayments(contractAddress);
-            return Json(payments);
+            return Json(progress);
         }
 
         [HttpPost]
@@ -41,11 +42,11 @@ namespace Web.Controllers
                 var hubContext = HubConnectionManager.GetHubContext<AuctusDemoHub>();
                 try
                 {
-                    List<Payment> payments = PensionFundsServices.ReadPayments(contractAddress);
-                    if (!payments.Any(c => !c.BlockNumber.HasValue))
-                        hubContext.Clients.Client(ConnectionId).paymentsCompleted(Json(payments));
+                    Progress progress = PensionFundsServices.ReadPayments(contractAddress);
+                    if (!progress.TransactionHistory.Any(c => !c.PaymentDate.HasValue))
+                        hubContext.Clients.Client(ConnectionId).paymentsCompleted(Json(progress));
                     else
-                        hubContext.Clients.Client(ConnectionId).paymentsUncompleted(Json(payments));
+                        hubContext.Clients.Client(ConnectionId).paymentsUncompleted(Json(progress));
                 }
                 catch (Exception ex)
                 {

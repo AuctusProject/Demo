@@ -25,7 +25,7 @@ namespace Web.Controllers
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             string connectionId = HttpContext.Request.Headers["HubConnectionId"];
-            if (!string.IsNullOrEmpty(connectionId) && connectionId != "undefined" )
+            if (!string.IsNullOrEmpty(connectionId) && connectionId != "undefined")
                 ConnectionId = connectionId;
             base.OnActionExecuting(context);
         }

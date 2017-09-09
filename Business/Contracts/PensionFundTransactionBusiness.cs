@@ -17,33 +17,36 @@ namespace Auctus.Business.Contracts
     public class PensionFundTransactionBusiness : BaseBusiness<PensionFundTransaction, PensionFundTransactionData>
     {
         public PensionFundTransactionBusiness(ILoggerFactory loggerFactory, Cache cache) : base(loggerFactory, cache) { }
-
-        public List<Payment> ReadPayments(string contractAddress)
+        
+        public Progress ReadPayments(string contractAddress)
         {
+            PensionFund pensionFund = PensionFundBusiness.GetByContract(contractAddress);
+
             string cacheKey = GetCachePaymentKey(contractAddress);
             List<Payment> cachedPayment = MemoryCache.Get<List<Payment>>(cacheKey);
             if (cachedPayment != null && cachedPayment.Count == 120)
-                return cachedPayment;
-
-            PensionFund pensionFund = PensionFundBusiness.GetByContract(contractAddress);
+                return PensionFundBusiness.GetProgress(pensionFund, cachedPayment);
+            
             SmartContract smartContract = SmartContractBusiness.GetDefaultDemonstrationPensionFund();
             IEnumerable<PensionFundTransaction> transactions = Data.List(pensionFund.Option.PensionFundContract.TransactionHash).
                                                     Where(c => c.FunctionType == FunctionType.EmployeeBuy || c.FunctionType == FunctionType.CompanyBuy);
             IEnumerable<PensionFundTransaction> pendingTransactions = transactions.Where(c => !c.BlockNumber.HasValue && !string.IsNullOrEmpty(c.TransactionHash));
 
+            if (!transactions.Any())
+                return PensionFundBusiness.GetProgress(pensionFund, new List<Payment>());
             if (!pendingTransactions.Any())
             {
                 if (cachedPayment == null && !transactions.Any(c => c.BlockNumber.HasValue))
                 {
-                    return transactions.Select(c => new Payment()
+                    return PensionFundBusiness.GetProgress(pensionFund, transactions.Select(c => new Payment()
                     {
                         TransactionHash = c.TransactionHash,
                         CreatedDate = c.CreationDate,
                         Responsable = c.WalletAddress
-                    }).ToList();
+                    }).ToList());
                 }
                 else if (cachedPayment != null && cachedPayment.Count == transactions.Count())
-                    return cachedPayment;
+                    return PensionFundBusiness.GetProgress(pensionFund, cachedPayment);
                 else if (cachedPayment != null && cachedPayment.Count == transactions.Count(c => !string.IsNullOrEmpty(c.TransactionHash)))
                 {
                     cachedPayment.AddRange(transactions.Where(c => string.IsNullOrEmpty(c.TransactionHash)).Select(c => new Payment()
@@ -51,7 +54,7 @@ namespace Auctus.Business.Contracts
                         CreatedDate = c.CreationDate,
                         Responsable = c.WalletAddress
                     }));
-                    return cachedPayment;
+                    return PensionFundBusiness.GetProgress(pensionFund, cachedPayment);
                 }
             }
 
@@ -85,7 +88,7 @@ namespace Auctus.Business.Contracts
                             SzaboInvested = buyInfo.SzaboInvested,
                             TokenAmount = buyInfo.TokenAmount,
                             DaysOverdue = buyInfo.DaysOverdue,
-                            ReferenceDate = pensionFund.Option.PensionFundContract.CreationDate.AddDays(buyInfo.Period * 30).Date
+                            ReferenceDate = pensionFund.Option.PensionFundContract.CreationDate.AddMonths(buyInfo.Period).Date
                         });
                     }
                 }
@@ -93,7 +96,7 @@ namespace Auctus.Business.Contracts
                     MemoryCache.Set<List<Payment>>(cacheKey, completedPayments);
             }
             completedPayments.AddRange(payments);
-            return completedPayments;
+            return PensionFundBusiness.GetProgress(pensionFund, completedPayments);
         }
 
         public Withdrawal ReadWithdrawal(string contractAddress)
@@ -105,8 +108,10 @@ namespace Auctus.Business.Contracts
 
             PensionFund pensionFund = PensionFundBusiness.GetByContract(contractAddress);
             SmartContract smartContract = SmartContractBusiness.GetDefaultDemonstrationPensionFund();
-            PensionFundTransaction transaction = Data.List(pensionFund.Option.PensionFundContract.TransactionHash).Where(c => c.FunctionType == FunctionType.CompleteWithdrawal).Single();
-            
+            PensionFundTransaction transaction = Data.List(pensionFund.Option.PensionFundContract.TransactionHash).Where(c => c.FunctionType == FunctionType.CompleteWithdrawal).SingleOrDefault();
+            if (transaction == null)
+                return null;
+
             WithdrawalInfo withdrawalInfo = EthereumManager.ReadWithdrawalFromDefaultPensionFund(contractAddress);
             List<BaseEventInfo> baseInfo = new List<BaseEventInfo>();
             if (withdrawalInfo != null)
@@ -133,7 +138,7 @@ namespace Auctus.Business.Contracts
                     EmployeeTokenCashback = withdrawalInfo.EmployeeTokenCashback,
                     EmployerSzaboCashback = withdrawalInfo.EmployerSzaboCashback,
                     EmployerTokenCashback = withdrawalInfo.EmployerTokenCashback,
-                    ReferenceDate = pensionFund.Option.PensionFundContract.CreationDate.AddDays(withdrawalInfo.Period * 30).Date
+                    ReferenceDate = pensionFund.Option.PensionFundContract.CreationDate.AddMonths(withdrawalInfo.Period).Date
                 };
                 MemoryCache.Set<Withdrawal>(cacheKey, withdrawal);
             }
@@ -149,7 +154,7 @@ namespace Auctus.Business.Contracts
             return withdrawal;
         }
 
-        public List<Payment> GeneratePayment(string contractAddress, int monthsAmount)
+        public Progress GeneratePayment(string contractAddress, int monthsAmount)
         {
             if (monthsAmount < 1 || monthsAmount > 60)
                 throw new InvalidOperationException("Invalid months amount.");
@@ -182,14 +187,14 @@ namespace Auctus.Business.Contracts
                 Responsable = c.WalletAddress
             });
             if (payments == 0)
-                return newPayments.ToList();
+                return PensionFundBusiness.GetProgress(pensionFund, newPayments.ToList());
             else
             {
                 List<Payment> cachedPayment = MemoryCache.Get<List<Payment>>(GetCachePaymentKey(contractAddress));
                 if (cachedPayment != null && cachedPayment.Count == payments)
                 {
                     cachedPayment.AddRange(newPayments);
-                    return cachedPayment;
+                    return PensionFundBusiness.GetProgress(pensionFund, cachedPayment);
                 }
                 else
                     return ReadPayments(contractAddress);
@@ -219,8 +224,7 @@ namespace Auctus.Business.Contracts
             };
         }
 
-        private void HandleTransactions(SmartContract smartContract, PensionFund pensionFund,
-            IEnumerable<PensionFundTransaction> pendingTransactions, IEnumerable<BaseEventInfo> events)
+        private void HandleTransactions(SmartContract smartContract, PensionFund pensionFund, IEnumerable<PensionFundTransaction> pendingTransactions, IEnumerable<BaseEventInfo> events)
         {
             IEnumerable<PensionFundTransaction> completed = pendingTransactions.Where(c => events.Any(k => k.TransactionHash == c.TransactionHash));
             DateTime tolerance = DateTime.UtcNow.AddMinutes(-2);

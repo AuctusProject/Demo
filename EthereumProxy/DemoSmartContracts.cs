@@ -299,7 +299,7 @@ contract CompanyContract is DemoPensionFund {
     }
 
     function getSzaboCashback(address employee, uint256 employerTokenCashback, uint256 employeeTokenCashback) private returns(uint256, uint256) {
-        uint256 value = getTokenReferenceValue(investedPeriods[employee], 0);
+        uint256 value = getTokenReferenceValue(investedPeriods[employee] + 1, 0);
         uint256 employerSzaboCashback = employerTokenCashback.divided(value);
         uint256 employeeSzaboCashback = employeeTokenCashback.divided(value);
         return (employerSzaboCashback, employeeSzaboCashback);
