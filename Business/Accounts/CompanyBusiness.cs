@@ -16,34 +16,42 @@ namespace Auctus.Business.Accounts
         {
             if (company == null)
                 throw new ArgumentNullException("company");
-            if (company.BonusFee < 0 || company.BonusFee > 100)
-                throw new ArgumentException("Bonus Fee should be a value between 0 and 100.");
-            if (company.MaxBonusFee < 0 || company.MaxBonusFee > 100)
-                throw new ArgumentException("Max Bonus Fee should be a value between 0 and 100.");
+            if (company.BonusFee <= 0)
+                throw new ArgumentException("Bonus Fee must be greater then zero.");
+            if (company.BonusFee >= 1000)
+                throw new ArgumentException("Bonus Fee must be lesser then 1000.");
+            if (company.MaxBonusFee <= 0)
+                throw new ArgumentException("Max Bonus Fee must be greater then zero.");
+            if (company.MaxBonusFee > 100)
+                throw new ArgumentException("Max Bonus Fee must be lesser then 100.");
 
             ValidateVestingRules(company.VestingRules);
         }
         
         private static void ValidateVestingRules(IEnumerable<Model.VestingRules> vestingRules)
         {
-            if (vestingRules != null && vestingRules.Any())
+            if (vestingRules == null || !vestingRules.Any())
+                throw new ArgumentNullException("VestingRules");
+            if (vestingRules.Any(c => c.Percentage > 100))
+                throw new ArgumentException("Maximum is 100%.");
+            if (vestingRules.Count() != vestingRules.Select(c => c.Period).Distinct().Count())
+                throw new ArgumentException("Periods must be unique.");
+            if (vestingRules.Count() != vestingRules.Select(c => c.Percentage).Distinct().Count())
+                throw new ArgumentException("Percentage must be unique.");
+            if (vestingRules.Count() > 10)
+                throw new ArgumentException("Maximum of 10 vesting rules are allowed.");
+
+            vestingRules = vestingRules.OrderBy(c => c.Period);
+            if (vestingRules.Last().Percentage != 100)
+                throw new ArgumentException("Last period must be 100 percentage.");
+
+            Model.VestingRules previousVestingRule = null;
+            foreach (var vestingRule in vestingRules)
             {
-                Model.VestingRules previousVestingRule = null;
-                foreach (var vestingRule in vestingRules)
-                {
-                    if (previousVestingRule != null)
-                    {
-                        if (vestingRule.Period <= previousVestingRule.Period)
-                        {
-                            throw new ArgumentException("Vesting Rules periods should be crescent");
-                        }
-                        if (vestingRule.Percentage <= previousVestingRule.Percentage)
-                        {
-                            throw new ArgumentException("Vesting Rules percentages should be crescent");
-                        }
-                    }
-                    previousVestingRule = vestingRule;
-                }
+                if (previousVestingRule != null && vestingRule.Percentage < previousVestingRule.Percentage)
+                        throw new ArgumentException("Vesting Rules percentages should be crescent.");
+
+                previousVestingRule = vestingRule;
             }
         }
 

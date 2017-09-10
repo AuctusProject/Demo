@@ -31,19 +31,25 @@ namespace Web.Controllers
         {
             var pensionFundContract = PensionFundsServices.CreateCompleteEntry(new Fund()
             {
-                Fee = 5,
-                LatePaymentFee = 5,
+                Name = "Simple Pension Fund",
+                Fee = 3,
+                LatePaymentFee = 0.07,
                 AssetAllocations = new List<AssetAllocation>() {
                         new AssetAllocation(){
-                            Percentage =100,
-                            ReferenceContractAddress = "0x42a694a6587b9a14c766abfa15acdcca77c90405"
+                            Percentage =20,
+                            ReferenceContractAddress = "0xd9340654db260f5f69df1a6dd64ffe6be3632844"
+                        },
+                        new AssetAllocation(){
+                            Percentage =80,
+                            ReferenceContractAddress = "0x62e77625fd1ea74eefa35e040574c723d2275cd1"
                         }
                     }
             },
                 new Company()
                 {
+                    Name = "Generic Company",
                     BonusFee = 100,
-                    MaxBonusFee = 10,
+                    MaxBonusFee = 8,
                     VestingRules = new List<VestingRules>() {
                         new VestingRules() {
                             Percentage=20,
@@ -67,7 +73,7 @@ namespace Web.Controllers
                         }
                     }
                 },
-                new Employee() { Name = "EmployeeName", ContributionPercentage = 10, Salary = 2000 });
+                new Employee() { Name = "John Smith", ContributionPercentage = 10, Salary = 2000 });
 
 
             CheckContractCreationTransaction(pensionFundContract.TransactionHash);

@@ -299,6 +299,14 @@ namespace Auctus.Business.Funds
                 throw new ArgumentException("Fee cannot be negative.");
             if (fund.Fee > 99)
                 throw new ArgumentException("Fee cannot be greater than 99.");
+            if (fund.AssetAllocations == null || !fund.AssetAllocations.Any())
+                throw new ArgumentNullException("AssetAllocations");
+            if (fund.AssetAllocations.Sum(c => c.Percentage) != 100)
+                throw new ArgumentException("Asset allocations must match 100 percentage.");
+            if (fund.AssetAllocations.Count() != fund.AssetAllocations.Select(c => c.ReferenceContractAddress).Distinct().Count())
+                throw new ArgumentException("Reference contract must be allocated only once.");
+
+            fund.AssetAllocations.Select(c => ReferenceType.Get(c.ReferenceContractAddress));
         }
     }
 }
