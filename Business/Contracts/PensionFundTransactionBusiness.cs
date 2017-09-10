@@ -260,30 +260,17 @@ namespace Auctus.Business.Contracts
 
         private void GeneratePaymentContractTransaction(IEnumerable<PensionFundTransaction> transactions, PensionFund pensionFund, SmartContract smartContract)
         {
+            
             Task.Factory.StartNew(() =>
             {
                 try
                 {
-                    int index = 0;
-                    Mutex mutex = new Mutex(false);
-                    Parallel.ForEach(transactions, new ParallelOptions() { MaxDegreeOfParallelism = 5 },
-                    trans =>
+                    Parallel.For(0, transactions.Count(), new ParallelOptions() { MaxDegreeOfParallelism = 5 },
+                    i =>
                     {
-                        try
-                        {
-                            index++;
-                            GenerateContractTransaction(trans, pensionFund.Option.Company.Employee.Address, pensionFund.Option.PensionFundContract.Address,
-                                smartContract.ABI, smartContract.ContractFunctions.Single(c => c.FunctionType == trans.FunctionType).GasLimit + index, 0);
-                            if (mutex.WaitOne())
-                            {
-                                ++index;
-                                mutex.ReleaseMutex();
-                            }
-                        }
-                        finally
-                        {
-                            mutex.ReleaseMutex();
-                        }
+                        PensionFundTransaction transaction = transactions.ElementAt(i);
+                        GenerateContractTransaction(transaction, pensionFund.Option.Company.Employee.Address, pensionFund.Option.PensionFundContract.Address,
+                            smartContract.ABI, smartContract.ContractFunctions.Single(c => c.FunctionType == transaction.FunctionType).GasLimit + i, 0);
                     });
                 }
                 catch(Exception ex)

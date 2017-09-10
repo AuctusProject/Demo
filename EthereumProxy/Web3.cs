@@ -522,12 +522,12 @@ namespace Auctus.EthereumProxy
         private List<Event> ParseEventResult(string eventResult, List<CompleteVariableType> eventParameters)
         {
             if (string.IsNullOrEmpty(eventResult))
-                return null;
+                return new List<Event>();
             else
             {
                 EventData[] events = JsonConvert.DeserializeObject<EventData[]>(eventResult);
                 if (events == null || events.Length == 0)
-                    return null;
+                    return new List<Event>();
                 else
                 {
                     if ((eventParameters == null && events[0].Topics.Length > 1) ||

@@ -39,7 +39,7 @@ namespace Auctus.Business.Funds
         public PensionFundInfo GetPensionFundInfo(string pensionFundContractAddress)
         {
             PensionFund pensionFund = GetByContract(pensionFundContractAddress);
-            AssetsReferenceValue[] assetReference = new AssetsReferenceValue[61];
+            Dictionary<int, double> assetReference = new Dictionary<int, double>();
             List<Asset> assets = new List<Asset>();
             foreach (PensionFundReferenceContract reference in pensionFund.Option.PensionFundContract.PensionFundReferenceContract)
             {
@@ -54,8 +54,9 @@ namespace Auctus.Business.Funds
                 double baseValue = values.ElementAt(0).Value;
                 foreach (ReferenceValue value in values)
                 {
-                    assetReference[value.Period - 1].Period = value.Period;
-                    assetReference[value.Period - 1].Value += (baseValue / value.Value) * reference.Percentage / 100;
+                    if (!assetReference.ContainsKey(value.Period))
+                        assetReference[value.Period] = 0;
+                    assetReference[value.Period] += (baseValue / value.Value) * reference.Percentage / 100;
                 }
             }
             return new PensionFundInfo()
@@ -72,7 +73,7 @@ namespace Auctus.Business.Funds
                 ContractAddress = pensionFund.Option.PensionFundContract.Address,
                 ContractTransactionHash = pensionFund.Option.PensionFundContract.TransactionHash,
                 ContractBlockNumber = pensionFund.Option.PensionFundContract.BlockNumber.Value,
-                AssetsReferenceValue = assetReference,
+                AssetsReferenceValue = assetReference.Select(c => new AssetsReferenceValue() { Period = c.Key, Value = 1 / c.Value }),
                 Assets = assets,
                 Withdrawal = PensionFundTransactionBusiness.ReadWithdrawal(pensionFund.Option.PensionFundContract.Address),
                 Progress = PensionFundTransactionBusiness.ReadPayments(pensionFund.Option.PensionFundContract.Address),
@@ -99,9 +100,25 @@ namespace Auctus.Business.Funds
                 int? employeeBlockNumber = null, companyBlockNumber = null;
                 double? employeeToken = null, companyToken = null;
                 ProgressValue progressValue = null;
+                Payment previousPayment = null;
                 double totalToken = 0, investedToken = 0, invested = 0, pensionFundFee = 0, auctusFee = 0;
                 foreach (Payment payment in completed)
                 {
+                    if (progressValue == null || payment.ReferenceDate.Value > progressValue.Date)
+                    {
+                        if (progressValue != null)
+                        {
+                            AddProgressValue(progress, progressValue, pensionFund, previousPayment, totalToken, investedToken, invested, pensionFundFee, auctusFee);
+                            AddProgressTransaction(progress, payments, alreadyIdentified, previousPayment.CreatedDate, previousPayment.ReferenceDate.Value,
+                                pensionFund.Option.Company.Employee.Address, pensionFund.Option.Company.Address, employeeTransaction, companyTransaction,
+                                employeeBlockNumber, companyBlockNumber, employeeToken, companyToken);
+                        }
+
+                        progressValue = new ProgressValue();
+                        progressValue.Date = payment.ReferenceDate.Value;
+                        employeeTransaction = null; companyTransaction = null; employeeBlockNumber = null;
+                        companyBlockNumber = null; employeeToken = null; companyToken = null;
+                    }
                     pensionFundFee += payment.PensionFundFee.Value;
                     auctusFee += payment.AuctusFee.Value;
                     totalToken += payment.TokenAmount.Value;
@@ -119,23 +136,14 @@ namespace Auctus.Business.Funds
                         companyTransaction = payment.TransactionHash;
                         companyToken = payment.TokenAmount.Value;
                     }
-                    if (progressValue == null || payment.ReferenceDate.Value > progressValue.Date || payment == last)
-                    {
-                        if (progressValue != null)
-                        {
-                            AddProgressValue(progress, progressValue, pensionFund, payment, totalToken, investedToken, invested, pensionFundFee, auctusFee);
-                            AddProgressTransaction(progress, payments, alreadyIdentified, payment.CreatedDate, payment.ReferenceDate.Value,
-                                pensionFund.Option.Company.Employee.Address, pensionFund.Option.Company.Address, employeeTransaction, companyTransaction,
-                                employeeBlockNumber, companyBlockNumber, employeeToken, companyToken);
-                        }
-
-                        progressValue = new ProgressValue();
-                        progressValue.Date = payment.ReferenceDate.Value;
-                        employeeTransaction = null; companyTransaction = null; employeeBlockNumber = null;
-                        companyBlockNumber = null; employeeToken = null; companyToken = null;
-                    }
+                    previousPayment = payment;
                 }
-                progress.CurrentVestingBonus = pensionFund.Option.Company.BonusDistribution.Where(c => c.Period * 12 <= last.Period.Value).Max(c => c.ReleasedBonus);
+                AddProgressValue(progress, progressValue, pensionFund, last, totalToken, investedToken, invested, pensionFundFee, auctusFee);
+                AddProgressTransaction(progress, payments, alreadyIdentified, last.CreatedDate, last.ReferenceDate.Value,
+                    pensionFund.Option.Company.Employee.Address, pensionFund.Option.Company.Address, employeeTransaction, companyTransaction,
+                    employeeBlockNumber, companyBlockNumber, employeeToken, companyToken);
+                IEnumerable<DomainObjects.Accounts.BonusDistribution> bonusDistribution = pensionFund.Option.Company.BonusDistribution.Where(c => c.Period * 12 <= last.Period.Value);
+                progress.CurrentVestingBonus = bonusDistribution.Count() > 0 ? bonusDistribution.Max(c => c.ReleasedBonus) : 0;
             }
             int lastPeriod = last != null ? last.Period.Value : 0;
             DateTime lastDate = last != null ? last.ReferenceDate.Value : progress.StartTime;
@@ -143,7 +151,7 @@ namespace Auctus.Business.Funds
             if (bonusAfterPeriod.Count() > 0)
             {
                 progress.NextVestingBonus = bonusAfterPeriod.Min(c => c.ReleasedBonus);
-                progress.NextVestingDate = lastDate.AddMonths(bonusAfterPeriod.Min(c => c.Period) * 12 - lastPeriod);
+                progress.NextVestingDate = lastDate.AddMonths(bonusAfterPeriod.Min(c => c.Period) * 12 - lastPeriod).Date;
             }
             else
             {
@@ -169,8 +177,9 @@ namespace Auctus.Business.Funds
             double employeeToken, double invested, double pensionFundFee, double auctusFee)
         {
             double price = payment.TokenAmount.Value / (payment.SzaboInvested.Value + payment.LatePenalty.Value);
+            IEnumerable<DomainObjects.Accounts.BonusDistribution> bonusDistribution = pensionFund.Option.Company.BonusDistribution.Where(c => c.Period * 12 <= payment.Period.Value);
             progressValue.Invested = invested;
-            progressValue.Vested = (employeeToken + (pensionFund.Option.Company.BonusDistribution.Where(c => c.Period * 12 <= payment.Period.Value).Max(c => c.ReleasedBonus) / 100 * (totalToken - employeeToken))) / price;
+            progressValue.Vested = (employeeToken + (bonusDistribution.Count() > 0 ? (bonusDistribution.Max(c => c.ReleasedBonus) / 100 * (totalToken - employeeToken)) : 0)) / price;
             progressValue.Total = totalToken / price;
             progressValue.Token = employeeToken;
             progressValue.PensinonFundFee = pensionFundFee;
@@ -231,8 +240,11 @@ namespace Auctus.Business.Funds
             string cacheKey = string.Format("PensionFund{0}", pensionFundContractAddress);
             PensionFund pensionFund = MemoryCache.Get<PensionFund>(cacheKey);
             if (pensionFund == null)
-                MemoryCache.Set<PensionFund>(cacheKey, GetFromDatabase(pensionFundContractAddress));
-
+            {
+                pensionFund = GetFromDatabase(pensionFundContractAddress);
+                if (pensionFund != null)
+                    MemoryCache.Set<PensionFund>(cacheKey, pensionFund);
+            }
             return pensionFund;
         }
 
