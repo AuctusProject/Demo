@@ -73,8 +73,9 @@ namespace Auctus.EthereumProxy
         public static string WithdrawalFromDefaultPensionFund(string employeeAddress, string smartContractAddress, string abi, int gasLimit)
         {
             WithdrawalInfo withdrawalInfo = GetWithdrawalInfo(employeeAddress, smartContractAddress, abi);
-            return Web3.CallFunction(smartContractAddress, abi, "sell", Web3.ETHER(withdrawalInfo.EmployeeSzaboCashback + withdrawalInfo.EmployerSzaboCashback), 
-                gasLimit, GetGweiPrice(), default(KeyValuePair<string, string>), new Variable(VariableType.Address, employeeAddress));
+            double szabo = withdrawalInfo.EmployeeSzaboCashback + withdrawalInfo.EmployerSzaboCashback + 0.000000000000000001;
+            return Web3.CallFunction(smartContractAddress, abi, "sell", Web3.ETHER(szabo), gasLimit, GetGweiPrice(), 
+                default(KeyValuePair<string, string>), new Variable(VariableType.Address, employeeAddress));
         }
 
         public static WithdrawalInfo GetWithdrawalInfo(string employeeAddress, string smartContractAddress, string abi)
