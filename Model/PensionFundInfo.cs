@@ -22,8 +22,6 @@ namespace Auctus.Model
         public Double CompanyBaseContribution { get; set; }
         public IEnumerable<Asset> Assets { get; set; }
         public IEnumerable<AssetsReferenceValue> AssetsReferenceValue { get; set; }
-        public Withdrawal Withdrawal { get; set; }
-        public Progress Progress { get; set; }
     }
 
     public class Asset

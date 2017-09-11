@@ -23,7 +23,10 @@ namespace Web.Controllers
         [Route("/PensionFund/{contractAddress}")]
         public IActionResult Index(string contractAddress)
         {
-            return Json(PensionFundsServices.GetPensionFundInfo(contractAddress));
+            PensionFundInfo pensionFundInfo = PensionFundsServices.GetPensionFundInfo(contractAddress);
+            ReadWithdrawal(contractAddress);
+            ReadPayments(contractAddress);
+            return Json(pensionFundInfo);
         }
 
         [HttpPost]
@@ -84,7 +87,7 @@ namespace Web.Controllers
                 try
                 {
                     Withdrawal withdrawal = PensionFundsServices.ReadWithdrawal(contractAddress);
-                    if (withdrawal.BlockNumber.HasValue)
+                    if (withdrawal == null || withdrawal.BlockNumber.HasValue)
                         hubContext.Clients.Client(ConnectionId).withdrawalCompleted(Json(withdrawal));
                     else
                         hubContext.Clients.Client(ConnectionId).withdrawalUncompleted(Json(withdrawal));

@@ -75,8 +75,6 @@ namespace Auctus.Business.Funds
                 ContractBlockNumber = pensionFund.Option.PensionFundContract.BlockNumber.Value,
                 AssetsReferenceValue = assetReference.Select(c => new AssetsReferenceValue() { Period = c.Key, Value = 1 / c.Value }),
                 Assets = assets,
-                Withdrawal = PensionFundTransactionBusiness.ReadWithdrawal(pensionFund.Option.PensionFundContract.Address),
-                Progress = PensionFundTransactionBusiness.ReadPayments(pensionFund.Option.PensionFundContract.Address),
                 EmployeeBaseContribution = pensionFund.Option.Company.Employee.Salary * pensionFund.Option.Company.Employee.Contribution / 100,
                 CompanyBaseContribution = pensionFund.Option.Company.Employee.Salary * pensionFund.Option.Company.BonusRate / 100 *
                                             Math.Min(pensionFund.Option.Company.MaxSalaryBonusRate, pensionFund.Option.Company.Employee.Contribution) / 100
