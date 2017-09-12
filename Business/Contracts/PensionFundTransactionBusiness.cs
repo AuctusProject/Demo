@@ -172,12 +172,13 @@ namespace Auctus.Business.Contracts
                 throw new InvalidOperationException("Withdrawal already made.");
 
             List<PensionFundTransaction> newTransactions = new List<PensionFundTransaction>();
-            foreach (int month in Enumerable.Range(1, monthsAmount))
+            Parallel.For(1, monthsAmount, new ParallelOptions() { MaxDegreeOfParallelism = 5 },
+            month =>
             {
                 DateTime date = DateTime.UtcNow;
                 newTransactions.Add(CreateTransaction(date, FunctionType.EmployeeBuy, pensionFund.Option.Company.Employee.Address, pensionFund.Option.PensionFundContract.TransactionHash));
                 newTransactions.Add(CreateTransaction(date, FunctionType.CompanyBuy, pensionFund.Option.Company.Address, pensionFund.Option.PensionFundContract.TransactionHash));
-            }
+            });
 
             GeneratePaymentContractTransaction(newTransactions, pensionFund, smartContract);
 
