@@ -1,8 +1,55 @@
-﻿p, span, body, input {
-    font-family: 'Roboto', sans-serif;
+﻿@font-face {
+    font-family: 'Helvetica Neue Light';
+    src: local("Helvetica Neue Light"), url("../fonts/HelveticaNeueLight.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
 }
 
-.wizard {
+@font-face {
+    font-family: 'Helvetica Neue Bold';
+    font-style: normal;
+    font-weight: normal;
+    src: local("Helvetica Neue Bold"), url("../fonts/HelveticaNeueBold.woff") format("woff");
+}
+
+@font-face {
+    font-family: 'Myriad Pro Bold';
+    font-style: normal;
+    font-weight: normal;
+    src: local("Myriad Pro Bold"), url("../fonts/MYRIADPRO-BOLD.woff") format("woff");
+}
+
+p, span, body, input {
+    font-family: 'Helvetica Neue Light', sans-serif;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    font-family: 'Helvetica Neue';
+}
+
+p {
+    font-family: 'Helvetica Neue Light';
+    font-size: 18px;
+}
+
+h2 {
+    font-family: 'Helvetica Neue Bold';
+    font-size: 36px !important;
+    color: #002d78;
+}
+
+h3 {
+    font-family: 'Helvetica Neue Light';
+    font-size: 15px !important;
+    letter-spacing: 2px;
+    color: black;
+}
+
+
+/*.wizard {
     margin: 20px auto;
     background: #fff;
 }
@@ -143,7 +190,7 @@ span.round-tab:hover {
         position: absolute;
         left: 35%;
     }
-}
+}*/
 
 #slider-value {
     left: 100%;
@@ -158,6 +205,68 @@ span.round-tab:hover {
     overflow-y: auto;
 }
 
-#modal-contract-deploy-code {
-    max-height: calc(100vh - 310px);
+
+.wizard-container {
+    background-color: white;
+    box-shadow: 0px 0px 15px 1px rgba(0,0,0,.14);
+}
+
+.step::after {
+    position: static;
+    display: inline-block;
+    width: 100%;
+    height: 1px;
+    background-color: rgba(0,0,0,.1);
+}
+
+
+.stepper li {
+    text-align: center;
+    margin: 0 30px;
+    display: inline-block;
+    color: #0BE6D0;
+    border: 2px solid #0BE6D0;
+    position: relative;
+    height: 32px;
+    border-radius: 50%;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    width: 32px;
+    line-height: 28px;
+    z-index:1;
+    font-family: 'Helvetica Neue Bold';
+}
+
+    .stepper li::before {
+        content: '';
+        position: absolute;
+        top: 13px;
+        left: -66px;
+        width: 66px;
+        height: 2px;
+        background: #0BE6D0;
+    }
+
+
+    .stepper li:first-child::before {
+        display: none;
+    }
+
+.stepper .active {
+    color: #0BE6D0;
+    border: 2px solid #0BE6D0;
+}
+
+    .stepper .active ~ li {
+        color: #D8DFE6;
+        border: 2px solid #D8DFE6;
+    }
+
+        .stepper .active ~ li::before {
+            background: #D8DFE6;
+        }
+
+
+.stepper{
+    padding: 30px;
 }

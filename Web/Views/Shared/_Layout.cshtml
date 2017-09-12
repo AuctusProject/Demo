@@ -25,14 +25,24 @@
     @RenderSection("Style", required: false)
     @Html.Raw(JavaScriptSnippet.FullScript)
 </head>
-<body>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; 2017 - Web</p>
-        </footer>
+<body style="background-color: rgb(250, 250, 252)">
+    <div style="text-align: center; margin-top:50px">
+        <img src="/images/logo.png" style="margin-bottom: 50px;">
     </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-offset-1 col-lg-10 col-lg-offset-1 wizard-container" style="text-align: center;">
+                @Html.Partial("_Stepper")
+            </div>
+            @*<form action="?" method="POST">
+                <div class="g-recaptcha" data-sitekey="6Letpy8UAAAAAPRVm-_751gMCAWQWOaOGXDDWxH9"></div>
+                <br />
+                <input type="submit" value="Submit">
+            </form>*@
+        </div>
+    </div>
+
+        @RenderBody()
 
     <environment names="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
