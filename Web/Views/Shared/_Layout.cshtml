@@ -8,7 +8,8 @@
 
     <environment names="Development">
         <link rel="stylesheet" href="~/lib/jquery-ui-min/themes/base/jquery-ui.min.css">
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/lib/bootstrapcustom/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="~/lib/bootstrap-material-design/dist/css/bootstrap-material-design.css" />
         <link rel="stylesheet" href="~/css/site.css" />
         <link rel="stylesheet"
               href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.12.0/build/styles/default.min.css">
@@ -33,28 +34,93 @@
         <div class="row">
             <div class="col-lg-offset-1 col-lg-10 col-lg-offset-1 wizard-container" style="text-align: center;">
                 @Html.Partial("_Stepper")
+                <div class="row">
+                    <div class="col-md-6 left">
+                        <div class="row">
+                            <div class="col-md-4">
+                            </div>
+                            <div class="col-md-7">
+                                <div class="form-group col-title">PENSION FUND REGISTER</div>
+                                <div class="form-group bmd-form-group">
+                                    <label for="fundNameInput" class="bmd-label-static">FUND NAME</label>
+                                    <input type="text" class="form-control" id="fundNameInput" placeholder="Enter fund name">
+                                </div>
+                                <div class="form-group bmd-form-group">
+                                    <label for="fundFeeInput" class="bmd-label-static">FUND FEE</label>
+                                    <input type="number" class="form-control" id="fundFeeInput" placeholder="00%">
+                                </div>
+                                <div class="form-group bmd-form-group">
+                                    <label for="latePenaltyInput" class="bmd-label-static">LATE PENALTY</label>
+                                    <input type="number" class="form-control" id="latePenaltyInput" placeholder="00%">
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 right">
+                        <div class="row">
+                            <div class="col-md-1">
+                            </div>
+                            <div class="col-md-7">
+                                <div class="form-group col-title">ASSETS DISTRIBUTION</div>
+                                @*<div class="form-group bmd-form-group" style="
+    display: inline-block;
+    border: 1px solid;
+    margin: 0;
+    padding: 0;
+    border-radius: 5px;
+    vertical-align: middle;
+    height: 45px;
+">
+                                    <span style="width: 40px;height: 40px;display: inline-block;border: 1px solid;border-radius: 5px;/* position: absolute; */">
+
+                                    </span>
+                                    <div style="
+    display: inline-block;
+    vertical-align: top;
+">
+                                        GOLD
+                                    </div>
+                                    <input style="
+    display: inline-block;
+    width: 35px;
+    vertical-align: top;
+    margin: 0;
+">
+                                </div>*@
+                            </div>
+                            <div class="col-md-4">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+
+
             @*<form action="?" method="POST">
-                <div class="g-recaptcha" data-sitekey="6Letpy8UAAAAAPRVm-_751gMCAWQWOaOGXDDWxH9"></div>
-                <br />
-                <input type="submit" value="Submit">
-            </form>*@
+                    <div class="g-recaptcha" data-sitekey="6Letpy8UAAAAAPRVm-_751gMCAWQWOaOGXDDWxH9"></div>
+                    <br />
+                    <input type="submit" value="Submit">
+                </form>*@
         </div>
     </div>
 
-        @RenderBody()
+    @RenderBody()
 
     <environment names="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.11.4/jquery-ui.min.js"></script>
         <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.16.0/jquery.validate.min.js"></script>
-        
+
         <script>
             /*** Handle jQuery plugin naming conflict between jQuery UI and Bootstrap ***/
             $.widget.bridge('uibutton', $.ui.button);
             $.widget.bridge('uitooltip', $.ui.tooltip);
         </script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/lib/bootstrapcustom/js/bootstrap.min.js"></script>
+        <script src="https://unpkg.com/popper.js@1.12.5/dist/umd/popper.js" integrity="sha384-KlVcf2tswD0JOTQnzU4uwqXcbAy57PvV48YUiLjqpk/MJ2wExQhg9tuozn5A1iVw" crossorigin="anonymous"></script>
+        <script src="~/lib/bootstrap-material-design/dist/js/bootstrap-material-design.min.js"></script>
         <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.12.0/build/highlight.min.js"></script>
         <script src="~/lib/signalr/jquery.signalR.js"></script>
         <script src="signalr/hubs"></script>

@@ -41,3 +41,5 @@ $(document).ready(function () {
 var connection = $.hubConnection();
 var hub = connection.createHubProxy("AuctusDemo");
 
+$('.form-control').focus(function () { $(this).parent().addClass('is-focused'); });
+$('.form-control').blur(function () { $(this).parent().removeClass('is-focused'); });

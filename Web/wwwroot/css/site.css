@@ -28,6 +28,7 @@ body {
     width: 100%;
     height: 100%;
     font-family: 'Helvetica Neue';
+    font-size: 14px;
 }
 
 p {
@@ -48,7 +49,15 @@ h3 {
     color: black;
 }
 
+.col-title {
+    font-family: 'Helvetica Neue Bold';
+    font-size: 16px;
+    text-align:left;
+}
 
+.bmd-label-static {
+    font-family: 'Helvetica Neue Bold';
+}
 /*.wizard {
     margin: 20px auto;
     background: #fff;
@@ -191,7 +200,6 @@ span.round-tab:hover {
         left: 35%;
     }
 }*/
-
 #slider-value {
     left: 100%;
     width: 3em;

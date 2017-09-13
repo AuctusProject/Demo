@@ -12,9 +12,13 @@
 
   <ItemGroup>
     <Compile Remove="docs\**" />
+    <Compile Remove="wwwroot\lib\bootstrap-material-design-4.0.2\**" />
     <Content Remove="docs\**" />
+    <Content Remove="wwwroot\lib\bootstrap-material-design-4.0.2\**" />
     <EmbeddedResource Remove="docs\**" />
+    <EmbeddedResource Remove="wwwroot\lib\bootstrap-material-design-4.0.2\**" />
     <None Remove="docs\**" />
+    <None Remove="wwwroot\lib\bootstrap-material-design-4.0.2\**" />
   </ItemGroup>
 
   <ItemGroup>
