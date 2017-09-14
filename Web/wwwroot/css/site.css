@@ -52,7 +52,7 @@ h3 {
 .col-title {
     font-family: 'Helvetica Neue Bold';
     font-size: 16px;
-    text-align:left;
+    text-align: left;
 }
 
 .bmd-label-static {
@@ -241,7 +241,7 @@ span.round-tab:hover {
     -webkit-border-radius: 50%;
     width: 32px;
     line-height: 28px;
-    z-index:1;
+    z-index: 1;
     font-family: 'Helvetica Neue Bold';
 }
 
@@ -275,6 +275,62 @@ span.round-tab:hover {
         }
 
 
-.stepper{
+.stepper {
     padding: 30px;
+}
+
+
+
+.asset-input-group {
+    display: inline-block;
+    border: 1px solid #d9e0e6;
+    margin: 12px 0px 0px 0px;
+    padding: 0;
+    border-radius: 5px;
+    height: 40px;
+    width: 100%;
+    text-align: left;
+    border-radius: 5px;
+    background-color: #fafafa;
+}
+
+.asset-input-group input{
+    display: inline-block;
+    width: 60px;
+    vertical-align: top;
+    margin: 4px 5px 5px 5px;
+    width: 57px;
+    height: 30px;
+    border-radius: 5px;
+    background-color: #ffffff;
+    border: solid 1px #d9e0e6;
+}
+
+.asset-input-group-left {
+    width: 40px;
+    height: 40px;
+    display: inline-block;
+    border: 1px solid #d9e0e6;
+    border-radius: 5px 0px 0px 5px;
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    background-color: #ffffff;
+}
+
+
+.asset-input-group-label {
+    display: inline-block;
+    margin-left: 50px;
+    line-height: 39px;
+    width: calc(100% - 160px);
+    text-align: left;
+    color: #707070;
+}
+
+.asset-input-group-percent-label {
+    display: inline-block;
+    line-height: 39px;
+    text-align: left;
+    color: #707070;
 }
