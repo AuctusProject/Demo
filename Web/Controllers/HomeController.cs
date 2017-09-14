@@ -26,9 +26,13 @@ namespace Web.Controllers
         }
         
         [HttpPost]
-        //[ValidateAntiForgeryToken]
-        public IActionResult Save()//Wizard model)
+        public IActionResult Save(Wizard model)
         {
+            if (model == null)
+                throw new Exception("Invalid data.");
+            if (!IsValidRecaptcha(model.Captcha))
+                throw new Exception("Invalid captcha.");
+
             var pensionFundContract = PensionFundsServices.CreateCompleteEntry(new Fund()
             {
                 Name = "Simple Pension Fund",

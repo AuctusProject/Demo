@@ -96,6 +96,7 @@ Wizard.Operations = {
     Save: function () {
         var model = convertModel(Wizard.Components.Model);
         model.Contract.VestingRules = GetVestingRules();
+        model.Captcha = $("#g-recaptcha-response").val();
 
         if (Wizard.Operations.Validate(model)) {
 
