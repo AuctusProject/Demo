@@ -288,28 +288,28 @@ span.round-tab:hover {
     margin: 12px 0px 0px 0px;
     padding: 0;
     border-radius: 5px;
-    height: 40px;
+    height: 45px;
     width: 100%;
     text-align: left;
     border-radius: 5px;
     background-color: #fafafa;
 }
 
-.asset-input-group input{
-    display: inline-block;
-    width: 60px;
-    vertical-align: top;
-    margin: 4px 5px 5px 5px;
-    width: 57px;
-    height: 30px;
-    border-radius: 5px;
-    background-color: #ffffff;
-    border: solid 1px #d9e0e6;
-}
+    .asset-input-group input {
+        display: inline-block;
+        width: 60px;
+        vertical-align: top;
+        margin: 6px 5px 7px 5px;
+        width: 57px;
+        height: calc(100% - 13px);
+        border-radius: 5px;
+        background-color: #ffffff;
+        border: solid 1px #d9e0e6;
+    }
 
 .asset-input-group-left {
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
     display: inline-block;
     border: 1px solid #d9e0e6;
     border-radius: 5px 0px 0px 5px;
@@ -323,7 +323,7 @@ span.round-tab:hover {
 .asset-input-group-label {
     display: inline-block;
     margin-left: 50px;
-    line-height: 39px;
+    line-height: 44px;
     width: calc(100% - 160px);
     text-align: left;
     color: #707070;
@@ -331,7 +331,64 @@ span.round-tab:hover {
 
 .asset-input-group-percent-label {
     display: inline-block;
-    line-height: 39px;
+    line-height: 44px;
     text-align: left;
     color: #707070;
+}
+
+
+.next-button {
+    width: 140px;
+    height: 40px;
+    border-radius: 50px;
+    border: solid 2px #d9e0e6;
+    margin: auto;
+    margin-top: 40px;
+}
+
+.next-button-label {
+    width: 49px;
+    height: 17px;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-align: center;
+    color: #d9e0e6;
+    line-height: 36px;
+}
+
+.total-assets {
+    width: 300px;
+    height: 45px;
+    border-radius: 5px;
+    background-color: rgba(216, 223, 230, 0.1);
+    border: solid 1px #d9e0e6;
+    margin: 12px 0px 0px 0px;
+}
+
+.total-assets-label {
+    width: 117px;
+    height: 12px;
+    font-size: 12px;
+    line-height: 1;
+    text-align: left;
+    color: #d9e0e6;
+}
+
+.total-assets-value {
+    width: 14px;
+    height: 12px;
+    font-size: 12px;
+    line-height: 1;
+    text-align: center;
+    color: #d9e0e6;
+}
+
+.total-assets-pecent-label {
+    width: 12px;
+    height: 12px;
+    font-size: 12px;
+    line-height: 1;
+    text-align: center;
+    color: #d9e0e6;
 }
