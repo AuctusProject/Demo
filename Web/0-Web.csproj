@@ -51,6 +51,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Controller\1-Service.csproj" />
     <ProjectReference Include="..\Model\8-Model.csproj" />
+    <ProjectReference Include="..\Util\7-Util.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="nlog.config">

@@ -392,3 +392,10 @@ span.round-tab:hover {
     text-align: center;
     color: #d9e0e6;
 }
+
+.step {
+    display: none;
+}
+.step.active {
+    display: block;
+}

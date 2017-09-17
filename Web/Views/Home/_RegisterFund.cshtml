@@ -1,26 +1,84 @@
-﻿<form>
-    <div class="row form-group">
-        <h2 class="col-md-12">Register Fund</h2>
-    </div>
-    <div class="row clearfix">
-        <div class="col-md-12">
-            <div class="form-group">
-                <label for="fundName">Fund Name</label>
-                <input name="Fund Name" type="text" placeholder="Fund Name" class="form-control" id="fundName" maxlength="50"/>
+﻿<div class="col-md-6 left">
+        <div class="row">
+            <div class="col-lg-4">
             </div>
-            <div class="form-group">
-                <label for="email">Fee</label>
-                <input min="0" max="99" name="Fee" placeholder="Fee" class="form-control" id="fee" type="number" required/>
+            <div class="col-lg-7">
+                <div class="form-group col-title">PENSION FUND REGISTER</div>
+                <div class="form-group bmd-form-group">
+                    <label for="fundNameInput" class="bmd-label-static">FUND NAME</label>
+                    <input type="text" class="form-control" id="fundNameInput" placeholder="Enter fund name">
+                </div>
+                <div class="form-group bmd-form-group">
+                    <label for="fundFeeInput" class="bmd-label-static">FUND FEE</label>
+                    <input type="number" class="form-control" id="fundFeeInput" placeholder="00%">
+                </div>
+                <div class="form-group bmd-form-group">
+                    <label for="latePenaltyInput" class="bmd-label-static">LATE PENALTY</label>
+                    <input type="number" class="form-control" id="latePenaltyInput" placeholder="00%">
+                </div>
             </div>
-            <div class="form-group">
-                <label for="email">Late Payment Fee</label>
-                <input min="0" name="Late Payment Fee" placeholder="Fee" class="form-control" id="latePaymentFee" type="number" required />
+            <div class="col-lg-1">
             </div>
         </div>
     </div>
-    <div class="row clearfix">
-        <div class="col-md-12">
-            <button type="button" class="btn pull-right btn-primary next-step">Next</button>
+    <div class="col-md-6 right">
+        <div class="row">
+            <div class="col-lg-1">
+            </div>
+            <div class="col-lg-7">
+                <div class="form-group col-title">ASSETS DISTRIBUTION</div>
+                <div class="form-group bmd-form-group asset-input-group">
+                    <span class="asset-input-group-left">
+                    </span>
+                    <div class="asset-input-group-label">
+                        GOLD
+                    </div>
+                    <input />
+                    <div class="asset-input-group-percent-label">%</div>
+                </div>
+                <div class="form-group bmd-form-group asset-input-group">
+                    <span class="asset-input-group-left">
+                    </span>
+                    <div class="asset-input-group-label">
+                        S&P
+                    </div>
+                    <input />
+                    <div class="asset-input-group-percent-label">%</div>
+                </div>
+                <div class="form-group bmd-form-group asset-input-group">
+                    <span class="asset-input-group-left">
+                    </span>
+                    <div class="asset-input-group-label">
+                        BONDS
+                    </div>
+                    <input />
+                    <div class="asset-input-group-percent-label">%</div>
+                </div>
+                <div class="form-group bmd-form-group asset-input-group">
+                    <span class="asset-input-group-left">
+                    </span>
+                    <div class="asset-input-group-label">
+                        MSCI WORLD
+                    </div>
+                    <input />
+                    <div class="asset-input-group-percent-label">%</div>
+                </div>
+                <div class="form-group bmd-form-group asset-input-group">
+                    <span class="asset-input-group-left">
+                    </span>
+                    <div class="asset-input-group-label">
+                        BTC
+                    </div>
+                    <input />
+                    <div class="asset-input-group-percent-label">%</div>
+                </div>
+                <div class="total-assets">
+                    <div class="total-assets-label">TOTAL DISTRIBUTED</div>
+                    <div class="total-assets-value"></div>
+                    <div class="total-assets-pecent-label">%</div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+            </div>
         </div>
     </div>
-</form>

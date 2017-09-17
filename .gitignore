@@ -76,3 +76,5 @@ orleans.codegen.cs
 *.mdf
 *.ldf
 *.ndf
+
+*.DS_Store

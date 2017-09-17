@@ -1,36 +1,34 @@
-﻿<Properties StartupConfiguration="{D00E2A77-3F46-4480-AE15-3E3CD4AC387F}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="DataAccess/BaseData.cs">
+﻿<Properties StartupConfiguration="{D00E2A77-3F46-4480-AE15-3E3CD4AC387F}|Default" NuGet.AddPackagesDialog.IncludePrerelease="True">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Web/Views/Home/_RegisterEmployee.cshtml">
     <Files>
-      <File FileName="WebApi/Program.cs" Line="1" Column="1" />
-      <File FileName="WebApi/Startup.cs" Line="69" Column="16" />
-      <File FileName="EthereumProxy/EthereumManager.cs" Line="97" Column="9" />
-      <File FileName="EthereumProxy/Web3.cs" Line="358" Column="9" />
-      <File FileName="EthereumProxy/ConsoleCommand.cs" Line="126" Column="21" />
-      <File FileName="WebApi/Controllers/EthereumController.cs" Line="15" Column="10" />
-      <File FileName="EthereumProxy/Solc.cs" Line="40" Column="9" />
-      <File FileName="DomainObjects/Accounts/Company.cs" Line="1" Column="1" />
-      <File FileName="DomainObjects/Accounts/Employee.cs" Line="1" Column="1" />
-      <File FileName="DataAccess/Accounts/CompanyData.cs" Line="1" Column="1" />
-      <File FileName="DataAccess/Accounts/EmployeeData.cs" Line="1" Column="1" />
-      <File FileName="Business/Accounts/CompanyBusiness.cs" Line="1" Column="1" />
-      <File FileName="Business/Accounts/EmployeeBusiness.cs" Line="1" Column="1" />
-      <File FileName="Controller/AccountsService.cs" Line="1" Column="1" />
-      <File FileName="Controller/ContractsService.cs" Line="1" Column="1" />
-      <File FileName="Web/Controllers/AccountsController.cs" Line="1" Column="1" />
-      <File FileName="Web/Controllers/HomeController.cs" Line="1" Column="1" />
-      <File FileName="Web/Properties/launchSettings.json" Line="1" Column="1" />
-      <File FileName="Util/Config.cs" Line="25" Column="6" />
-      <File FileName="../../../../.nuget/packages/mysql.data/8.0.8-dmr/contentFiles/any/netstandard1.6/app.config.transform" Line="1" Column="1" />
-      <File FileName="DataAccess/BaseData.cs" Line="1" Column="1" />
-      <File FileName="../../../../.nuget/packages/mysql.data/8.0.8-dmr/contentFiles/any/netstandard1.6/web.config.transform" Line="1" Column="1" />
-      <File FileName="Business/Contracts/SmartContractBusiness.cs" Line="1" Column="1" />
-      <File FileName="Business/BaseBusiness.cs" Line="1" Column="1" />
+      <File FileName="Web/Controllers/HomeController.cs" Line="20" Column="6" />
+      <File FileName="Web/Controllers/BaseController.cs" Line="24" Column="9" />
+      <File FileName="DataAccess/BaseData.cs" Line="18" Column="34" />
+      <File FileName="EthereumProxy/Web3.cs" Line="740" Column="10" />
+      <File FileName="EthereumProxy/Solc.cs" Line="1" Column="1" />
+      <File FileName="EthereumProxy/ConsoleCommand.cs" Line="1" Column="1" />
+      <File FileName="Web/Views/Home/_RegisterFund.cshtml" Line="16" Column="10" />
+      <File FileName="Web/Views/Home/_RegisterEmployee.cshtml" Line="27" Column="1" />
+      <File FileName="Web/Views/Home/_RegisterCompany.cshtml" Line="1" Column="1" />
+      <File FileName="Web/Views/Home/Index.cshtml" Line="85" Column="1" />
+      <File FileName="Web/Views/_ViewImports.cshtml" Line="1" Column="1" />
+      <File FileName="Web/Views/_ViewStart.cshtml" Line="1" Column="1" />
+      <File FileName="Web/Controllers/PensionFundController.cs" Line="1" Column="1" />
+      <File FileName="Web/Hubs/AuctusDemoHub.cs" Line="1" Column="1" />
+      <File FileName="Web/Views/Shared/Layout.cshtml" Line="1" Column="1" />
+      <File FileName="Web/wwwroot/css/site.css" Line="1" Column="1" />
+      <File FileName="Web/Views/Shared/_Layout.cshtml" Line="54" Column="18" />
+      <File FileName="Web/Model/Home/Wizard.cs" Line="15" Column="1" />
+      <File FileName="Web/Views/Shared/_Stepper.cshtml" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/Users/guilherme/Documents/ggusman/Auctus/Demo/WebApi/Controllers/EthereumController.cs" relfile="WebApi/Controllers/EthereumController.cs" line="44" column="1" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.ItemProperties.WebApi PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.ItemProperties.0-Web PreferredExecutionTarget="MonoDevelop.Default" />
   <MultiItemStartupConfigurations />
