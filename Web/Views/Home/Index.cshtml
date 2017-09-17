@@ -1,84 +1,17 @@
-﻿@Html.Partial("_Stepper")
-<div class="row">
-	<div class="step active" id="step1">
+﻿<div class="row">
+	<div class="step active" id="step1" data-step-id="1">
+        @Html.Partial("_Stepper", 1)
         @Html.Partial("_RegisterFund")
 	</div>
-	<div class="step" id="step2">
+	<div class="step" id="step2" data-step-id="2" style:"display:none">
+        @Html.Partial("_Stepper", 2)
         @Html.Partial("_RegisterCompany")
     </div>
-	<div class="step" id="step3">
+	<div class="step" id="step3" data-step-id="3" style:"display:none">
+        @Html.Partial("_Stepper", 3)
         @Html.Partial("_RegisterEmployee")
     </div>
-    <div class="col-md-12">
-        <div class="next-button">
-            <span class="next-button-label">NEXT</span>
-            <span class="next-button-icon"></span>
-        </div>
-    </div>
 </div>
-@*<div id="wizard-row" class="row">
-    <section>
-        <div class="wizard">
-            <div class="wizard-inner">
-                <div class="connecting-line"></div>
-                <ul class="nav nav-tabs" role="tablist">
-
-                    <li role="presentation" class="active">
-                        <a href="#step1" data-toggle="tab" aria-controls="step1" role="tab" title="Register Fund">
-                            <span class="round-tab">
-                                <i class="fa fa-building"></i>
-                            </span>
-                        </a>
-                    </li>
-
-                    <li role="presentation" class="disabled">
-                        <a href="#step2" data-toggle="tab" aria-controls="step2" role="tab" title="Register Company">
-                            <span class="round-tab">
-                                <i class="glyphicon glyphicon-pencil"></i>
-                            </span>
-                        </a>
-                    </li>
-                    <li role="presentation" class="disabled">
-                        <a href="#step3" data-toggle="tab" aria-controls="step3" role="tab" title="Register Employee">
-                            <span class="round-tab">
-                                <i class="fa fa-user"></i>
-                            </span>
-                        </a>
-                    </li>
-
-                    <li role="presentation" class="disabled">
-                        <a href="#complete" data-toggle="tab" aria-controls="complete" role="tab" title="Contract">
-                            <span class="round-tab">
-                                <i class="fa fa-file-text-o"></i>
-                            </span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-                <div class="tab-content col-md-offset-3 col-md-6">
-                    <div class="tab-pane active" role="tabpanel" id="step1">
-                        @Html.Partial("_RegisterFund")
-                    </div>
-                    <div class="tab-pane" role="tabpanel" id="step2">
-                        @Html.Partial("_RegisterCompany")                        
-                    </div>
-                    <div class="tab-pane" role="tabpanel" id="step3">
-                        @Html.Partial("_RegisterContract")
-                    </div>
-                    <div class="tab-pane" role="tabpanel" id="complete">
-                        @Html.Partial("_RegisterEmployee")
-                    </div>
-                    <div class="clearfix"></div>
-                </div>
-        </div>
-    </section>
-</div>
-<div id="contract-deploy-row" class="row" style="display:none">
-    @Html.Partial("~/Views/Home/_ContractDeploy.cshtml")
-</div>
-
-
 @section style{
     <link rel=stylesheet href="~/lib/codemirror/codemirror.css">
 }
@@ -87,4 +20,4 @@
     <script src="~/lib/codemirror/codemirror.js"></script>
     <script src="~/lib/codemirror/mode/javascript.js"></script>
     <script type="text/javascript" src="~/js/home.js"></script>
-}*@
+}

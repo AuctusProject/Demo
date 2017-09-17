@@ -13,16 +13,14 @@
 
     $(".next-step").click(function (e) {
         if ($(this).closest('form').valid()) {
-            var $active = $('.wizard .nav-tabs li.active');
-            $active.next().removeClass('disabled');
-            nextTab($active);
+            var stepId = $(this).closest('.step').data('step-id');
+            nextTab(stepId);
         }
     });
 
     $(".prev-step").click(function (e) {
-        var $active = $('.wizard .nav-tabs li.active');
-        prevTab($active);
-
+        var stepId = $(this).closest('.step').data('step-id');
+        nextTab(stepId);
     });
 
     Wizard.Components.Contract.Initialize();
@@ -30,21 +28,27 @@
 
     $('form').validate();
 
-    Wizard.Components.ContractDeploy.CodeMirror = CodeMirror.fromTextArea(Wizard.Components.ContractDeploy.Code[0], {
+    /*Wizard.Components.ContractDeploy.CodeMirror = CodeMirror.fromTextArea(Wizard.Components.ContractDeploy.Code[0], {
         lineNumbers: true,
         mode: "text/javascript"
-    });
+    });*/
 });
 
-function nextTab(elem) {
-    $(elem).next().find('a[data-toggle="tab"]').click();
+function nextTab(currentStepId) {
+    var $active = $('#step' + currentStepId);
+    var $nextTab = $('#step' + currentStepId + 1);
+    $active.hide();
+    $nextTab.show();
 }
 
 function prevTab(elem) {
-    $(elem).prev().find('a[data-toggle="tab"]').click();
+    var $active = $('#step' + currentStepId);
+    var $prevTab = $('#step' + currentStepId - 1);
+    $active.hide();
+    $prevTab.show();
 }
 
-Wizard = {};
+var Wizard = {};
 
 Wizard.Components = {
     Model: {
@@ -68,11 +72,11 @@ Wizard.Components = {
         }
     },
     Contract: {
-        RowTemplateHtml: $('#vesting-row-template').prop('outerHTML'),
+        //RowTemplateHtml: $('#vesting-row-template').prop('outerHTML'),
         Content: $('#vesting-content'),
         Initialize: function () {
-            $('#vesting-row-template').remove();
-            createSlider(1, 0);
+            /*$('#vesting-row-template').remove();
+            createSlider(1, 0);*/
         }
     },
     Buttons: {

@@ -317,10 +317,14 @@ span.round-tab:hover {
     top: -1px;
     left: -1px;
     background-color: #ffffff;
+    text-align:center;
 }
 
+.asset-input-group-left img{
+    margin-top:12px;
+}
 
-.asset-input-group-label {
+    .asset-input-group-label {
     display: inline-block;
     margin-left: 50px;
     line-height: 44px;
