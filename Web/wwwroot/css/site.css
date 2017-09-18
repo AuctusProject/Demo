@@ -227,15 +227,6 @@ span.round-tab:hover {
     }
 }
 
-.step::after {
-    position: static;
-    display: inline-block;
-    width: 100%;
-    height: 1px;
-    background-color: rgba(0,0,0,.1);
-}
-
-
 .stepper li {
     text-align: center;
     margin: 0 30px;

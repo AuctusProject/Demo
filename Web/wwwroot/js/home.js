@@ -51,14 +51,14 @@ function updateTotalAssets()
 
 function nextTab(currentStepId) {
     var $active = $('#step' + currentStepId);
-    var $nextTab = $('#step' + currentStepId + 1);
+    var $nextTab = $('#step' + (currentStepId + 1));
     $active.hide();
     $nextTab.show();
 }
 
 function prevTab(elem) {
     var $active = $('#step' + currentStepId);
-    var $prevTab = $('#step' + currentStepId - 1);
+    var $prevTab = $('#step' + (currentStepId - 1));
     $active.hide();
     $prevTab.show();
 }
