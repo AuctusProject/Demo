@@ -1,5 +1,5 @@
 ﻿<Properties StartupConfiguration="{D00E2A77-3F46-4480-AE15-3E3CD4AC387F}|Default" NuGet.AddPackagesDialog.IncludePrerelease="True">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Web/Views/Home/_RegisterEmployee.cshtml">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Web/wwwroot/css/companyRegister.css">
     <Files>
       <File FileName="Web/Controllers/HomeController.cs" Line="20" Column="6" />
       <File FileName="Web/Controllers/BaseController.cs" Line="24" Column="9" />
@@ -7,19 +7,20 @@
       <File FileName="EthereumProxy/Web3.cs" Line="740" Column="10" />
       <File FileName="EthereumProxy/Solc.cs" Line="1" Column="1" />
       <File FileName="EthereumProxy/ConsoleCommand.cs" Line="1" Column="1" />
-      <File FileName="Web/Views/Home/_RegisterFund.cshtml" Line="16" Column="10" />
-      <File FileName="Web/Views/Home/_RegisterEmployee.cshtml" Line="27" Column="1" />
-      <File FileName="Web/Views/Home/_RegisterCompany.cshtml" Line="1" Column="1" />
-      <File FileName="Web/Views/Home/Index.cshtml" Line="85" Column="1" />
+      <File FileName="Web/Views/Home/_RegisterFund.cshtml" Line="84" Column="11" />
+      <File FileName="Web/Views/Home/_RegisterEmployee.cshtml" Line="27" Column="119" />
+      <File FileName="Web/Views/Home/_RegisterCompany.cshtml" Line="12" Column="55" />
+      <File FileName="Web/Views/Home/Index.cshtml" Line="15" Column="39" />
       <File FileName="Web/Views/_ViewImports.cshtml" Line="1" Column="1" />
       <File FileName="Web/Views/_ViewStart.cshtml" Line="1" Column="1" />
       <File FileName="Web/Controllers/PensionFundController.cs" Line="1" Column="1" />
       <File FileName="Web/Hubs/AuctusDemoHub.cs" Line="1" Column="1" />
       <File FileName="Web/Views/Shared/Layout.cshtml" Line="1" Column="1" />
-      <File FileName="Web/wwwroot/css/site.css" Line="1" Column="1" />
-      <File FileName="Web/Views/Shared/_Layout.cshtml" Line="54" Column="18" />
+      <File FileName="Web/wwwroot/css/site.css" Line="398" Column="2" />
+      <File FileName="Web/Views/Shared/_Layout.cshtml" Line="23" Column="57" />
       <File FileName="Web/Model/Home/Wizard.cs" Line="15" Column="1" />
       <File FileName="Web/Views/Shared/_Stepper.cshtml" Line="1" Column="1" />
+      <File FileName="Web/wwwroot/css/companyRegister.css" Line="5" Column="14" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />

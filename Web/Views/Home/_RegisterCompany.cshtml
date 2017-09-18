@@ -1,33 +1,129 @@
-﻿<form>
-    <div class="row clearfix form-group">
-        <h2 class="col-md-12">Register Company</h2>
+﻿<div class="col-md-12 company-register">
+	<div class="col-md-6 left">
+		        <div class="row">
+		            <div class="col-lg-4">
+		            </div>
+		            <div class="col-lg-7">
+		                <div class="form-group col-title">COMPANY REGISTER</div>
+		                <div class="form-group bmd-form-group">
+		                    <label for="companyNameInput" class="bmd-label-static">COMPANY NAME</label>
+		                    <input type="text" class="form-control" id="companyNameInput" placeholder="My company">
+		                </div>
+		                <div class="form-group bmd-form-group">
+		                    <label for="employerMatchingInput" class="bmd-label-static">EMPLOYER MATCHING</label>
+		                    <input type="number" class="form-control" id="employerMatchingInput" placeholder="00%">
+		                </div>
+		                <div class="form-group bmd-form-group">
+		                    <label for="maxCounterpartInput" class="bmd-label-static">MAX COUNTERPART</label>
+		                    <input type="number" class="form-control" id="maxCounterpartInput" placeholder="00%">
+		                </div>
+		            </div>
+		            <div class="col-lg-1">
+		            </div>
+		        </div>
+		    </div>
+	    <div class="col-md-6 right">
+	        <div class="row">
+	            <div class="col-lg-1">
+	            </div>
+	            <div class="col-lg-11">
+	                <div class="form-group text-left"><span class="col-title no-padding col-xs-5">VESTING</span><a class="link" data-toggle="modal" href="#" data-target="#advancedOptions">Advanced options</a></div>
+				    <div class="row form-group">
+		                <div class="col-md-12">
+						    <div class="img-container">
+                                <img class="Vesting" src="images/companyRegister/vesting_icons/vesting-calendar.png" srcset="images/companyRegister/vesting_icons/vesting-calendar@2x.png 2x, images/companyRegister/vesting_icons/vesting-calendar@3x.png 3x">
+                                <span class="number less">&lt;1</span>
+                            </div>
+						    <span class="vesting-title">BEFORE 1 YEAR OF SERVICE</span>
+							<div class="input-percentage">
+					            <input class="input"/>
+                                <span class="percentage">%</span>
+							</div>
+		                </div>  
+					</div>
+				    <div class="row form-group">
+                        <div class="col-md-12">
+						    <div class="img-container">
+						        <img class="Vesting" src="images/companyRegister/vesting_icons/vesting-calendar.png" srcset="images/companyRegister/vesting_icons/vesting-calendar@2x.png 2x, images/companyRegister/vesting_icons/vesting-calendar@3x.png 3x">
+							    <span class="number">1</span>
+							</div>
+                            <span class="vesting-title">AFTER 1 YEAR OF SERVICE</span>
+                            <div class="input-percentage">
+                                <input class="input"/>
+                                <span class="percentage">%</span>
+                            </div>
+                        </div>  
+                    </div>
+				    <div class="row form-group">
+                        <div class="col-md-12">
+                            <div class="img-container">
+                                <img class="Vesting" src="images/companyRegister/vesting_icons/vesting-calendar.png" srcset="images/companyRegister/vesting_icons/vesting-calendar@2x.png 2x, images/companyRegister/vesting_icons/vesting-calendar@3x.png 3x">
+                                <span class="number">2</span>
+                            </div>
+                            <span class="vesting-title">AFTER 2 YEARS OF SERVICE</span>
+                            <div class="input-percentage">
+                                <input class="input"/>
+                                <span class="percentage">%</span>
+                            </div>
+                        </div>  
+                    </div>
+				    <div class="row form-group">
+                        <div class="col-md-12">
+                            <div class="img-container">
+                                <img class="Vesting" src="images/companyRegister/vesting_icons/vesting-calendar.png" srcset="images/companyRegister/vesting_icons/vesting-calendar@2x.png 2x, images/companyRegister/vesting_icons/vesting-calendar@3x.png 3x">
+                                <span class="number">3</span>
+                            </div>
+                            <span class="vesting-title">AFTER 3 YEARS OF SERVICE</span>
+                            <div class="input-percentage">
+                                <input class="input"/>
+                                <span class="percentage">%</span>
+                            </div>
+                        </div>  
+                    </div>
+				    <div class="row form-group">
+                        <div class="col-md-12">
+                            <div class="img-container">
+                                <img class="Vesting" src="images/companyRegister/vesting_icons/vesting-calendar.png" srcset="images/companyRegister/vesting_icons/vesting-calendar@2x.png 2x, images/companyRegister/vesting_icons/vesting-calendar@3x.png 3x">
+                                <span class="number">4</span>
+                            </div>
+                            <span class="vesting-title">AFTER 4 YEARS OF SERVICE</span>
+                            <div class="input-percentage">
+                                <input class="input"/>
+                                <span class="percentage">%</span>
+                            </div>
+                        </div>  
+                    </div>
+				    <div class="row form-group">
+                        <div class="col-md-12">
+                            <div class="img-container">
+                                <img class="Vesting" src="images/companyRegister/vesting_icons/vesting-calendar.png" srcset="images/companyRegister/vesting_icons/vesting-calendar@2x.png 2x, images/companyRegister/vesting_icons/vesting-calendar@3x.png 3x">
+                                <span class="number">5</span>
+                            </div>
+                            <span class="vesting-title">AFTER 5 YEARS OF SERVICE</span>
+                            <div class="input-percentage">
+                                <input class="input"/>
+                                <span class="percentage">%</span>
+                            </div>
+                        </div>  
+                    </div>
+	            </div>
+	        </div>
+	    </div>
+</div>
+<div class="modal fade" id="advancedOptions" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+		<h4 class="modal-title" id="myModalLabel">CUSTOMIZED VESTING</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <p>In the slider below, you can decide for the first 5 years of service what percentage should be vested in the employees salary-deferral contributions.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
     </div>
-    <div class="row clearfix">
-        <div class="col-md-12">
-            <div class="form-group">
-                <label for="companyName">Company Name</label>
-                <input name="Company Name" class="form-control" placeholder="Company Name" id="companyName" maxlength="50"/>
-            </div>
-            <div class="form-group">
-                <label for="bonusFee">Bonus Fee</label>
-                <div class="input-group">
-                    <span class="input-group-addon" id="basic-addon2" title="Company contribution % of employee contribution">?</span>
-                    <input name="Bonus Fee" class="form-control" placeholder="Bonus Fee" id="bonusFee" type="number" min="0" max="100" required/>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="maxBonusFee">Max Bonus Fee</label>
-                <div class="input-group">
-                    <span class="input-group-addon" id="basic-addon2">%</span>
-                    <input name="Max Bonus Fee" class="form-control" placeholder="Max Bonus Fee" id="maxBonusFee" min="0" max="100" required/>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row clearfix">
-        <div class="col-md-12">
-            <button type="button" class="btn btn-default prev-step">Previous</button>
-            <button type="button" class="btn pull-right btn-primary next-step">Next</button>
-        </div>
-    </div>
-</form>
+  </div>
+</div>

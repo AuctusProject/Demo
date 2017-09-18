@@ -1,0 +1,72 @@
+﻿.company-register .Vesting {
+    width: 20px;
+    height: 22px;
+    object-fit: contain;
+    float: left;
+    margin-top: 0.2em;
+}
+
+.company-register .img-container {
+    display: inline-block;
+    float: left;
+    min-width: 32px;
+}
+
+.company-register .img-container .number {
+    position: relative;
+    left: -16px;
+    top: 4px;
+    font-family: 'Helvetica Neue Bold';
+    font-size: 11px;
+    color: #00E6D1;
+}
+
+.company-register .vesting-title {
+    font-family: HelveticaNeue;
+    font-size: 10px;
+    line-height: 1;
+    text-align: left;
+    color: #939598;
+    float: left;
+    padding: 6px 0px;
+    margin-top: 0.3em;
+}
+    
+@media (min-width: 640px) {
+    .company-register .vesting-title {
+        min-width: 180px;
+    }
+}
+
+.input-percentage {
+    float: left;
+}
+
+@media (max-width: 640px) {
+    .input-percentage {
+        float: right !important;
+    }
+}
+
+.company-register .right .input {
+    width: 57px;
+}
+
+.company-register .percentage {
+    width: 12px;
+    height: 12px;
+    font-family: HelveticaNeue;
+    font-size: 12px;
+    line-height: 1;
+    text-align: right;
+    color: #707070;
+}
+
+#advanceOptions .modal-body p {
+    font-family: HelveticaNeue;
+    font-size: 10px !important;
+    font-weight: 300;
+    line-height: 1.8;
+    text-align: center;
+    color: #707070;
+}

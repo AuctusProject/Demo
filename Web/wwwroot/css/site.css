@@ -399,3 +399,22 @@ span.round-tab:hover {
 .step.active {
     display: block;
 }
+
+.input {
+    height: 30px;
+    border-radius: 5px;
+    background-color: #ffffff;
+    border: solid 1px #d9e0e6;
+}
+
+.no-padding {
+    padding: 0px;
+}
+
+.modal-content button.close {
+    border: 2px solid #ababab;
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    color: #ababab;
+}
