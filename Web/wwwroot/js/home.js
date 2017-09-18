@@ -2,11 +2,13 @@
     $('[data-toggle="popover"]').popover();
 
     $(".next-step").click(function (e) {
-        if ($(this).closest('form').valid()) {
+        if ($('.next-button').attr('disabled') == null) {
             var stepId = $(this).closest('.step').data('step-id');
             nextTab(stepId);
         }
     });
+
+    $('.asset-input-group input').blur(updateTotalAssets);
 
     $(".prev-step").click(function (e) {
         var stepId = $(this).closest('.step').data('step-id');
@@ -23,6 +25,29 @@
         mode: "text/javascript"
     });*/
 });
+
+function updateTotalAssets()
+{
+    var total = 0;
+    $('.asset-input-group input').each(function (i, element) {
+        if (element.value < 0)
+            element.value = 0;
+        if (!isNaN(parseInt(element.value))) {
+            total += parseInt(element.value);
+        }
+        
+    });
+    if (total != 100) {
+        $('.total-assets').addClass('has-error');
+        $('.total-assets').removeClass('has-success');
+    }
+    else {
+        $('.total-assets').removeClass('has-error');
+        $('.total-assets').addClass('has-success');
+    }
+
+    $('.total-assets-value').html(total);
+}
 
 function nextTab(currentStepId) {
     var $active = $('#step' + currentStepId);

@@ -217,8 +217,14 @@ span.round-tab:hover {
 
 .wizard-container {
     background-color: white;
-    box-shadow: 0px 0px 15px 1px rgba(0,0,0,.14);
-    padding: 20px;
+    box-shadow: none;
+    padding: 40px;
+}
+
+@media (min-width: 576px) {
+    .wizard-container {
+        box-shadow: 0px 0px 15px 1px rgba(0,0,0,.14);
+    }
 }
 
 .step::after {
@@ -309,10 +315,10 @@ span.round-tab:hover {
         text-align: center;
     }
 
-    .asset-input-group input:focus {
-        border-color: #00bdff;
-        outline:none;
-    }
+        .asset-input-group input:focus {
+            border-color: #00bdff;
+            outline: none;
+        }
 
 .asset-input-group-left {
     width: 45px;
@@ -347,6 +353,31 @@ span.round-tab:hover {
     color: #707070;
 }
 
+.btn-chart-img {
+    width: 45px;
+    height: 45px;
+    display: inline-block;
+    border: 1px solid #d9e0e6;
+    border-radius: 5px;
+    text-align: center;
+    vertical-align: top;
+    margin-top: 13px;
+    margin-bottom: 13px;
+}
+
+    .btn-chart-img img {
+        margin-top: 12px;
+    }
+
+.btn-chart-help {
+    display: inline-block;
+    width: calc(100% - 60px);
+    margin-left: 13px;
+}
+
+.inline-content {
+    display: inline-block;
+}
 
 .next-button {
     width: 140px;
@@ -395,7 +426,7 @@ span.round-tab:hover {
 }
 
 .total-assets {
-    width: 300px;
+    width: 100%;
     height: 45px;
     border-radius: 5px;
     background-color: rgba(216, 223, 230, 0.1);
@@ -509,6 +540,14 @@ span.round-tab:hover {
     color: #d9e0e6;
 }
 
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0;
+}
+
 .popover-header {
     background-color: transparent;
     border-bottom: 0;
@@ -528,6 +567,10 @@ span.round-tab:hover {
     box-shadow: 0 0 14px 0 rgba(0, 0, 0, 0.12);
 }
 
-.popover .arrow::before {
-    border-right-color: rgba(0, 0, 0, 0.06) !important;
-}
+    .popover.bs-popover-right .arrow::before {
+        border-right-color: rgba(0, 0, 0, 0.06) !important;
+    }
+
+    .popover.bs-popover-left .arrow::before {
+        border-left-color: rgba(0, 0, 0, 0.06) !important;
+    }
