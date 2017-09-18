@@ -1,10 +1,31 @@
-﻿<div class="row">
+﻿@model int
+<div class="row">
     <div class="col-md-12">
         <div class="stepper">
             <ul style="margin: auto;padding: 0;">
-                <li class="active">1</li>
-                <li>2</li>
-                <li>3</li>
+                @if (Model == 1)
+                {
+                    <text>
+                    <li class="active">1</li>
+                    <li>2</li>
+                    <li>3</li>
+                    </text>
+                }
+                @if (Model == 2)
+                {
+                    <text>
+                    <li style="border:0"><img src="~/images/ok.png" /></li>
+                    <li class="active">2</li>
+                    <li>3</li>
+                    </text>
+                }@if (Model == 3)
+                {
+                    <text>
+                    <li style="border:0"><img src="~/images/ok.png" /></li>
+                    <li style="border:0"><img src="~/images/ok.png" /></li>
+                    <li class="active">3</li>
+                    </text>
+                }
             </ul>
         </div>
     </div>
