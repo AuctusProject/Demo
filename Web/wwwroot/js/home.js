@@ -15,6 +15,11 @@
         nextTab(stepId);
     });
 
+
+    $(".asset-input-group-left").click(function (e) {
+        openAssetInformationModal();
+    });
+
     Wizard.Components.Contract.Initialize();
     Wizard.Components.Buttons.Save.click(Wizard.Operations.Save);
 
@@ -25,6 +30,10 @@
         mode: "text/javascript"
     });*/
 });
+
+function openAssetInformationModal() {
+    $('#assetInformationModal').modal('show');
+};
 
 function updateTotalAssets()
 {

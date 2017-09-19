@@ -200,6 +200,7 @@ h3 {
     left: -1px;
     background-color: #ffffff;
     text-align: center;
+    cursor: pointer;
 }
 
     .asset-input-group-left img {
@@ -442,4 +443,32 @@ input[type=number]::-webkit-outer-spin-button {
 
     .popover.bs-popover-left .arrow::before {
         border-left-color: rgba(0, 0, 0, 0.06) !important;
+    }
+
+    .popover.bs-popover-top .arrow::before {
+        border-top-color: rgba(0, 0, 0, 0.06) !important;
+    }
+
+    .popover.bs-popover-bottom .arrow::before {
+        border-bottom-color: rgba(0, 0, 0, 0.06) !important;
+    }
+
+
+.about-auctus{
+    margin:25px;
+    text-align:center;
+}
+
+    .about-auctus label {
+        font-size: 12px;
+        line-height:14px;
+        font-weight: 300;
+        letter-spacing: 0.9px;
+        text-align: center;
+        color: #707070;
+    }
+
+    .about-auctus a {
+        font-weight: bold;
+        color: #231f20;
     }
