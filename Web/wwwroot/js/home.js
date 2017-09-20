@@ -15,6 +15,11 @@
         nextTab(stepId);
     });
 
+
+    $(".asset-input-group-left").click(function (e) {
+        openAssetInformationModal();
+    });
+
     Wizard.Components.Contract.Initialize();
     Wizard.Components.Buttons.Save.click(Wizard.Operations.Save);
 
@@ -26,8 +31,30 @@
     });*/
 });
 
-function updateTotalAssets()
-{
+function openAssetInformationModal() {
+    $('#assetInformationModal').modal('show');
+};
+
+function loadGraphs() {
+    createGraph("goldGraph", [
+        [1, 10],
+        [2, 20],
+        [3, 50],
+        [4, 70]
+    ]);
+}
+
+function createGraph(elementId, data) {
+    g = new Dygraph(
+        document.getElementById(elementId), data,
+        {
+            labels: ["year", "Value"],
+            color: "#0000FF"
+        }
+    );
+}
+
+function updateTotalAssets() {
     var total = 0;
     $('.asset-input-group input').each(function (i, element) {
         if (element.value < 0)
@@ -35,7 +62,7 @@ function updateTotalAssets()
         if (!isNaN(parseInt(element.value))) {
             total += parseInt(element.value);
         }
-        
+
     });
     if (total != 100) {
         $('.total-assets').addClass('has-error');
@@ -99,7 +126,7 @@ Wizard.Components = {
     },
     ContractDeploy: {
         ContractDeployRow: $('#contract-deploy-row'),
-        NextButton: $('#btn-contract-deploy-next'),        
+        NextButton: $('#btn-contract-deploy-next'),
         Title: $('#contract-deploy-title'),
         Icon: $('#contract-deploy-icon'),
         ContractCodeWrapper: $('#contract-deploy-code-wrapper'),
@@ -151,7 +178,7 @@ Wizard.Operations = {
         Wizard.Components.ContractDeploy.TransactionIdLink.html(data.transactionHash);
         Wizard.Components.ContractDeploy.TransactionIdTitle.show();
         Wizard.Components.ContractDeploy.CodeMirror.setValue(js_beautify(data.smartContractCode, { indent_size: 4 }));
-        setTimeout(function () { Wizard.Components.ContractDeploy.CodeMirror.refresh(); },1);
+        setTimeout(function () { Wizard.Components.ContractDeploy.CodeMirror.refresh(); }, 1);
         Wizard.Components.ContractDeploy.ContractCodeWrapper.show();
     },
     OnDeployCompleted: function (data) {
@@ -181,7 +208,7 @@ Wizard.Operations = {
         Wizard.Components.ContractDeploy.Title.removeClass();
         Wizard.Components.ContractDeploy.Icon.removeClass();
         Wizard.Components.ContractDeploy.TransactionIdTitle.hide();
-        Wizard.Components.ContractDeploy.TryAgain.unbind('click').click(function () { Wizard.Operations.Save();});
+        Wizard.Components.ContractDeploy.TryAgain.unbind('click').click(function () { Wizard.Operations.Save(); });
         Wizard.Components.ContractDeploy.TryAgain.show();
     },
     GoToDashBoard: function (ContractAddress) {
