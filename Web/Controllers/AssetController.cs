@@ -12,9 +12,9 @@ using Auctus.DomainObjects.Contracts;
 
 namespace Web.Controllers
 {
-    public class ContractController : BaseController
+    public class AssetController : BaseController
     {
-        public ContractController(ILoggerFactory loggerFactory, Cache cache, IServiceProvider serviceProvider) : base (loggerFactory, cache, serviceProvider) { }
+        public AssetController(ILoggerFactory loggerFactory, Cache cache, IServiceProvider serviceProvider) : base (loggerFactory, cache, serviceProvider) { }
 
         [HttpPost]
         public IActionResult GetGoldReference()

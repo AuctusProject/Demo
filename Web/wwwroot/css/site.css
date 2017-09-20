@@ -96,7 +96,7 @@ h3 {
 .wizard-container {
     background-color: white;
     box-shadow: none;
-    padding: 40px;
+    padding: 10px 40px;
 }
 
 @media (min-width: 576px) {
@@ -257,6 +257,7 @@ h3 {
     border-color: #00bdff;
     margin: auto;
     margin-top: 40px;
+    margin-bottom: 40px;
     text-align: center;
     display: inline-block;
 }
@@ -474,6 +475,18 @@ input[type=number]::-webkit-outer-spin-button {
     }
 
 
-.asset-disclaimer{
+.asset-disclaimer {
+    font-size: 9px;
+    line-height: 1.33;
+    text-align: center;
+    color: #939598;
+}
 
+.line-separator {
+    width: 124px;
+    height: 1px;
+    background-color: #d9e0e6;
+    margin: auto;
+    margin-bottom: 11.5px;
+    font-size: 1em;
 }
