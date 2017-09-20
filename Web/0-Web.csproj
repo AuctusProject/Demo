@@ -26,9 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="wwwroot\js\home - Copy.js">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
     <Content Include="wwwroot\js\registerFund.js" />
   </ItemGroup>
 
