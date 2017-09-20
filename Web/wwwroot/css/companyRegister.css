@@ -42,6 +42,11 @@
     float: left;
 }
 
+.input-percentage a, .input-percentage a:hover, .input-percentage a:active, .input-percentage a:visited, .input-percentage a:focus {
+    text-decoration: none;
+    cursor: default;
+}
+
 @media (max-width: 640px) {
     .input-percentage {
         float: right !important;
@@ -50,6 +55,10 @@
 
 .company-register .right .input {
     width: 57px;
+}
+
+.company-register .vesting-percentage {
+    color: grey;
 }
 
 .company-register .percentage {
@@ -62,11 +71,60 @@
     color: #707070;
 }
 
-#advanceOptions .modal-body p {
+.modal-title {
     font-family: HelveticaNeue;
-    font-size: 10px !important;
+    font-size: 14px;
+    letter-spacing: 0.9px;
+    color: #231f20;
+}
+
+#advancedOptions .modal-title {
+    position: absolute;
+    left: 160px;
+}
+
+.modal-body p {
+    font-family: HelveticaNeue;
+    font-size: 12px !important;
     font-weight: 300;
-    line-height: 1.8;
+    line-height: 1. 8;
     text-align: center;
     color: #707070;
+}
+
+#slider {
+    margin-top: 60px;
+}
+
+#slider.noUi-target {
+    border: 0px;
+    height: 2px;
+}
+
+#slider .noUi-base {
+    border: 0px;
+}
+
+#slider .noUi-handle {
+    width: 12px;
+    height: 12px;
+    background-color: #07dce0;
+    border-radius: 50%;
+    border: 0px;
+    box-shadow: none;
+    left: -8px;
+}
+
+#slider .noUi-handle:nth-child(2) {
+    background: #0243b7;
+}
+
+#slider .noUi-handle:before {
+    content: none;
+}
+#slider .noUi-handle:after {
+    content: none;
+}
+#slider .noUi-tooltip:focus {
+    outline: none;
 }

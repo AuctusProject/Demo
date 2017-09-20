@@ -19,6 +19,8 @@
     <EmbeddedResource Remove="wwwroot\lib\bootstrap-material-design-4.0.2\**" />
     <None Remove="docs\**" />
     <None Remove="wwwroot\lib\bootstrap-material-design-4.0.2\**" />
+    <Content Remove="wwwroot\js\registerFund.js" />
+    <None Remove="wwwroot\lib\noUiSlider\.DS_Store" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,9 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="wwwroot\js\home - Copy.js">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
     <Content Include="wwwroot\js\registerFund.js" />
   </ItemGroup>
 

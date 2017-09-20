@@ -35,9 +35,12 @@
                                 <span class="number less">&lt;1</span>
                             </div>
 						    <span class="vesting-title">BEFORE 1 YEAR OF SERVICE</span>
+						    <span class="vesting-period hidden">0.5</span>                  
 							<div class="input-percentage">
-					            <input class="input"/>
-                                <span class="percentage">%</span>
+							    <a tabindex="0" class="" role="button" data-toggle="popover" data-trigger="focus" title="VESTING"
+                                   data-content="<div>Under graduated vesting, there is partial vesting for each year of service. Here, we have suggested the most common values for this type of benefit. <br><br>You can click on <a class='link' data-toggle='modal' href='#' data-target='#advancedOptions'>Advanced options</a> to  customize these values.</div>"
+                                   data-html="true"><input class="input text-center vesting-percentage" type="number" disabled="disabled" value="0"/>
+                                <span class="percentage">%</span></a>
 							</div>
 		                </div>  
 					</div>
@@ -48,8 +51,9 @@
 							    <span class="number">1</span>
 							</div>
                             <span class="vesting-title">AFTER 1 YEAR OF SERVICE</span>
+						    <span class="vesting-period hidden">1</span>
                             <div class="input-percentage">
-                                <input class="input"/>
+                                <input class="input text-center vesting-percentage" type="number" disabled="disabled" value="20"/>
                                 <span class="percentage">%</span>
                             </div>
                         </div>  
@@ -61,8 +65,9 @@
                                 <span class="number">2</span>
                             </div>
                             <span class="vesting-title">AFTER 2 YEARS OF SERVICE</span>
+						    <span class="vesting-period hidden">2</span>
                             <div class="input-percentage">
-                                <input class="input"/>
+                                <input class="input text-center vesting-percentage" type="number" disabled="disabled" value="40"/>
                                 <span class="percentage">%</span>
                             </div>
                         </div>  
@@ -74,8 +79,9 @@
                                 <span class="number">3</span>
                             </div>
                             <span class="vesting-title">AFTER 3 YEARS OF SERVICE</span>
+						    <span class="vesting-period hidden">3</span>
                             <div class="input-percentage">
-                                <input class="input"/>
+                                <input class="input text-center vesting-percentage" type="number" disabled="disabled" value="60"/>
                                 <span class="percentage">%</span>
                             </div>
                         </div>  
@@ -87,8 +93,9 @@
                                 <span class="number">4</span>
                             </div>
                             <span class="vesting-title">AFTER 4 YEARS OF SERVICE</span>
+						    <span class="vesting-period hidden">4</span>
                             <div class="input-percentage">
-                                <input class="input"/>
+                                <input class="input text-center vesting-percentage" type="number" disabled="disabled" value="80"/>
                                 <span class="percentage">%</span>
                             </div>
                         </div>  
@@ -100,8 +107,9 @@
                                 <span class="number">5</span>
                             </div>
                             <span class="vesting-title">AFTER 5 YEARS OF SERVICE</span>
+						    <span class="vesting-period hidden">5</span>
                             <div class="input-percentage">
-                                <input class="input"/>
+                                <input class="input text-center vesting-percentage" type="number" disabled="disabled" value="100"/>
                                 <span class="percentage">%</span>
                             </div>
                         </div>  
@@ -119,10 +127,11 @@
       </div>
       <div class="modal-body">
         <p>In the slider below, you can decide for the first 5 years of service what percentage should be vested in the employees salary-deferral contributions.</p>
+        <div id="slider"></div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary">Confirm</button>
       </div>
     </div>
   </div>
