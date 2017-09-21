@@ -202,7 +202,9 @@ function nextTab(currentStepId) {
     var $nextTab = $('#step' + (currentStepId + 1));
     $active.hide();
     $nextTab.show();
-    $('.next-button').attr('disabled', 'disabled');
+    if (currentStepId == 1){
+        registerCompanyForm.init();
+    }
 }
 
 function prevTab(currentStepId) {
