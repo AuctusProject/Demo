@@ -39,7 +39,7 @@
 							<div class="input-percentage">
 							    <a tabindex="0" class="" role="button" data-toggle="popover" data-trigger="focus" title="VESTING"
                                    data-content="<div>Under graduated vesting, there is partial vesting for each year of service. Here, we have suggested the most common values for this type of benefit. <br><br>You can click on <a class='link' data-toggle='modal' href='#' data-target='#advancedOptions'>Advanced options</a> to  customize these values.</div>"
-                                   data-html="true"><input class="input text-center vesting-percentage" type="number" disabled="disabled" value="0"/>
+                                   data-html="true"><input id="lessOneYear" class="input text-center vesting-percentage" type="number" disabled="disabled" value="0"/>
                                 <span class="percentage">%</span></a>
 							</div>
 		                </div>  
@@ -53,7 +53,7 @@
                             <span class="vesting-title">AFTER 1 YEAR OF SERVICE</span>
 						    <span class="vesting-period hidden">1</span>
                             <div class="input-percentage">
-                                <input class="input text-center vesting-percentage" type="number" disabled="disabled" value="20"/>
+                                <input id="afterOneYear" class="input text-center vesting-percentage" type="number" disabled="disabled" value="20"/>
                                 <span class="percentage">%</span>
                             </div>
                         </div>  
@@ -67,7 +67,7 @@
                             <span class="vesting-title">AFTER 2 YEARS OF SERVICE</span>
 						    <span class="vesting-period hidden">2</span>
                             <div class="input-percentage">
-                                <input class="input text-center vesting-percentage" type="number" disabled="disabled" value="40"/>
+                                <input id="afterTwoYears" class="input text-center vesting-percentage" type="number" disabled="disabled" value="40"/>
                                 <span class="percentage">%</span>
                             </div>
                         </div>  
@@ -81,7 +81,7 @@
                             <span class="vesting-title">AFTER 3 YEARS OF SERVICE</span>
 						    <span class="vesting-period hidden">3</span>
                             <div class="input-percentage">
-                                <input class="input text-center vesting-percentage" type="number" disabled="disabled" value="60"/>
+                                <input id="afterThreeYears" class="input text-center vesting-percentage" type="number" disabled="disabled" value="60"/>
                                 <span class="percentage">%</span>
                             </div>
                         </div>  
@@ -95,7 +95,7 @@
                             <span class="vesting-title">AFTER 4 YEARS OF SERVICE</span>
 						    <span class="vesting-period hidden">4</span>
                             <div class="input-percentage">
-                                <input class="input text-center vesting-percentage" type="number" disabled="disabled" value="80"/>
+                                <input id="afterFourYears" class="input text-center vesting-percentage" type="number" disabled="disabled" value="80"/>
                                 <span class="percentage">%</span>
                             </div>
                         </div>  
@@ -109,7 +109,7 @@
                             <span class="vesting-title">AFTER 5 YEARS OF SERVICE</span>
 						    <span class="vesting-period hidden">5</span>
                             <div class="input-percentage">
-                                <input class="input text-center vesting-percentage" type="number" disabled="disabled" value="100"/>
+                                <input id="afterFiveYears" class="input text-center vesting-percentage" type="number" disabled="disabled" value="100"/>
                                 <span class="percentage">%</span>
                             </div>
                         </div>  
@@ -130,7 +130,7 @@
         <div id="slider"></div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-default" onclick="cancel()">Cancel</button>
         <button type="button" class="btn btn-primary" onclick="confirm()">Confirm</button>
       </div>
     </div>

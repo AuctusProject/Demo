@@ -1,13 +1,20 @@
 ﻿
 $(document).ready(function () {
     configVestingSlider();
+    configModal();
 });
 
+function configModal(){
+    $("#advancedOptions").on('shown.bs.modal', function(){
+        Wizard.Components.vestingSlider.tmpValues = Wizard.Components.vestingSlider.noUiSlider.get();
+    });
+}
+
 function configVestingSlider(){
-    var slider = document.getElementById('slider');
+    Wizard.Components.vestingSlider = document.getElementById('slider');
 
     var startValues = [0, 20, 40, 60, 80, 100]
-    noUiSlider.create(slider, {
+    noUiSlider.create(Wizard.Components.vestingSlider, {
         start: startValues,
         step: 1,
         tooltips: true,
@@ -35,26 +42,26 @@ function configVestingSlider(){
     $('.noUi-tooltip').addClass('unselected');
     setTooltipValues(startValues);
 
-    slider.noUiSlider.on('slide', function( values, handle ) {
+    Wizard.Components.vestingSlider.noUiSlider.on('slide', function( values, handle ) {
         $($('.noUi-tooltip')[handle]).removeClass('unselected');
         setTooltipValues(values);
     });
 
-    slider.noUiSlider.on('start', function( values, handle ) {
+    Wizard.Components.vestingSlider.noUiSlider.on('start', function( values, handle ) {
         $($('.noUi-tooltip')[handle]).removeClass('unselected');
         hideTooltipsExceptSelected(handle);
         setTooltipValues(values);
     });
 
-    slider.noUiSlider.on('change', function( values, handle ) {
+    Wizard.Components.vestingSlider.noUiSlider.on('change', function( values, handle ) {
         setTooltipValues(values);
     });
 
-    slider.noUiSlider.on('set', function( values, handle ) {
+    Wizard.Components.vestingSlider.noUiSlider.on('set', function( values, handle ) {
         setTooltipValues(values);
     });
 
-    slider.noUiSlider.on('end', function( values, handle ) {
+    Wizard.Components.vestingSlider.noUiSlider.on('end', function( values, handle ) {
         $($('.noUi-tooltip')[handle]).addClass('unselected');
         showAllTooltips();
     });
@@ -81,4 +88,21 @@ function setTooltipValues(values){
     $($('.noUi-tooltip')[3]).html('<span class="year">3 years<br></span><span class="percentage">'+parseInt(values[3])+'%</span>');
     $($('.noUi-tooltip')[4]).html('<span class="year">4 years<br></span><span class="percentage">'+parseInt(values[4])+'%</span>');
     $($('.noUi-tooltip')[5]).html('<span class="year">&gt; 5 years<br></span><span class="percentage">'+parseInt(values[5])+'%</span>');    
+}
+
+function cancel(){
+    Wizard.Components.vestingSlider.noUiSlider.set(Wizard.Components.vestingSlider.tmpValues);
+    $('#advancedOptions').modal('toggle');
+}
+
+function confirm(){
+    var values = Wizard.Components.vestingSlider.noUiSlider.get();
+    $('#lessOneYear').val(parseInt(values[0]));
+    $('#afterOneYear').val(parseInt(values[1]));
+    $('#afterTwoYears').val(parseInt(values[2]));
+    $('#afterThreeYears').val(parseInt(values[3]));
+    $('#afterFourYears').val(parseInt(values[4]));
+    $('#afterFiveYears').val(parseInt(values[5]));
+
+    $('#advancedOptions').modal('toggle');
 }
