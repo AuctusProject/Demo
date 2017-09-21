@@ -37,8 +37,10 @@
 });
 
 function validateFormToEnableNextButton() {
-    if ($('.total-assets').hasClass('has-success') && $('#registerFund').valid())
+    if ($('.total-assets').hasClass('has-success') && $('#fundFeeInput').val() != "" &&  $('#registerFund').valid())
         $('.next-button').removeAttr('disabled');
+    else
+        $('.next-button').attr('disabled', 'disabled');
 }
 
 function nextAssetReference() {
