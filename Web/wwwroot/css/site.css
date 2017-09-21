@@ -405,10 +405,16 @@ input[type=number]::-webkit-outer-spin-button {
         border-bottom-color: rgba(0, 0, 0, 0.06) !important;
     }
 
+.salary-popover .div:last-child
+{
+    border:unset;
+}
 
-.about-auctus{
-    margin:25px;
-    text-align:center;
+
+
+.about-auctus {
+    margin: 25px;
+    text-align: center;
 }
 
     .about-auctus label {
