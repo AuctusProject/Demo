@@ -28,6 +28,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="wwwroot\css\companyRegister.css" />
+    <Content Include="wwwroot\css\contractDeploy.css" />
+    <Content Include="wwwroot\css\contractDeploy.min.css" />
+    <Content Include="wwwroot\css\fundRegister.css">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="wwwroot\css\site - Copy.css">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Include="wwwroot\js\registerFund.js" />
   </ItemGroup>
 

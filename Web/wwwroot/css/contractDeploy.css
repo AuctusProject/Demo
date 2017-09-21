@@ -1,0 +1,36 @@
+﻿.contract-deploy-title {
+    font-family: 'Helvetica Neue Bold';
+    font-size: 12px;
+    letter-spacing: 0.9px;
+    text-align: center;
+    color: #231f20;
+}
+
+.contract-deploy-subtitle {
+    font-family: 'Helvetica Neue';
+    font-size: 12px;
+    font-weight: 300;
+    line-height: 1.5;
+    text-align: center;
+    color: #707070;
+    margin: 10px;
+}
+
+.contract-deploy-link {
+    margin-left: 10px;
+    margin-right: 10px;
+    color: #00bdff;
+}
+
+
+.contract-deploy-title img {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+#contract-deploy-code-wrapper{
+    width:100%;
+    max-width: 650px;
+    margin:auto;
+    text-align:left;
+}
