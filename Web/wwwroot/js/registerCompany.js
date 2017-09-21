@@ -42,6 +42,7 @@ function configVestingSlider(){
 
     slider.noUiSlider.on('start', function( values, handle ) {
         $($('.noUi-tooltip')[handle]).removeClass('unselected');
+        hideTooltipsExceptSelected(handle);
         setTooltipValues(values);
     });
 
@@ -55,7 +56,22 @@ function configVestingSlider(){
 
     slider.noUiSlider.on('end', function( values, handle ) {
         $($('.noUi-tooltip')[handle]).addClass('unselected');
+        showAllTooltips();
     });
+}
+
+function showAllTooltips(){
+    for (var i = 0; i < 6; ++i){
+        $($('.noUi-tooltip')[i]).css('display', 'block');
+    }
+}
+
+function hideTooltipsExceptSelected(indexSelected){
+    for (var i = 0; i < 6; ++i){
+        if (i != indexSelected){
+            $($('.noUi-tooltip')[i]).css('display', 'none');
+        }
+    }
 }
 
 function setTooltipValues(values){
