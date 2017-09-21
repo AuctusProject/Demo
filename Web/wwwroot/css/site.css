@@ -92,7 +92,6 @@ h3 {
     overflow-y: auto;
 }
 
-
 .wizard-container {
     background-color: white;
     box-shadow: none;
@@ -156,95 +155,6 @@ h3 {
     padding: 30px;
 }
 
-
-
-.asset-input-group {
-    display: inline-block;
-    border: 1px solid #d9e0e6;
-    margin: 12px 0px 0px 0px;
-    padding: 0;
-    border-radius: 5px;
-    height: 45px;
-    width: 100%;
-    text-align: left;
-    border-radius: 5px;
-    background-color: #fafafa;
-}
-
-    .asset-input-group input {
-        display: inline-block;
-        width: 60px;
-        vertical-align: top;
-        margin: 6px 5px 7px 5px;
-        width: 57px;
-        height: calc(100% - 13px);
-        border-radius: 5px;
-        background-color: #ffffff;
-        border: solid 1px #d9e0e6;
-        text-align: center;
-    }
-
-        .asset-input-group input:focus {
-            border-color: #00bdff;
-            outline: none;
-        }
-
-.asset-input-group-left {
-    width: 45px;
-    height: 45px;
-    display: inline-block;
-    border: 1px solid #d9e0e6;
-    border-radius: 5px 0px 0px 5px;
-    position: absolute;
-    top: -1px;
-    left: -1px;
-    background-color: #ffffff;
-    text-align: center;
-    cursor: pointer;
-}
-
-    .asset-input-group-left img {
-        margin-top: 12px;
-    }
-
-.asset-input-group-label {
-    display: inline-block;
-    margin-left: 50px;
-    line-height: 44px;
-    width: calc(100% - 160px);
-    text-align: left;
-    color: #707070;
-}
-
-.asset-input-group-percent-label {
-    display: inline-block;
-    line-height: 44px;
-    text-align: left;
-    color: #707070;
-}
-
-.btn-chart-img {
-    width: 45px;
-    height: 45px;
-    display: inline-block;
-    border: 1px solid #d9e0e6;
-    border-radius: 5px;
-    text-align: center;
-    vertical-align: top;
-    margin-top: 13px;
-    margin-bottom: 13px;
-}
-
-    .btn-chart-img img {
-        margin-top: 12px;
-    }
-
-.btn-chart-help {
-    display: inline-block;
-    width: calc(100% - 60px);
-    margin-left: 13px;
-}
-
 .inline-content {
     display: inline-block;
 }
@@ -294,80 +204,6 @@ h3 {
 
 .next-button[disabled] .next-button-icon {
     background-image: url('/images/right_disabled.png');
-}
-
-.total-assets {
-    width: 100%;
-    height: 45px;
-    border-radius: 5px;
-    background-color: rgba(216, 223, 230, 0.1);
-    border: solid 1px;
-    border-color: #d9e0e6;
-    margin: 12px 0px 0px 0px;
-    text-align: left;
-    display: inline-block;
-}
-
-    .total-assets.has-error {
-        background-color: rgba(251, 120, 120, 0.1);
-        border-color: #fb7878;
-    }
-
-        .total-assets.has-error div {
-            font-weight: 500;
-            color: #fb7878;
-        }
-
-        .total-assets.has-error .total-assets-value {
-            height: 16px;
-            font-size: 16px;
-        }
-
-    .total-assets.has-success {
-        background-color: rgba(11, 230, 208, 0.05);
-        border-color: #0be6d0;
-    }
-
-        .total-assets.has-success div {
-            font-weight: 500;
-            color: #0be6d0;
-        }
-
-        .total-assets.has-success .total-assets-value {
-            height: 16px;
-            font-size: 16px;
-        }
-
-.total-assets-label {
-    width: calc(100% - 160px);
-    height: 12px;
-    font-size: 12px;
-    line-height: 1;
-    text-align: left;
-    color: #d9e0e6;
-    margin-top: 17px;
-    margin-left: 50px;
-    display: inline-block;
-}
-
-.total-assets-value {
-    width: 67px;
-    height: 12px;
-    font-size: 12px;
-    line-height: 1;
-    text-align: center;
-    color: #d9e0e6;
-    display: inline-block;
-}
-
-.total-assets-pecent-label {
-    width: 12px;
-    height: 12px;
-    font-size: 12px;
-    line-height: 1;
-    text-align: center;
-    color: #d9e0e6;
-    display: inline-block;
 }
 
 .input {
@@ -475,132 +311,23 @@ input[type=number]::-webkit-outer-spin-button {
     }
 
 
-.asset-disclaimer {
-    font-size: 9px;
-    line-height: 1.33;
-    text-align: center;
-    color: #939598;
-}
-
-.line-separator {
-    width: 124px;
-    height: 1px;
-    background-color: #d9e0e6;
-    margin: auto;
-    margin-bottom: 11.5px;
-    font-size: 1em;
-}
-
-.asset-title {
-    font-family: HelveticaNeue;
+#contract-deploy-title {
+    font-family: 'Helvetica Neue Bold';
     font-size: 12px;
     letter-spacing: 0.9px;
     text-align: center;
     color: #231f20;
-    margin: auto;
-    margin-bottom:20px;
 }
 
-.asset-graph {
-    width: 380px;
-    height: 200px;
-    margin-left: 30px;
-    margin-right: 30px;
+#contract-deploy-subtitle {
+    font-family: 'Helvetica Neue';
+    font-size: 12px;
+    font-weight: 300;
+    line-height: 1.5;
+    text-align: center;
+    color: #707070;
 }
 
-
-.carousel-indicators .active {
-    background-color: #00bdff !important;
-    width: 8px !important;
-    height: 8px !important;
-    margin-top: 0;
-    margin-right: 4px;
-    margin-left: 4px;
-}
-
-.carousel-indicators li {
-    width: 4px !important;
-    height: 4px !important;
-    margin-top: 2px;
-    border-radius: 50%;
-    background-color: #d9e0e6;
-    margin-right: 6px;
-    margin-left: 6px;
-}
-
-.carousel-indicators{
-    position:relative !important;
-    margin: 20px;
-    margin-top:30px;
-}
-
-.carousel-control-next {
-    /*right: -30px !important;*/
-}
-
-.carousel-control-prev {
-    /*left: -30px !important;*/
-}
-
-.carousel-control-prev, .carousel-control-next {
-    opacity: 1;
-    width: 20px;
-    top: 100px;
-    height: 40px;   
-}
-
-.dygraph-legend {
-    text-align: left;
-    color: #ffffff;
-    width: 58px;
-    height: 40.6px;
-    opacity: 0.9;
-    border-radius: 1px;
-    background-color: #485465;
-    padding: 3px 6px;
-}
-
-.legend-y-value {
-    height: 12px;
-    font-size: 11px;
-    letter-spacing: 0.2px;
-    text-align: left;
-    color: #ffffff;
-}
-
-.legend-x-value {
-    height: 11px;
-    opacity: 0.4;
-    font-size: 9px;
-    letter-spacing: 0.2px;
-    text-align: left;
-    color: #ffffff;
-}
-
-.dygraph-legend::after {
-    content: '';
-    border-color: transparent;
-    border-top: 10px solid #485465;
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    width: 10px;
-    height: 10px;
-    position: absolute;
-    display: block;
-    top: 40px;
-    left: 19px;
-}
-
-.dygraph-legend {
-    display: inline-block;
-    position: relative;
-    overflow: unset;
-}
-
-.close-asset-modal {
-    display: block;
-}
-
-#carouselExampleIndicators{
-    display:inline-block;
+.step{
+    width:100%;
 }
