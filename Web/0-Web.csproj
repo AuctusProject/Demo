@@ -28,6 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="wwwroot\css\companyRegister.css" />
     <Content Include="wwwroot\css\contractDeploy.css" />
     <Content Include="wwwroot\css\contractDeploy.min.css" />
     <Content Include="wwwroot\css\fundRegister.css">

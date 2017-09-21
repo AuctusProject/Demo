@@ -1,4 +1,4 @@
-﻿﻿﻿@font-face {
+﻿﻿﻿﻿@font-face {
     font-family: 'Helvetica Neue Light';
     src: local("Helvetica Neue Light"), url("../fonts/HelveticaNeueLight.ttf") format("truetype");
     font-weight: normal;
@@ -206,6 +206,30 @@ h3 {
     background-image: url('/images/right_disabled.png');
 }
 
+.back-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: solid 2px;
+    border-color: #00bdff;
+    margin: auto;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    text-align: center;
+    display: inline-block;
+    position: relative;
+    top: -6px;
+    right: 7px;
+}
+
+.back-button-icon {
+    width: 18px;
+    height: 14px;
+    background-image: url('/images/left.png');
+    display: inline-block;
+    vertical-align: middle;
+    margin-top: 10px;
+}
 .input {
     height: 30px;
     border-radius: 5px;

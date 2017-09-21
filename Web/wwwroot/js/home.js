@@ -1,4 +1,4 @@
-﻿$(document).ready(function () {
+﻿﻿$(document).ready(function () {
     $('[data-toggle="popover"]').popover();
 
     $(".next-step").click(function (e) {
@@ -14,7 +14,7 @@
 
     $(".prev-step").click(function (e) {
         var stepId = $(this).closest('.step').data('step-id');
-        nextTab(stepId);
+        prevTab(stepId);
     });
 
 
@@ -202,13 +202,17 @@ function nextTab(currentStepId) {
     var $nextTab = $('#step' + (currentStepId + 1));
     $active.hide();
     $nextTab.show();
+    if (currentStepId == 1){
+        registerCompanyForm.init();
+    }
 }
 
-function prevTab(elem) {
+function prevTab(currentStepId) {
     var $active = $('#step' + currentStepId);
     var $prevTab = $('#step' + (currentStepId - 1));
     $active.hide();
     $prevTab.show();
+    $('.next-button').removeAttr('disabled');
 }
 
 var Wizard = {};
