@@ -12,35 +12,35 @@ using Auctus.DomainObjects.Contracts;
 
 namespace Web.Controllers
 {
-    public class ContractController : BaseController
+    public class AssetController : BaseController
     {
-        public ContractController(ILoggerFactory loggerFactory, Cache cache, IServiceProvider serviceProvider) : base (loggerFactory, cache, serviceProvider) { }
+        public AssetController(ILoggerFactory loggerFactory, Cache cache, IServiceProvider serviceProvider) : base (loggerFactory, cache, serviceProvider) { }
 
-        [HttpPost]
+        [HttpGet]
         public IActionResult GetGoldReference()
         {
             return GetJsonFromReferenceContract(ContractsServices.GetGoldReference());
         }
 
-        [HttpPost]
+        [HttpGet]
         public IActionResult GetMSCIWorldReference()
         {
             return GetJsonFromReferenceContract(ContractsServices.GetMSCIWorldReference());
         }
 
-        [HttpPost]
+        [HttpGet]
         public IActionResult GetSP500Reference()
         {
             return GetJsonFromReferenceContract(ContractsServices.GetSP500Reference());
         }
 
-        [HttpPost]
+        [HttpGet]
         public IActionResult GetVWEHXReference()
         {
             return GetJsonFromReferenceContract(ContractsServices.GetVWEHXReference());
         }
 
-        [HttpPost]
+        [HttpGet]
         public IActionResult GetBitcoinReference()
         {
             return GetJsonFromReferenceContract(ContractsServices.GetBitcoinReference());
@@ -49,7 +49,7 @@ namespace Web.Controllers
         private JsonResult GetJsonFromReferenceContract(ReferenceContract referenceContract)
         {
             return Json(new { Address = referenceContract.Address, Name = referenceContract.Description,
-                Values = referenceContract.ReferenceValue.Select(c => new KeyValuePair<int, double>(c.Period, c.Value)) });
+                Values = referenceContract.ReferenceValue.Select(c => new double[]{ c.Period, c.Value}) });
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿﻿<form>
+﻿<form id="registerFund">
     <div class="row">
         <div class="col-lg-6 left">
             <div class="row">
@@ -15,9 +15,10 @@
                         <input type="number" min="0" max="100" class="form-control" id="fundFeeInput" placeholder="00%" 
                                data-toggle="popover" 
                                data-trigger="focus"
+                               data-placement="right"
                                title="FUND FEE"
                                data-content="<div>This fee covers the cost of administration, and are usually included in the annual management charge. However, older pensions may have a separate policy fee.</div><br/><div><strong>Choose a value between 0-100%.</strong></div>"
-                               data-html="true" >
+                               data-html="true" required>
                     </div>
                 </div>
                 <div class="col-lg-1">
@@ -31,7 +32,7 @@
                 <div class="col-lg-7">
                     <div class="form-group col-title">ASSETS DISTRIBUTION</div>
                     <div class="form-group bmd-form-group asset-input-group">
-                        <span class="asset-input-group-left">
+                        <span class="asset-input-group-left" data-carousel-sequential="0">
                             <img src="~/images/chart.png" />
                         </span>
                         <div class="asset-input-group-label">
@@ -46,7 +47,7 @@
                         <div class="asset-input-group-percent-label">%</div>
                     </div>
                     <div class="form-group bmd-form-group asset-input-group">
-                        <span class="asset-input-group-left">
+                        <span class="asset-input-group-left" data-carousel-sequential="1">
                             <img src="~/images/chart.png" />
                         </span>
                         <div class="asset-input-group-label">
@@ -56,7 +57,7 @@
                         <div class="asset-input-group-percent-label">%</div>
                     </div>
                     <div class="form-group bmd-form-group asset-input-group">
-                        <span class="asset-input-group-left">
+                        <span class="asset-input-group-left" data-carousel-sequential="2">
                             <img src="~/images/chart.png" />
                         </span>
                         <div class="asset-input-group-label">
@@ -66,7 +67,7 @@
                         <div class="asset-input-group-percent-label">%</div>
                     </div>
                     <div class="form-group bmd-form-group asset-input-group">
-                        <span class="asset-input-group-left">
+                        <span class="asset-input-group-left" data-carousel-sequential="3">
                             <img src="~/images/chart.png" />
                         </span>
                         <div class="asset-input-group-label">
@@ -76,11 +77,11 @@
                         <div class="asset-input-group-percent-label">%</div>
                     </div>
                     <div class="form-group bmd-form-group asset-input-group">
-                        <span class="asset-input-group-left">
+                        <span class="asset-input-group-left" data-carousel-sequential="4">
                             <img src="~/images/chart.png" />
                         </span>
                         <div class="asset-input-group-label">
-                            BTC
+                            BITCOIN
                         </div>
                         <input placeholder="00" type="number" />
                         <div class="asset-input-group-percent-label">%</div>
@@ -107,37 +108,58 @@
 <div class="modal fade" id="assetInformationModal" tabindex="-1" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="assetInformationId">GOLD NOMINAL RETURN</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            </div>
             <div class="modal-body">
+                <div class="close-asset-modal">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
                 <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" data-interval="false">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <div class="asset-title">GOLD NOMINAL RETURN</div>
+                            <div class="asset-graph" id="goldGraph">
+                                <div class="fa fa-spinner fa-spin fa-fw"></div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="asset-title">S&P NOMINAL RETURN</div>
+                            <div class="asset-graph" id="sandpGraph">
+                                <div class="fa fa-spinner fa-spin fa-fw"></div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="asset-title">BONDS NOMINAL RETURN</div>
+                            <div class="asset-graph" id="bondsGraph">
+                                <div class="fa fa-spinner fa-spin fa-fw"></div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="asset-title">MSCI WORLD NOMINAL RETURN</div>
+                            <div class="asset-graph" id="msciGraph">
+                                <div class="fa fa-spinner fa-spin fa-fw"></div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="asset-title">BITCOIN NOMINAL RETURN</div>
+                            <div class="asset-graph" id="btcGraph">
+                                <div class="fa fa-spinner fa-spin fa-fw"></div>
+                            </div>
+                        </div>
+                    </div>
                     <ol class="carousel-indicators">
                         <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
                         <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
                         <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                        <li data-target="#carouselExampleIndicators" data-slide-to="3"></li>
+                        <li data-target="#carouselExampleIndicators" data-slide-to="4"></li>
                     </ol>
-                    <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <div id="goldGraph"></div>
-                        </div>
-                        <div class="carousel-item">
-                            <div id="sandpGraph"></div>
-                        </div>
-                        <div class="carousel-item">
-                            <div id="boundsGraph"></div>
-                        </div>
-                    </div>
                     <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Previous</span>
+                        <img src="~/images/chevron-left.png" />
                     </a>
                     <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Next</span>
+                        <img src="~/images/chevron-right.png" />
                     </a>
                 </div>
+                <div class="line-separator"></div>
                 <div class="asset-disclaimer">This graph is for general information and illustrative purposes only and is not intended to serve as financial, investment or any other type of advice. Auctus makes no representation as to the accuracy of the information and any reliance on any information on this demo shall be at the user's own risk.</div>
             </div>
         </div>
