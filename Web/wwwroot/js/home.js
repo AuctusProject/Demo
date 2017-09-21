@@ -28,10 +28,10 @@
 
     $('form').validate();
 
-    /*Wizard.Components.ContractDeploy.CodeMirror = CodeMirror.fromTextArea(Wizard.Components.ContractDeploy.Code[0], {
+    Wizard.Components.ContractDeploy.CodeMirror = CodeMirror.fromTextArea(Wizard.Components.ContractDeploy.Code[0], {
         lineNumbers: true,
         mode: "text/javascript"
-    });*/
+    });
 
     loadAssetsGraphs();
 });
@@ -247,15 +247,13 @@ Wizard.Components = {
     },
     AssetsCarousel: $("#carouselExampleIndicators"),
     ContractDeploy: {
-        ContractDeployRow: $('#contract-deploy-row'),
         NextButton: $('#btn-contract-deploy-next'),
-        Title: $('#contract-deploy-title'),
-        Icon: $('#contract-deploy-icon'),
-        ContractCodeWrapper: $('#contract-deploy-code-wrapper'),
+        ContractBeingDeployedDiv: $('#contract-being-deployed'),
+        ContractDeployedDiv: $('#contract-deployed'),
+        ContractCodeWrapper: $('.contract-deploy-code-wrapper'),
         Code: $('#contract-deploy-code'),
-        TransactionIdLink: $('#contract-deploy-tx-id-link'),
-        TransactionIdTitle: $('#contract-deploy-tx-id-title'),
-        TryAgain: $('#try-again')
+        TransactionIdLink: $('.contract-deploy-tx-id-link'),
+        ContractAddressLink: $('.contract-deploy-contract-address-link'),
     },
     WizardRow: $('#wizard-row')
 };
@@ -268,7 +266,7 @@ Wizard.Operations = {
 
         if (Wizard.Operations.Validate(model)) {
 
-            Wizard.Operations.ShowGeneratingContract(model);
+            //Wizard.Operations.ShowGeneratingContract(model);
 
             $.ajax({
                 url: "Home/Save",
@@ -284,7 +282,7 @@ Wizard.Operations = {
             });
         }
     },
-    ShowGeneratingContract: function (model) {
+    /*ShowGeneratingContract: function (model) {
         Wizard.Components.ContractDeploy.ContractCodeWrapper.hide();
         Wizard.Components.ContractDeploy.Title.html("Generating Smart Contract...");
         Wizard.Components.ContractDeploy.Icon.addClass("fa fa-spinner fa-spin fa-fw");
@@ -292,22 +290,20 @@ Wizard.Operations = {
         Wizard.Components.ContractDeploy.TransactionIdTitle.hide();
         Wizard.Components.WizardRow.hide();
         Wizard.Components.ContractDeploy.NextButton.hide();
-        Wizard.Components.ContractDeploy.ContractDeployRow.show();
-    },
+    },*/
     OnSave: function (data) {
-        Wizard.Components.ContractDeploy.Title.html("Deploying Smart Contract...");
+        Wizard.Components.ContractDeploy.ContractDeployedDiv.hide();
         Wizard.Components.ContractDeploy.TransactionIdLink.attr("href", "https://ropsten.etherscan.io/tx/" + data.transactionHash);
-        Wizard.Components.ContractDeploy.TransactionIdLink.html(data.transactionHash);
-        Wizard.Components.ContractDeploy.TransactionIdTitle.show();
         Wizard.Components.ContractDeploy.CodeMirror.setValue(js_beautify(data.smartContractCode, { indent_size: 4 }));
         setTimeout(function () { Wizard.Components.ContractDeploy.CodeMirror.refresh(); }, 1);
         Wizard.Components.ContractDeploy.ContractCodeWrapper.show();
+        Wizard.Components.ContractDeploy.ContractBeingDeployedDiv.show();
+        nextTab(3);
     },
     OnDeployCompleted: function (data) {
-        Wizard.Components.ContractDeploy.Title.html("<i class='fa fa-check-circle-o'></i> Deploy Completed!");
-        Wizard.Components.ContractDeploy.Title.addClass("text-success");
-        Wizard.Components.ContractDeploy.Icon.html("Address: <a target='_blank' href='https://ropsten.etherscan.io/address/" + data.address + "'>" + data.address + "</a>");
-        Wizard.Components.ContractDeploy.Icon.removeClass();
+        Wizard.Components.ContractDeploy.ContractBeingDeployedDiv.hide();
+        Wizard.Components.ContractDeploy.ContractDeployedDiv.show();
+        Wizard.Components.ContractDeploy.ContractAddressLink.attr("href", "https://ropsten.etherscan.io/tx/" + data.address);
         Wizard.Components.ContractDeploy.NextButton.removeAttr('disabled');
         Wizard.Components.ContractDeploy.NextButton.unbind('click').click(function () { Wizard.Operations.GoToDashBoard(data.address); });
         Wizard.Components.ContractDeploy.NextButton.show();
