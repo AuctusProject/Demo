@@ -93,7 +93,8 @@
 }
 
 #slider {
-    margin-top: 60px;
+    margin: 20px;
+    margin-top: 80px;
 }
 
 #slider.noUi-target {
@@ -113,6 +114,7 @@
     border: 0px;
     box-shadow: none;
     left: -8px;
+    outline: none !important;
 }
 
 #slider .noUi-handle:nth-child(2) {
@@ -127,4 +129,53 @@
 }
 #slider .noUi-tooltip:focus {
     outline: none;
+}
+#slider .noUi-tooltip {
+    background: #485465;
+    min-width: 55px;
+    margin-bottom: 5px;
+}
+
+#slider .noUi-tooltip.unselected {
+    color: black;
+    background: white;
+}
+
+#slider .noUi-tooltip.unselected .year, #slider .noUi-tooltip.unselected .percentage {
+    color: black;
+}
+
+#slider .noUi-tooltip.unselected:after {
+    border-top: solid 5px #D9D9D9;
+}
+
+#slider .noUi-tooltip .year {
+    opacity: 0.4;
+    font-family: HelveticaNeue;
+    font-size: 9px;
+    letter-spacing: 0.2px;
+    text-align: left;
+    color: #ffffff;
+}
+
+#slider .noUi-tooltip .percentage {
+    font-family: HelveticaNeue;
+    font-size: 11px;
+    letter-spacing: 0.2px;  
+    text-align: left;
+    color: #ffffff;
+}
+
+#slider .noUi-tooltip:after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: 0;
+    height: 0;
+    border-top: solid 5px #485465;
+    border-left: solid 5px transparent;
+    border-right: solid 5px transparent;
 }
