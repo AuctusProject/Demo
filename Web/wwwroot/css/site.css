@@ -156,7 +156,9 @@ h3 {
     padding: 30px;
 }
 
-
+.step.active{
+    margin:auto;
+}
 
 .asset-input-group {
     display: inline-block;
@@ -295,6 +297,59 @@ h3 {
 .next-button[disabled] .next-button-icon {
     background-image: url('/images/right_disabled.png');
 }
+
+.back-button {
+    padding-top: 7px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50px;
+    border: solid 2px;
+    border-color: #00bdff;
+    margin: auto;
+    margin:40px 10px;
+    text-align: center;
+    display: inline-block;
+}
+.next-button-icon {
+    width: 18px;
+    height: 14px;
+    background-image: url('/images/left.png');
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.deploy-contract-button {
+    width: 189px;
+    height: 40px;
+    border-radius: 50px;
+    border: solid 2px;
+    border-color: #00bdff;
+    margin: auto;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    text-align: center;
+    display: inline-block;
+}
+
+.deploy-contract-label {
+    width: 49px;
+    height: 17px;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-align: center;
+    color: #00bdff;
+    line-height: 36px;
+    vertical-align: middle;
+}
+
+.deploy-contract[disabled] {
+    border-color: #d9e0e6;
+}
+
+    .deploy-contract[disabled] span {
+        color: #d9e0e6;
+    }
 
 .total-assets {
     width: 100%;
