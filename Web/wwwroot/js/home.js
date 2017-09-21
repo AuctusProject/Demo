@@ -9,6 +9,8 @@
     });
 
     $('.asset-input-group input').blur(updateTotalAssets);
+    $('#fundFeeInput').blur(validateFormToEnableNextButton);
+
 
     $(".prev-step").click(function (e) {
         var stepId = $(this).closest('.step').data('step-id');
@@ -17,7 +19,8 @@
 
 
     $(".asset-input-group-left").click(function (e) {
-        openAssetInformationModal();
+        var sequential = $(this).data('carousel-sequential');
+        openAssetInformationModal(sequential);
     });
 
     Wizard.Components.Contract.Initialize();
@@ -29,29 +32,144 @@
         lineNumbers: true,
         mode: "text/javascript"
     });*/
+
+    loadAssetsGraphs();
 });
 
-function openAssetInformationModal() {
-    $('#assetInformationModal').modal('show');
-};
-
-function loadGraphs() {
-    createGraph("goldGraph", [
-        [1, 10],
-        [2, 20],
-        [3, 50],
-        [4, 70]
-    ]);
+function validateFormToEnableNextButton() {
+    if ($('.total-assets').hasClass('has-success') && $('#registerFund').valid())
+        $('.next-button').removeAttr('disabled');
 }
 
+function nextAssetReference() {
+    Wizard.Components.AssetsCarousel.carousel('next');
+}
+
+function previousAssetReference() {
+    Wizard.Components.AssetsCarousel.carousel('prev');
+}
+
+function openAssetInformationModal(sequential) {
+    Wizard.Components.AssetsCarousel.carousel(sequential);
+    $('#assetInformationModal').modal('show');    
+};
+
+function loadAssetsGraphs() {
+    $.ajax({
+        url: "Asset/GetGoldReference",
+        method: "GET",
+        success: loadGoldGraph,
+        error: function (xhr, ajaxOptions, thrownError) {
+            
+        }
+    });           
+    $.ajax({
+        url: "Asset/GetSP500Reference",
+        method: "GET",
+        success: loadSPGraph,
+        error: function (xhr, ajaxOptions, thrownError) {
+            
+        }
+    });    
+    $.ajax({
+        url: "Asset/GetVWEHXReference",
+        method: "GET",
+        success: loadBondsGraph,
+        error: function (xhr, ajaxOptions, thrownError) {
+            
+        }
+    }); 
+    $.ajax({
+        url: "Asset/GetMSCIWorldReference",
+        method: "GET",
+        success: loadMsciGraph,
+        error: function (xhr, ajaxOptions, thrownError) {
+            
+        }
+    }); 
+    $.ajax({
+        url: "Asset/GetBitcoinReference",
+        method: "GET",
+        success: loadBtcGraph,
+        error: function (xhr, ajaxOptions, thrownError) {
+            
+        }
+    });    
+}
+
+function loadGoldGraph(data) {
+    createGraph("goldGraph", data.values);
+}
+
+function loadSPGraph(data) {
+    createGraph("sandpGraph", data.values);
+}
+
+function loadBondsGraph(data) {
+    createGraph("bondsGraph", data.values);
+}
+
+function loadMsciGraph(data) {
+    createGraph("msciGraph", data.values);
+}
+
+function loadBtcGraph(data) {
+    createGraph("btcGraph", data.values);
+}
+
+var openDate = new Date();
 function createGraph(elementId, data) {
     g = new Dygraph(
         document.getElementById(elementId), data,
         {
-            labels: ["year", "Value"],
-            color: "#0000FF"
+            labels: ["Year", "Value"],
+            color: "#00bdff",
+            width: 380,
+            height: 200,
+            axisLabelFontSize: 10,
+            strokeWidth: 2,
+            axes: {
+                x: {
+                    drawGrid: false,
+                    axisLabelFormatter: function (x) {
+                        var date = new Date(openDate.getFullYear(), openDate.getMonth() + parseInt(x));
+                        return date.getMonth()+1 + "/" + date.getFullYear();
+                    },
+                    axisLineColor: 'white'
+                },
+                y: {
+                    axisLabelFormatter: function (y) {
+                        return '$' + y.toFixed(2);
+                    },
+                    axisLineColor: 'white'
+                },
+            },
+            gridLineColor: '#d9e0e6',
+            legend: 'follow',
+            legendFormatter: legendFormatter,
+            digitsAfterDecimal: 2 
         }
     );
+}
+
+
+function legendFormatter(data) {
+    if (data.x == null) {
+        // This happens when there's no selection and {legend: 'always'} is set.
+        return '';
+    }
+
+    var date = new Date(openDate.getFullYear(), openDate.getMonth() + parseInt(data.xHTML));
+    var html = "<span class='legend-x-value'>" + (parseInt(date.getMonth()) + 1) + "/" + date.getFullYear() +"</span>";
+    data.series.forEach(function (series) {
+        if (!series.isVisible) return;
+        var labeledData = '$'+series.yHTML;
+        if (series.isHighlighted) {
+            labeledData = '<b>' + labeledData + '</b>';
+        }
+        html += "<span class='legend-y-value'>" + '<br>' + labeledData + "</span>";
+    });
+    return html;
 }
 
 function updateTotalAssets() {
@@ -74,6 +192,7 @@ function updateTotalAssets() {
     }
 
     $('.total-assets-value').html(total);
+    validateFormToEnableNextButton();
 }
 
 function nextTab(currentStepId) {
@@ -124,6 +243,7 @@ Wizard.Components = {
     Buttons: {
         Save: $('#wizard-save-button')
     },
+    AssetsCarousel: $("#carouselExampleIndicators"),
     ContractDeploy: {
         ContractDeployRow: $('#contract-deploy-row'),
         NextButton: $('#btn-contract-deploy-next'),

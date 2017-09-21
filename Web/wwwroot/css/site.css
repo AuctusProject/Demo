@@ -490,3 +490,117 @@ input[type=number]::-webkit-outer-spin-button {
     margin-bottom: 11.5px;
     font-size: 1em;
 }
+
+.asset-title {
+    font-family: HelveticaNeue;
+    font-size: 12px;
+    letter-spacing: 0.9px;
+    text-align: center;
+    color: #231f20;
+    margin: auto;
+    margin-bottom:20px;
+}
+
+.asset-graph {
+    width: 380px;
+    height: 200px;
+    margin-left: 30px;
+    margin-right: 30px;
+}
+
+
+.carousel-indicators .active {
+    background-color: #00bdff !important;
+    width: 8px !important;
+    height: 8px !important;
+    margin-top: 0;
+    margin-right: 4px;
+    margin-left: 4px;
+}
+
+.carousel-indicators li {
+    width: 4px !important;
+    height: 4px !important;
+    margin-top: 2px;
+    border-radius: 50%;
+    background-color: #d9e0e6;
+    margin-right: 6px;
+    margin-left: 6px;
+}
+
+.carousel-indicators{
+    position:relative !important;
+    margin: 20px;
+    margin-top:30px;
+}
+
+.carousel-control-next {
+    /*right: -30px !important;*/
+}
+
+.carousel-control-prev {
+    /*left: -30px !important;*/
+}
+
+.carousel-control-prev, .carousel-control-next {
+    opacity: 1;
+    width: 20px;
+    top: 100px;
+    height: 40px;   
+}
+
+.dygraph-legend {
+    text-align: left;
+    color: #ffffff;
+    width: 58px;
+    height: 40.6px;
+    opacity: 0.9;
+    border-radius: 1px;
+    background-color: #485465;
+    padding: 3px 6px;
+}
+
+.legend-y-value {
+    height: 12px;
+    font-size: 11px;
+    letter-spacing: 0.2px;
+    text-align: left;
+    color: #ffffff;
+}
+
+.legend-x-value {
+    height: 11px;
+    opacity: 0.4;
+    font-size: 9px;
+    letter-spacing: 0.2px;
+    text-align: left;
+    color: #ffffff;
+}
+
+.dygraph-legend::after {
+    content: '';
+    border-color: transparent;
+    border-top: 10px solid #485465;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    display: block;
+    top: 40px;
+    left: 19px;
+}
+
+.dygraph-legend {
+    display: inline-block;
+    position: relative;
+    overflow: unset;
+}
+
+.close-asset-modal {
+    display: block;
+}
+
+#carouselExampleIndicators{
+    display:inline-block;
+}
