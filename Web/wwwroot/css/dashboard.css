@@ -316,9 +316,25 @@
     color: #231f20;
 }
 
-.card .icon {
-    width: 20px;
+.card .title span {
+    margin-left: 10px;
+    line-height: 20px;
+    vertical-align: middle;
+}
+
+.card .assets-icon {
+    width: 21px;
     height: 20px;
+}
+
+.card .trending-icon {
+    width: 22px;
+    height: 12px;
+}
+
+.card .bar-chart-icon {
+    width: 20px;
+    height: 18px;
 }
 
 .fund-summary {
