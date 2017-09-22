@@ -3,10 +3,18 @@
 
 @Html.Partial("_Header")
 @Html.Partial("_Timeline", 60)
+@Html.Partial("_FundSummary")
+@Html.Partial("_Charts")
+@Html.Partial("_TransactionHistory")
 
 @section style{
     <link rel=stylesheet href="~/css/dashboard.css">
+    <link href="~/lib/c3/c3.min.css" rel="stylesheet">
 }
 
 @section scripts{
-}
+    <script src="~/lib/d3/d3.min.js" charset="utf-8"></script>
+    <script src="~/lib/c3/c3.min.js"></script>
+
+    <script type="text/javascript" src="~/js/dashboard/charts.js"></script>
+}   
