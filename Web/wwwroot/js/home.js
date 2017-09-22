@@ -1,4 +1,4 @@
-﻿$(document).ready(function () {
+﻿﻿$(document).ready(function () {
     $('[data-toggle="popover"]').popover();
 
     $(".next-step").click(function (e) {
@@ -9,15 +9,18 @@
     });
 
     $('.asset-input-group input').blur(updateTotalAssets);
+    $('#fundFeeInput').blur(validateFormToEnableNextButton);
+
 
     $(".prev-step").click(function (e) {
         var stepId = $(this).closest('.step').data('step-id');
-        nextTab(stepId);
+        prevTab(stepId);
     });
 
 
     $(".asset-input-group-left").click(function (e) {
-        openAssetInformationModal();
+        var sequential = $(this).data('carousel-sequential');
+        openAssetInformationModal(sequential);
     });
 
     Wizard.Components.Contract.Initialize();
@@ -25,33 +28,150 @@
 
     $('form').validate();
 
-    /*Wizard.Components.ContractDeploy.CodeMirror = CodeMirror.fromTextArea(Wizard.Components.ContractDeploy.Code[0], {
+    Wizard.Components.ContractDeploy.CodeMirror = CodeMirror.fromTextArea(Wizard.Components.ContractDeploy.Code[0], {
         lineNumbers: true,
         mode: "text/javascript"
-    });*/
+    });
+
+    loadAssetsGraphs();
 });
 
-function openAssetInformationModal() {
-    $('#assetInformationModal').modal('show');
-};
-
-function loadGraphs() {
-    createGraph("goldGraph", [
-        [1, 10],
-        [2, 20],
-        [3, 50],
-        [4, 70]
-    ]);
+function validateFormToEnableNextButton() {
+    if ($('.total-assets').hasClass('has-success') && $('#fundFeeInput').val() != "" &&  $('#registerFund').valid())
+        $('.next-button').removeAttr('disabled');
+    else
+        $('.next-button').attr('disabled', 'disabled');
 }
 
+function nextAssetReference() {
+    Wizard.Components.AssetsCarousel.carousel('next');
+}
+
+function previousAssetReference() {
+    Wizard.Components.AssetsCarousel.carousel('prev');
+}
+
+function openAssetInformationModal(sequential) {
+    Wizard.Components.AssetsCarousel.carousel(sequential);
+    $('#assetInformationModal').modal('show');    
+};
+
+function loadAssetsGraphs() {
+    $.ajax({
+        url: "Asset/GetGoldReference",
+        method: "GET",
+        success: loadGoldGraph,
+        error: function (xhr, ajaxOptions, thrownError) {
+            
+        }
+    });           
+    $.ajax({
+        url: "Asset/GetSP500Reference",
+        method: "GET",
+        success: loadSPGraph,
+        error: function (xhr, ajaxOptions, thrownError) {
+            
+        }
+    });    
+    $.ajax({
+        url: "Asset/GetVWEHXReference",
+        method: "GET",
+        success: loadBondsGraph,
+        error: function (xhr, ajaxOptions, thrownError) {
+            
+        }
+    }); 
+    $.ajax({
+        url: "Asset/GetMSCIWorldReference",
+        method: "GET",
+        success: loadMsciGraph,
+        error: function (xhr, ajaxOptions, thrownError) {
+            
+        }
+    }); 
+    $.ajax({
+        url: "Asset/GetBitcoinReference",
+        method: "GET",
+        success: loadBtcGraph,
+        error: function (xhr, ajaxOptions, thrownError) {
+            
+        }
+    });    
+}
+
+function loadGoldGraph(data) {
+    createGraph("goldGraph", data.values);
+}
+
+function loadSPGraph(data) {
+    createGraph("sandpGraph", data.values);
+}
+
+function loadBondsGraph(data) {
+    createGraph("bondsGraph", data.values);
+}
+
+function loadMsciGraph(data) {
+    createGraph("msciGraph", data.values);
+}
+
+function loadBtcGraph(data) {
+    createGraph("btcGraph", data.values);
+}
+
+var openDate = new Date();
 function createGraph(elementId, data) {
     g = new Dygraph(
         document.getElementById(elementId), data,
         {
-            labels: ["year", "Value"],
-            color: "#0000FF"
+            labels: ["Year", "Value"],
+            color: "#00bdff",
+            width: 380,
+            height: 200,
+            axisLabelFontSize: 10,
+            strokeWidth: 2,
+            axes: {
+                x: {
+                    drawGrid: false,
+                    axisLabelFormatter: function (x) {
+                        var date = new Date(openDate.getFullYear(), openDate.getMonth() + parseInt(x));
+                        return date.getMonth()+1 + "/" + date.getFullYear();
+                    },
+                    axisLineColor: 'white'
+                },
+                y: {
+                    axisLabelFormatter: function (y) {
+                        return '$' + y.toFixed(2);
+                    },
+                    axisLineColor: 'white'
+                },
+            },
+            gridLineColor: '#d9e0e6',
+            legend: 'follow',
+            legendFormatter: legendFormatter,
+            digitsAfterDecimal: 2 
         }
     );
+}
+
+
+function legendFormatter(data) {
+    if (data.x == null) {
+        // This happens when there's no selection and {legend: 'always'} is set.
+        return '';
+    }
+
+    var date = new Date(openDate.getFullYear(), openDate.getMonth() + parseInt(data.xHTML));
+    var html = "<span class='legend-x-value'>" + (parseInt(date.getMonth()) + 1) + "/" + date.getFullYear() +"</span>";
+    data.series.forEach(function (series) {
+        if (!series.isVisible) return;
+        var labeledData = '$'+series.yHTML;
+        if (series.isHighlighted) {
+            labeledData = '<b>' + labeledData + '</b>';
+        }
+        html += "<span class='legend-y-value'>" + '<br>' + labeledData + "</span>";
+    });
+    return html;
 }
 
 function updateTotalAssets() {
@@ -74,6 +194,7 @@ function updateTotalAssets() {
     }
 
     $('.total-assets-value').html(total);
+    validateFormToEnableNextButton();
 }
 
 function nextTab(currentStepId) {
@@ -81,13 +202,17 @@ function nextTab(currentStepId) {
     var $nextTab = $('#step' + (currentStepId + 1));
     $active.hide();
     $nextTab.show();
+    if (currentStepId == 1){
+        registerCompanyForm.init();
+    }
 }
 
-function prevTab(elem) {
+function prevTab(currentStepId) {
     var $active = $('#step' + currentStepId);
     var $prevTab = $('#step' + (currentStepId - 1));
     $active.hide();
     $prevTab.show();
+    $('.next-button').removeAttr('disabled');
 }
 
 var Wizard = {};
@@ -124,16 +249,15 @@ Wizard.Components = {
     Buttons: {
         Save: $('#wizard-save-button')
     },
+    AssetsCarousel: $("#carouselExampleIndicators"),
     ContractDeploy: {
-        ContractDeployRow: $('#contract-deploy-row'),
         NextButton: $('#btn-contract-deploy-next'),
-        Title: $('#contract-deploy-title'),
-        Icon: $('#contract-deploy-icon'),
-        ContractCodeWrapper: $('#contract-deploy-code-wrapper'),
+        ContractBeingDeployedDiv: $('#contract-being-deployed'),
+        ContractDeployedDiv: $('#contract-deployed'),
+        ContractCodeWrapper: $('.contract-deploy-code-wrapper'),
         Code: $('#contract-deploy-code'),
-        TransactionIdLink: $('#contract-deploy-tx-id-link'),
-        TransactionIdTitle: $('#contract-deploy-tx-id-title'),
-        TryAgain: $('#try-again')
+        TransactionIdLink: $('.contract-deploy-tx-id-link'),
+        ContractAddressLink: $('.contract-deploy-contract-address-link'),
     },
     WizardRow: $('#wizard-row')
 };
@@ -146,7 +270,7 @@ Wizard.Operations = {
 
         if (Wizard.Operations.Validate(model)) {
 
-            Wizard.Operations.ShowGeneratingContract(model);
+            //Wizard.Operations.ShowGeneratingContract(model);
 
             $.ajax({
                 url: "Home/Save",
@@ -162,7 +286,7 @@ Wizard.Operations = {
             });
         }
     },
-    ShowGeneratingContract: function (model) {
+    /*ShowGeneratingContract: function (model) {
         Wizard.Components.ContractDeploy.ContractCodeWrapper.hide();
         Wizard.Components.ContractDeploy.Title.html("Generating Smart Contract...");
         Wizard.Components.ContractDeploy.Icon.addClass("fa fa-spinner fa-spin fa-fw");
@@ -170,22 +294,20 @@ Wizard.Operations = {
         Wizard.Components.ContractDeploy.TransactionIdTitle.hide();
         Wizard.Components.WizardRow.hide();
         Wizard.Components.ContractDeploy.NextButton.hide();
-        Wizard.Components.ContractDeploy.ContractDeployRow.show();
-    },
+    },*/
     OnSave: function (data) {
-        Wizard.Components.ContractDeploy.Title.html("Deploying Smart Contract...");
+        Wizard.Components.ContractDeploy.ContractDeployedDiv.hide();
         Wizard.Components.ContractDeploy.TransactionIdLink.attr("href", "https://ropsten.etherscan.io/tx/" + data.transactionHash);
-        Wizard.Components.ContractDeploy.TransactionIdLink.html(data.transactionHash);
-        Wizard.Components.ContractDeploy.TransactionIdTitle.show();
         Wizard.Components.ContractDeploy.CodeMirror.setValue(js_beautify(data.smartContractCode, { indent_size: 4 }));
         setTimeout(function () { Wizard.Components.ContractDeploy.CodeMirror.refresh(); }, 1);
         Wizard.Components.ContractDeploy.ContractCodeWrapper.show();
+        Wizard.Components.ContractDeploy.ContractBeingDeployedDiv.show();
+        nextTab(3);
     },
     OnDeployCompleted: function (data) {
-        Wizard.Components.ContractDeploy.Title.html("<i class='fa fa-check-circle-o'></i> Deploy Completed!");
-        Wizard.Components.ContractDeploy.Title.addClass("text-success");
-        Wizard.Components.ContractDeploy.Icon.html("Address: <a target='_blank' href='https://ropsten.etherscan.io/address/" + data.address + "'>" + data.address + "</a>");
-        Wizard.Components.ContractDeploy.Icon.removeClass();
+        Wizard.Components.ContractDeploy.ContractBeingDeployedDiv.hide();
+        Wizard.Components.ContractDeploy.ContractDeployedDiv.show();
+        Wizard.Components.ContractDeploy.ContractAddressLink.attr("href", "https://ropsten.etherscan.io/tx/" + data.address);
         Wizard.Components.ContractDeploy.NextButton.removeAttr('disabled');
         Wizard.Components.ContractDeploy.NextButton.unbind('click').click(function () { Wizard.Operations.GoToDashBoard(data.address); });
         Wizard.Components.ContractDeploy.NextButton.show();

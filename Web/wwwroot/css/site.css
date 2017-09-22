@@ -1,4 +1,4 @@
-﻿﻿@font-face {
+﻿﻿﻿﻿@font-face {
     font-family: 'Helvetica Neue Light';
     src: local("Helvetica Neue Light"), url("../fonts/HelveticaNeueLight.ttf") format("truetype");
     font-weight: normal;
@@ -92,11 +92,10 @@ h3 {
     overflow-y: auto;
 }
 
-
 .wizard-container {
     background-color: white;
     box-shadow: none;
-    padding: 40px;
+    padding: 10px 40px;
 }
 
 @media (min-width: 576px) {
@@ -156,7 +155,9 @@ h3 {
     padding: 30px;
 }
 
-
+.step.active{
+    margin:auto;
+}
 
 .asset-input-group {
     display: inline-block;
@@ -257,6 +258,7 @@ h3 {
     border-color: #00bdff;
     margin: auto;
     margin-top: 40px;
+    margin-bottom: 40px;
     text-align: center;
     display: inline-block;
 }
@@ -295,80 +297,30 @@ h3 {
     background-image: url('/images/right_disabled.png');
 }
 
-.total-assets {
-    width: 100%;
-    height: 45px;
-    border-radius: 5px;
-    background-color: rgba(216, 223, 230, 0.1);
-    border: solid 1px;
-    border-color: #d9e0e6;
-    margin: 12px 0px 0px 0px;
-    text-align: left;
-    display: inline-block;
-}
-
-    .total-assets.has-error {
-        background-color: rgba(251, 120, 120, 0.1);
-        border-color: #fb7878;
-    }
-
-        .total-assets.has-error div {
-            font-weight: 500;
-            color: #fb7878;
-        }
-
-        .total-assets.has-error .total-assets-value {
-            height: 16px;
-            font-size: 16px;
-        }
-
-    .total-assets.has-success {
-        background-color: rgba(11, 230, 208, 0.05);
-        border-color: #0be6d0;
-    }
-
-        .total-assets.has-success div {
-            font-weight: 500;
-            color: #0be6d0;
-        }
-
-        .total-assets.has-success .total-assets-value {
-            height: 16px;
-            font-size: 16px;
-        }
-
-.total-assets-label {
-    width: calc(100% - 160px);
-    height: 12px;
-    font-size: 12px;
-    line-height: 1;
-    text-align: left;
-    color: #d9e0e6;
-    margin-top: 17px;
-    margin-left: 50px;
-    display: inline-block;
-}
-
-.total-assets-value {
-    width: 67px;
-    height: 12px;
-    font-size: 12px;
-    line-height: 1;
+.back-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: solid 2px;
+    border-color: #00bdff;
+    margin: auto;
+    margin-top: 40px;
+    margin-bottom: 40px;
     text-align: center;
-    color: #d9e0e6;
     display: inline-block;
+    position: relative;
+    top: -6px;
+    right: 7px;
 }
 
-.total-assets-pecent-label {
-    width: 12px;
-    height: 12px;
-    font-size: 12px;
-    line-height: 1;
-    text-align: center;
-    color: #d9e0e6;
+.back-button-icon {
+    width: 18px;
+    height: 14px;
+    background-image: url('/images/left.png');
     display: inline-block;
+    vertical-align: middle;
+    margin-top: 10px;
 }
-
 .input {
     height: 30px;
     border-radius: 5px;
@@ -453,10 +405,16 @@ input[type=number]::-webkit-outer-spin-button {
         border-bottom-color: rgba(0, 0, 0, 0.06) !important;
     }
 
+.salary-popover .div:last-child
+{
+    border:unset;
+}
 
-.about-auctus{
-    margin:25px;
-    text-align:center;
+
+
+.about-auctus {
+    margin: 25px;
+    text-align: center;
 }
 
     .about-auctus label {
@@ -473,7 +431,6 @@ input[type=number]::-webkit-outer-spin-button {
         color: #231f20;
     }
 
-
-.asset-disclaimer{
-
+.step{
+    width:100%;
 }
