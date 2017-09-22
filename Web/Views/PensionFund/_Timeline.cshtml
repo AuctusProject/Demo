@@ -1,0 +1,46 @@
+@model int
+
+<div class="dashboard-container dashboard-container-full timeline-container">
+    <div class="timeline-space"></div>
+    <div class="dashboard-container timeline-grid">
+        @for (int line = 1; line <= 60; ++line)
+        {
+            string externalVerticalLine = "";
+            string internalVerticalLine = "";
+            string horizontalLine = "";
+            if (line % 12 == 0)
+            {
+                if (line != 60)
+                {
+                    externalVerticalLine += "timeline-grid-vertical-line timeline-grid-vertical-line-big";
+                }
+                internalVerticalLine = "timeline-grid-height-half";
+                horizontalLine += " timeline-grid-height-half";
+            }
+            else
+            {
+                internalVerticalLine = "timeline-grid-height-tiny timeline-grid-vertical-line timeline-grid-vertical-line-tiny";
+                horizontalLine += " timeline-grid-height-tiny";
+            }
+            horizontalLine += line <= Model ? " timeline-grid-horizontal-line-complete" : " timeline-grid-horizontal-line-pending";
+
+            <div class="timeline-grid-height-full timeline-grid-width-fraction">
+                <div class="timeline-grid-width-full timeline-grid-height-half @externalVerticalLine">
+                    <div class="@internalVerticalLine">
+                        <div data-line="@line" class="timeline-grid-width-full timeline-grid-horizontal-line @horizontalLine"></div>
+                    </div>
+                </div>
+                @if (line % 12 == 0)
+                {
+                    <div class="timeline-grid-height-half timeline-grid-width-fraction">
+                        <div class="timeline-text"><span class="timeline-text-year">@string.Format("YEAR {0}", line / 12)</span></div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+    <div class="dashboard-container timeline-buttons">
+        <div class="timeline-btn timeline-btn-payment"><img src="/images/payment.png" class="timeline-btn-img" height="25" width="30" /></div>
+        <div class="timeline-btn timeline-btn-withdrawal"><img src="/images/withdrawal.png" class="timeline-btn-img" height="25" width="37" /></div>
+    </div>
+</div>
