@@ -15,10 +15,12 @@
         <link rel="stylesheet" href="~/css/fundRegister.css" />
         <link rel="stylesheet" href="~/css/companyRegister.css" />
         <link rel="stylesheet" href="~/css/contractDeploy.css" />
+        <link rel="stylesheet" href="~/css/loading.css" />
         <link rel="stylesheet"
               href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.12.0/build/styles/default.min.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.6.14/beautify.min.js"></script>
         <script src="https://use.fontawesome.com/04d62b0ee0.js"></script>
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     </environment>
     <environment names="Staging,Production">
         <link rel="stylesheet" href="~/lib/jquery-ui-min/themes/base/jquery-ui.min.css">
@@ -37,7 +39,7 @@
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.11.4/jquery-ui.min.js"></script>
         <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.16.0/jquery.validate.min.js"></script>
-
+        <script src="~/lib/spinner/material.spinner.min.js"></script>
         <script>
             /*** Handle jQuery plugin naming conflict between jQuery UI and Bootstrap ***/
             $.widget.bridge('uibutton', $.ui.button);

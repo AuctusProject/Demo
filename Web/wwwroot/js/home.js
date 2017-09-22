@@ -4,7 +4,10 @@
     $(".next-step").click(function (e) {
         if ($('.next-button').attr('disabled') == null) {
             var stepId = $(this).closest('.step').data('step-id');
-            nextTab(stepId);
+            if (stepId == 3)
+                deploy();
+            else
+                nextTab(stepId);
         }
     });
 
@@ -23,9 +26,6 @@
         openAssetInformationModal(sequential);
     });
 
-    Wizard.Components.Contract.Initialize();
-    Wizard.Components.Buttons.Save.click(Wizard.Operations.Save);
-
     $('form').validate();
 
     Wizard.Components.ContractDeploy.CodeMirror = CodeMirror.fromTextArea(Wizard.Components.ContractDeploy.Code[0], {
@@ -34,6 +34,10 @@
     });
 
     loadAssetsGraphs();
+
+    hub.on('deployCompleted', Wizard.Operations.OnDeployCompleted);
+    hub.on('deployUncompleted', Wizard.Operations.OnDeployUncompleted);
+    hub.on('deployError', Wizard.Operations.OnDeployError);
 });
 
 function validateFormToEnableNextButton() {
@@ -215,43 +219,50 @@ function prevTab(currentStepId) {
     $('.next-button').removeAttr('disabled');
 }
 
+function deploy() {
+    Wizard.Operations.Save();
+}
+
 var Wizard = {};
 
 Wizard.Components = {
     Model: {
         Fund: {
-            Name: $('#fundName'),
-            Fee: $('#fee'),
-            LatePaymentFee: $('#latePaymentFee')
+            Name: $('#fundNameInput'),
+            Fee: $('#fundFeeInput'),
+            GoldPercentage: $('#goldAllocationInput'),
+            SPPercentage: $('#spAllocationInput'),
+            BONDSPercentage: $('#bondsAllocationInput'),
+            MSCIPercentage: $('#msciAllocationInput'),
+            BitcoinPercentage: $('#bitcoinAllocationInput'),
         },
         Company: {
-            Name: $('#companyName'),
-            BonusFee: $('#bonusFee'),
-            MaxBonusFee: $('#maxBonusFee')
+            Name: $('#companyNameInput'),
+            BonusFee: $('#employerMatchingInput'),
+            MaxBonusFee: $('#maxCounterpartInput'),
+            VestingRules: {
+            }
         },
         Employee: {
-            Name: $('#employeeName'),
-            Salary: $('#salary'),
-            ContributionPercentage: $('#contributionPercentage')
-        },
-        Contract: {
-            VestingRules: {}
+            Name: $('#employeeNameInput'),
+            Salary: $('#salaryInput'),
+            ContributionPercentage: $('#contributionInput')
         }
     },
-    Contract: {
-        //RowTemplateHtml: $('#vesting-row-template').prop('outerHTML'),
-        Content: $('#vesting-content'),
-        Initialize: function () {
-            /*$('#vesting-row-template').remove();
-            createSlider(1, 0);*/
-        }
-    },
-    Buttons: {
-        Save: $('#wizard-save-button')
+    VestingFields: {
+        VestingPeriod: $('.vesting-period'),
+        LessOneYear: $('#lessOneYear'),
+        AfterOneYear: $('#afterOneYear'),
+        AfterTwoYears: $('#afterTwoYears'),
+        AfterThreeYears: $('#afterThreeYears'),
+        AfterFourYears: $('#afterFourYears'),
+        AfterFiveYears: $('#afterFiveYears')
     },
     AssetsCarousel: $("#carouselExampleIndicators"),
     ContractDeploy: {
-        NextButton: $('#btn-contract-deploy-next'),
+        //NextButton: $('.next-button'),
+        ButtonsControl: $('.buttons-control-div'),
+        GeneratingContract: $('.generating-contract'),
         ContractBeingDeployedDiv: $('#contract-being-deployed'),
         ContractDeployedDiv: $('#contract-deployed'),
         ContractCodeWrapper: $('.contract-deploy-code-wrapper'),
@@ -265,12 +276,11 @@ Wizard.Components = {
 Wizard.Operations = {
     Save: function () {
         var model = convertModel(Wizard.Components.Model);
-        model.Contract.VestingRules = GetVestingRules();
+        model.Company.VestingRules = GetVestingRules();
         model.Captcha = $("#g-recaptcha-response").val();
 
         if (Wizard.Operations.Validate(model)) {
-
-            //Wizard.Operations.ShowGeneratingContract(model);
+            Wizard.Operations.ShowGeneratingContract(model);
 
             $.ajax({
                 url: "Home/Save",
@@ -281,20 +291,15 @@ Wizard.Operations = {
                 data: model,
                 success: Wizard.Operations.OnSave,
                 error: function (xhr, ajaxOptions, thrownError) {
-                    Wizard.Operations.OnDeployError();
+                    Wizard.Operations.OnSaveError();
                 }
             });
         }
     },
-    /*ShowGeneratingContract: function (model) {
-        Wizard.Components.ContractDeploy.ContractCodeWrapper.hide();
-        Wizard.Components.ContractDeploy.Title.html("Generating Smart Contract...");
-        Wizard.Components.ContractDeploy.Icon.addClass("fa fa-spinner fa-spin fa-fw");
-        Wizard.Components.ContractDeploy.TryAgain.hide();
-        Wizard.Components.ContractDeploy.TransactionIdTitle.hide();
-        Wizard.Components.WizardRow.hide();
-        Wizard.Components.ContractDeploy.NextButton.hide();
-    },*/
+    ShowGeneratingContract: function (model) {
+        Wizard.Components.ContractDeploy.ButtonsControl.hide();
+        Wizard.Components.ContractDeploy.GeneratingContract.show();
+    },
     OnSave: function (data) {
         Wizard.Components.ContractDeploy.ContractDeployedDiv.hide();
         Wizard.Components.ContractDeploy.TransactionIdLink.attr("href", "https://ropsten.etherscan.io/tx/" + data.transactionHash);
@@ -325,46 +330,20 @@ Wizard.Operations = {
             }
         });
     },
+    OnSaveError: function () {
+        Wizard.Components.ContractDeploy.ButtonsControl.show();
+        Wizard.Components.ContractDeploy.GeneratingContract.error();
+    },
     OnDeployError: function () {
-        Wizard.Components.ContractDeploy.Title.html("Sorry, something unexpected happened.");
-        Wizard.Components.ContractDeploy.Title.removeClass();
-        Wizard.Components.ContractDeploy.Icon.removeClass();
-        Wizard.Components.ContractDeploy.TransactionIdTitle.hide();
-        Wizard.Components.ContractDeploy.TryAgain.unbind('click').click(function () { Wizard.Operations.Save(); });
-        Wizard.Components.ContractDeploy.TryAgain.show();
+        alert('Deploy error');
     },
     GoToDashBoard: function (ContractAddress) {
         alert('Go to dashboard: ' + ContractAddress);
     },
     Validate: function (model) {
-        var previousVestingRule = null;
-        for (var i = 0; i < model.Contract.VestingRules.length; i++) {
-            if (previousVestingRule != null) {
-                if (model.Contract.VestingRules[i].Period <= previousVestingRule.Period) {
-                    $('#vesting-error').text("Period must be crescent");
-                    $('#vesting-content').addClass('has-error');
-                    $('#vesting-error').show();
-                    return false;
-                }
-            }
-            previousVestingRule = model.Contract.VestingRules[i];
-        }
-        $('#vesting-content').removeClass('has-error');
-        $('#vesting-error').hide();
         return true;
     }
 };
-
-function GetVestingRules() {
-    var rules = [];
-    $('.vesting-row').each(function (i, element) {
-        var period = $('.vesting-period', element).val();
-        var percentage = $('.vesting-percentage', element).text();
-        rules.push({ Percentage: parseInt(percentage), Period: parseInt(period) });
-    });
-    return rules;
-}
-
 
 function convertModel(obj) {
     var model = {};
@@ -379,121 +358,17 @@ function convertModel(obj) {
     return model;
 }
 
-function disableIfIsOnlyOneButtonAndEnableIfIsMore() {
-    var buttons = $('.btn-remove-slider');
-    if (buttons.length == 1)
-        buttons.prop('disabled', true);
-    else
-        buttons.prop('disabled', false);
-}
-
-function createSlider(index, currentIndex) {
-    Wizard.Components.Contract.Content.append(Wizard.Components.Contract.RowTemplateHtml.replaceAll('template', index));
-    disableIfIsOnlyOneButtonAndEnableIfIsMore();
-    $("#btn-remove-" + index).click(
-        function () {
-            var currentSlider = $('#slider-range-' + index);
-
-            var previousIndex = currentSlider.slider('option', 'previousIndex');
-            var previousSlider = $('#slider-range-' + previousIndex);
-
-            var nextIndex = currentSlider.slider('option', 'nextIndex');
-            var nextSlider = $('#slider-range-' + nextIndex);
-
-            previousSlider.slider('option', 'nextIndex', nextIndex);
-            nextSlider.slider('option', 'previousIndex', previousIndex);
-
-            if (nextSlider.length)
-                setSliderMinValue(nextSlider.slider('option', 'myIndex'), previousSlider.length ? previousSlider.slider('values')[1] : 0);
-
-            if (previousSlider.length)
-                setSliderMaxValue(previousSlider.slider('option', 'myIndex'), nextSlider.length ? nextSlider.slider('values')[0] : 100);
-
-            $('#vesting-row-' + index).remove();
-            disableIfIsOnlyOneButtonAndEnableIfIsMore();
-        }
-    );
-
-
-    $('#vesting-row-' + index).show();
-
-    var minValue = getPreviousSliderValue(currentIndex);
-
-    $('#slider-range-' + index).slider({
-        range: true,
-        value: $(this).data('index') === 1 ? 100 : minValue,
-        values: [minValue, 100],
-        min: 0,
-        max: 100,
-        stop: function (event, ui) {
-            if (ui.value == ui.values[0])
-                return false;
-
-            onStopSlider($(this).slider('option', 'myIndex'), ui.value);
-        },
-        create: function () {
-            setSliderValuesText(this, $(this).slider('option', 'myIndex'), [minValue, 100]);
-        },
-        slide: function (event, ui) {
-            if (ui.value == ui.values[0])
-                return false;
-
-            if (ui.value >= getSliderMaxValue($(this).slider('option', 'nextIndex'))) {
-                setSliderMaxValue($(this).slider('option', 'myIndex'), getSliderMaxValue($(this).slider('option', 'nextIndex')) - 1);
-                return false;
-            }
-
-            setSliderMinValue($(this).slider('option', 'nextIndex'), ui.value);
-            setSliderValuesText(this, $(this).slider('option', 'myIndex'), ui.values);
-        },
-        myIndex: index,
-        nextIndex: index + 1,
-        previousIndex: currentIndex
+function GetVestingRules() {
+    var periods = $('.vesting-period');
+    var rules = [];
+    periods.each(function (index, elem) {
+        var vestingPeriod = elem.innerHtml;
+        var vestingPercentage = $(elem).siblings('.input-percentage').find('.vesting-percentage').val();
+        rules.push({ Percentage: parseInt(vestingPercentage), Period: parseInt(vestingPeriod) });
     });
+    
+    return rules;
 }
-
-function setSliderMaxValue(index, value) {
-    var element = $('#slider-range-' + (index));
-    element.slider('values', [getSliderMinValue(index), value]).change();
-    setSliderMinValue(element.slider('option', 'nextIndex'), value);
-    setSliderValuesText(element, index, element.slider("values"));
-}
-
-function setSliderValuesText(element, index, values) {
-    $(element).children('#slider-value-1-' + index).text(values[0]);
-    $(element).children('#slider-value-2-' + index).text(values[1]);
-}
-
-function setSliderMinValue(index, value) {
-    var element = $('#slider-range-' + (index));
-    element.slider('values', [value, getSliderMaxValue(index)]).change();
-    setSliderValuesText(element, index, element.slider("values"));
-}
-
-function getPreviousSliderValue(index) {
-    if (index < 1)
-        return 0;
-
-    return getSliderMaxValue(index);
-}
-
-function getSliderMinValue(index) {
-    return previousSliderValue = $('#slider-range-' + (index)).slider("values")[0];
-}
-
-function getSliderMaxValue(index) {
-    return previousSliderValue = $('#slider-range-' + (index)).slider("values")[1];
-}
-
-function onStopSlider(index, value) {
-    var currentSlider = $('#slider-range-' + index);
-    var nextIndex = currentSlider.slider('option', 'nextIndex');
-    var nextSlider = $('#slider-range-' + nextIndex);
-
-    if (!nextSlider.length && value < 100)
-        createSlider(nextIndex, index);
-}
-
 
 String.prototype.replaceAll = function (search, replacement) {
     var target = this;

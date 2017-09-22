@@ -434,3 +434,16 @@ input[type=number]::-webkit-outer-spin-button {
 .step{
     width:100%;
 }
+
+.generating-contract {
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.generating-contract-message {
+    margin-top:12px;
+    font-size: 12px;
+    font-weight: 300;
+    letter-spacing: 0.9px;
+    color: #707070;
+}
