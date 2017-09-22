@@ -204,6 +204,8 @@ function nextTab(currentStepId) {
     $nextTab.show();
     if (currentStepId == 1){
         registerCompanyForm.init();
+    } else if (currentStepId == 2){
+        registerEmployeeForm.init();
     }
 }
 

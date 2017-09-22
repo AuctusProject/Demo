@@ -240,6 +240,20 @@ h3 {
         margin-top: 12px;
     }
 
+.eth-pop-img {
+    width: 45px;
+    height: 45px;
+    display: inline-block;
+   
+    border-radius: 5px;
+    text-align: center;
+    vertical-align: top;
+    margin-top: 13px;
+}
+
+    .eth-pop-img img {
+        margin-top: -15px;
+    }
 .btn-chart-help {
     display: inline-block;
     width: calc(100% - 60px);
@@ -404,13 +418,6 @@ input[type=number]::-webkit-outer-spin-button {
     .popover.bs-popover-bottom .arrow::before {
         border-bottom-color: rgba(0, 0, 0, 0.06) !important;
     }
-
-.salary-popover .div:last-child
-{
-    border:unset;
-}
-
-
 
 .about-auctus {
     margin: 25px;
