@@ -13,31 +13,17 @@
   <ItemGroup>
     <Compile Remove="docs\**" />
     <Compile Remove="wwwroot\lib\bootstrap-material-design-4.0.2\**" />
-    <Content Remove="docs\**" />
+	<Content Remove="docs\**" />
     <Content Remove="wwwroot\lib\bootstrap-material-design-4.0.2\**" />
     <EmbeddedResource Remove="docs\**" />
     <EmbeddedResource Remove="wwwroot\lib\bootstrap-material-design-4.0.2\**" />
     <None Remove="docs\**" />
     <None Remove="wwwroot\lib\bootstrap-material-design-4.0.2\**" />
-    <Content Remove="wwwroot\js\registerFund.js" />
     <None Remove="wwwroot\lib\noUiSlider\.DS_Store" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Remove="Views\Shared\_LayoutMaterial.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="wwwroot\css\companyRegister.css" />
-    <Content Include="wwwroot\css\contractDeploy.css" />
-    <Content Include="wwwroot\css\contractDeploy.min.css" />
-    <Content Include="wwwroot\css\fundRegister.css">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="wwwroot\css\site - Copy.css">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="wwwroot\js\registerFund.js" />
   </ItemGroup>
 
   <ItemGroup>
