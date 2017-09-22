@@ -1,13 +1,20 @@
 ﻿@model bool
 <div class="col-lg-12">
-	@if (Model == true)
-	{
-	    <div class="back-button prev-step">
-	        <span class="back-button-icon"></span>
-	    </div>
-	}
-	<div class="next-button next-step" disabled="disabled">
-        <span class="next-button-label">NEXT</span>
-        <span class="next-button-icon"></span>
+    <div class="buttons-control-div">
+        @if (Model == true)
+        {
+            <div class="back-button prev-step">
+                <span class="back-button-icon"></span>
+            </div>}
+        <div class="next-button next-step" disabled="disabled">
+            <span class="next-button-label">NEXT</span>
+            <span class="next-button-icon"></span>
+        </div>
+    </div>
+    <div class="generating-contract text-center" style="display:none">
+        <div id="demo" data-spinner='{"radius": 20, "color":"#00bdff","strokeWidth":"3"}'></div>
+        <div class="generating-contract-message">
+            Please wait! Generating contract.
+        </div>
     </div>
 </div>

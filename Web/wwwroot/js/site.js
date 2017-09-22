@@ -27,10 +27,6 @@ $(document).ready(function () {
 
     hub.on('deploy', deploy);
 
-    hub.on('deployCompleted', Wizard.Operations.OnDeployCompleted);
-    hub.on('deployUncompleted', Wizard.Operations.OnDeployUncompleted);
-    hub.on('deployError', Wizard.Operations.OnDeployError);
-
     $.connection.hub.disconnected(function () {
         if ($.connection.hub.lastError)
         { alert("Disconnected. Reason: " + $.connection.hub.lastError.message); }

@@ -34,6 +34,8 @@
     <Content Include="wwwroot\css\fundRegister.css">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+    <Content Include="wwwroot\css\loading.css" />
+    <Content Include="wwwroot\css\loading.min.css" />
     <Content Include="wwwroot\css\site - Copy.css">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
