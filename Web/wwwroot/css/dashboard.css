@@ -118,6 +118,32 @@
     margin-top: 5px;
 }
 
+.popup-share-footer-text {
+    width: 100%;
+    text-align: center;
+    font-family: HelveticaNeue;
+    font-size: 12px;
+    letter-spacing: 0.9px;
+    color: #231f20;
+}
+
+.popup-share-btn {
+    width: 33.333333%;
+    cursor: pointer;
+}
+
+.popup-share-btn-left {
+    text-align: right;
+}
+
+.popup-share-btn-right {
+    text-align: left;
+}
+
+.popup-share-btn-center {
+    text-align: center;
+}
+
 .timeline-grid-width-fraction {
     width: 1.666666666%;
 }
