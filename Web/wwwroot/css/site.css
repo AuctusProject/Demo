@@ -152,7 +152,7 @@ h3 {
 
 
 .stepper {
-    padding: 30px;
+    padding: 25px;
 }
 
 .step.active{
@@ -447,3 +447,27 @@ input[type=number]::-webkit-outer-spin-button {
     letter-spacing: 0.9px;
     color: #707070;
 }
+
+.error-message {
+    font-size: 12px;
+    line-height: 28px;
+    color: #fb7878;
+    border-radius: 5px;
+    background-color: rgba(251, 120, 120, 0.1);
+    border: solid 1px #fb7878;
+    vertical-align: middle;
+    max-width: 450px;
+    margin: auto;
+    margin-top:25px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+    .error-message::before {
+        content: '';
+        background-image: url('../images/error.png');
+        display: inline-block;
+        height:18px;
+        width: 20px;
+        vertical-align: middle;
+    }

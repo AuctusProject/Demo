@@ -270,7 +270,8 @@ Wizard.Components = {
         TransactionIdLink: $('.contract-deploy-tx-id-link'),
         ContractAddressLink: $('.contract-deploy-contract-address-link'),
     },
-    WizardRow: $('#wizard-row')
+    WizardRow: $('#wizard-row'),
+    ErrorMessage: $('.error-message')
 };
 
 Wizard.Operations = {
@@ -299,8 +300,10 @@ Wizard.Operations = {
     ShowGeneratingContract: function (model) {
         Wizard.Components.ContractDeploy.ButtonsControl.hide();
         Wizard.Components.ContractDeploy.GeneratingContract.show();
+        Wizard.Components.ErrorMessage.hide();
     },
     OnSave: function (data) {
+        Wizard.Components.ErrorMessage.hide();
         Wizard.Components.ContractDeploy.ContractDeployedDiv.hide();
         Wizard.Components.ContractDeploy.TransactionIdLink.attr("href", "https://ropsten.etherscan.io/tx/" + data.transactionHash);
         Wizard.Components.ContractDeploy.CodeMirror.setValue(js_beautify(data.smartContractCode, { indent_size: 4 }));
@@ -310,6 +313,7 @@ Wizard.Operations = {
         nextTab(3);
     },
     OnDeployCompleted: function (data) {
+        Wizard.Components.ErrorMessage.hide();
         Wizard.Components.ContractDeploy.ContractBeingDeployedDiv.hide();
         Wizard.Components.ContractDeploy.ContractDeployedDiv.show();
         Wizard.Components.ContractDeploy.ContractAddressLink.attr("href", "https://ropsten.etherscan.io/tx/" + data.address);
@@ -332,7 +336,8 @@ Wizard.Operations = {
     },
     OnSaveError: function () {
         Wizard.Components.ContractDeploy.ButtonsControl.show();
-        Wizard.Components.ContractDeploy.GeneratingContract.error();
+        Wizard.Components.ContractDeploy.GeneratingContract.hide();
+        Wizard.Components.ErrorMessage.show();
     },
     OnDeployError: function () {
         alert('Deploy error');
