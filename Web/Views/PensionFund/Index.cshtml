@@ -1,15 +1,21 @@
 @using Auctus.Model
 @model PensionFundInfo
 
-@Html.Partial("_Header")
+@Html.Partial("_Header", "0xCf89E68C055435A67b57D7676091A56Df59f14b0")
 @Html.Partial("_Timeline", 60)
 @Html.Partial("_FundSummary")
 @Html.Partial("_Charts")
+
 @Html.Partial("_TransactionHistory")
 
 @section style{
     <link rel=stylesheet href="~/css/dashboard.css">
+    <link href="~/lib/c3/c3.min.css" rel="stylesheet">
 }
 
 @section scripts{
+    <script src="~/lib/d3/d3.min.js" charset="utf-8"></script>
+    <script src="~/lib/c3/c3.min.js"></script>
+
+    <script type="text/javascript" src="~/js/dashboard/charts.js"></script>
 }   

@@ -6,85 +6,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Web</title>
 
-    <environment names="Development">
-        <link rel="stylesheet" href="~/lib/jquery-ui-min/themes/base/jquery-ui.min.css">
-        <link rel="stylesheet" href="~/lib/bootstrapcustom/css/bootstrap.min.css" />
-        <link rel="stylesheet" href="~/lib/bootstrap-material-design/dist/css/bootstrap-material-design.css" />
-        <link rel="stylesheet" href="~/lib/dygraph/dygraph.css" />
-        <link rel="stylesheet" href="~/css/site.css" />
-        <link rel="stylesheet" href="~/css/fundRegister.css" />
-        <link rel="stylesheet" href="~/css/companyRegister.css" />
-        <link rel="stylesheet" href="~/css/contractDeploy.css" />
-        <link rel="stylesheet"
-              href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.12.0/build/styles/default.min.css">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.6.14/beautify.min.js"></script>
-        <script src="https://use.fontawesome.com/04d62b0ee0.js"></script>
-    </environment>
-    <environment names="Staging,Production">
-        <link rel="stylesheet" href="~/lib/jquery-ui-min/themes/base/jquery-ui.min.css">
-        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
-              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
-              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
-        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
-    </environment>
+    <link rel="stylesheet" href="~/lib/jquery-ui-min/themes/base/jquery-ui.min.css">
+    <link rel="stylesheet" href="~/lib/bootstrapcustom/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-material-design/dist/css/bootstrap-material-design.css" />
+    <link rel="stylesheet" href="~/lib/dygraph/dygraph.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/fundRegister.css" />
+    <link rel="stylesheet" href="~/css/companyRegister.css" />
+    <link rel="stylesheet" href="~/css/contractDeploy.css" />
+    <link rel="stylesheet" href="~/css/loading.css" />
+    <link rel="stylesheet"
+            href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.12.0/build/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.6.14/beautify.min.js"></script>
+    <script src="https://use.fontawesome.com/04d62b0ee0.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    
     @RenderSection("Style", required: false)
     @Html.Raw(JavaScriptSnippet.FullScript)
 </head>
 <body style="background-color: rgb(250, 250, 252)">
     @RenderBody()
 
-    <environment names="Development">
-        <script src="~/lib/jquery/dist/jquery.js"></script>
-        <script src="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.11.4/jquery-ui.min.js"></script>
-        <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.16.0/jquery.validate.min.js"></script>
-
-        <script>
-            /*** Handle jQuery plugin naming conflict between jQuery UI and Bootstrap ***/
-            $.widget.bridge('uibutton', $.ui.button);
-            $.widget.bridge('uitooltip', $.ui.tooltip); 
-        </script>
-<!--        <script src="~/lib/bootstrapcustom/js/bootstrap.min.js"></script>-->
-        <script src="https://unpkg.com/popper.js@1.12.5/dist/umd/popper.js" integrity="sha384-KlVcf2tswD0JOTQnzU4uwqXcbAy57PvV48YUiLjqpk/MJ2wExQhg9tuozn5A1iVw" crossorigin="anonymous"></script>
-        <script src="~/lib/bootstrap-material-design/dist/js/bootstrap-material-design.min.js"></script>
-        <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.12.0/build/highlight.min.js"></script>
-        <script src="~/lib/signalr/jquery.signalR.js"></script>
-        <script src="signalr/hubs"></script>
-        <script src="~/lib/dygraph/dygraph.min.js"></script>
-        <script src="~/js/site.js" asp-append-version="true"></script>
-    </environment>
-    <environment names="Staging,Production">
-        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
-                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
-                asp-fallback-test="window.jQuery"
-                crossorigin="anonymous"
-                integrity="sha384-K+ctZQ+LL8q6tP7I94W+qzQsfRV2a+AfHIi9k8z8l9ggpc8X+Ytst4yBo/hH+8Fk">
-        </script>
-        <script src="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.11.4/jquery-ui.min.js"
-                asp-fallback-src="~/lib/jquery-ui-min/jquery-ui-min.js"
-                asp-fallback-test="window.jQuery.ui"
-                crossorigin="anonymous">
-        </script>
-        <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.16.0/jquery.validate.min.js"
-                asp-fallback-src="~/lib/jquery-validation/dist/jquery.validate.js"
-                asp-fallback-test="window.jQuery.ui"
-                crossorigin="anonymous">
-        </script>
-        <script>
-            /*** Handle jQuery plugin naming conflict between jQuery UI and Bootstrap ***/
-            $.widget.bridge('uibutton', $.ui.button);
-            $.widget.bridge('uitooltip', $.ui.tooltip);
-        </script>
-        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
-                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
-                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
-                crossorigin="anonymous"
-                integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
-        </script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/go.min.js"></script>
-        <script src="~/lib/signalr/jquery.signalR.js"></script>
-        <script src="signalr/hubs"></script>
-        <script src="~/js/site.min.js" asp-append-version="true"></script>
-    </environment>
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.11.4/jquery-ui.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.16.0/jquery.validate.min.js"></script>
+    <script src="~/lib/spinner/material.spinner.min.js"></script>
+    <script>
+        /*** Handle jQuery plugin naming conflict between jQuery UI and Bootstrap ***/
+        $.widget.bridge('uibutton', $.ui.button);
+        $.widget.bridge('uitooltip', $.ui.tooltip); 
+    </script>
+    <script src="https://unpkg.com/popper.js@1.12.5/dist/umd/popper.js" integrity="sha384-KlVcf2tswD0JOTQnzU4uwqXcbAy57PvV48YUiLjqpk/MJ2wExQhg9tuozn5A1iVw" crossorigin="anonymous"></script>
+    <script src="~/lib/bootstrap-material-design/dist/js/bootstrap-material-design.min.js"></script>
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.12.0/build/highlight.min.js"></script>
+    <script src="~/lib/signalr/jquery.signalR.js"></script>
+    <script src="signalr/hubs"></script>
+    <script src="~/lib/dygraph/dygraph.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
 
     @RenderSection("Scripts", required: false)
 </body>

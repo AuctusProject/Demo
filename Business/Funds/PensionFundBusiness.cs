@@ -266,6 +266,7 @@ namespace Auctus.Business.Funds
         public PensionFundContract CreateCompleteEntry(Fund fund, Company company, Employee employee)
         {
             Validate(fund, company, employee);
+            var assetDictionary = GetAssetAllocationDictionary(fund);
             var pensionFund = PensionFundBusiness.Create(fund.Name);
             var pensionFundWallet = WalletBusiness.Create();
             var pensionFundOption = PensionFundOptionBusiness.Create(pensionFundWallet.Address, fund.Fee, fund.LatePaymentFee, pensionFund.Id);
@@ -275,13 +276,29 @@ namespace Auctus.Business.Funds
             var domainEmployee = EmployeeBusiness.Create(employeeWallet.Address, employee.Name, employee.Salary, employee.ContributionPercentage, domainCompany.Address);
             var pensionFundContract = PensionFundContractBusiness.Create(pensionFundOption.Address, domainCompany.Address, domainEmployee.Address,
                 pensionFundOption.Fee, pensionFundOption.LatePenalty, domainCompany.MaxSalaryBonusRate, domainEmployee.Contribution,
-                domainCompany.BonusRate, domainEmployee.Salary, 
-                fund.AssetAllocations.ToDictionary(asset => asset.ReferenceContractAddress, asset => asset.Percentage),
+                domainCompany.BonusRate, domainEmployee.Salary,
+                assetDictionary,
                 company.VestingRules.ToDictionary(bonus => bonus.Period, bonus => bonus.Percentage));
-            foreach (AssetAllocation asset in fund.AssetAllocations)
-                PensionFundReferenceContractBusiness.Create(pensionFundContract.TransactionHash, asset.ReferenceContractAddress, asset.Percentage);
+            foreach (var asset in assetDictionary)
+                PensionFundReferenceContractBusiness.Create(pensionFundContract.TransactionHash, asset.Key, asset.Value);
 
             return pensionFundContract;
+        }
+
+        public Dictionary<String, Double> GetAssetAllocationDictionary(Fund fund)
+        {
+            var dictionary = new Dictionary<String, Double>();
+            if (fund.GoldPercentage > 0)
+                dictionary.Add(ReferenceType.Gold.Address, fund.GoldPercentage);
+            if (fund.MSCIPercentage > 0)
+                dictionary.Add(ReferenceType.MSCIWorld.Address, fund.MSCIPercentage);
+            if (fund.SPPercentage > 0)
+                dictionary.Add(ReferenceType.SP500.Address, fund.SPPercentage);
+            if (fund.BONDSPercentage > 0)
+                dictionary.Add(ReferenceType.VWEHX.Address, fund.BONDSPercentage);
+            if (fund.BitcoinPercentage > 0)
+                dictionary.Add(ReferenceType.Bitcoin.Address, fund.BitcoinPercentage);
+            return dictionary;
         }
 
         internal PensionFund Create(String name)
@@ -305,18 +322,22 @@ namespace Auctus.Business.Funds
                 throw new ArgumentNullException("fund");
             if (fund.LatePaymentFee < 0)
                 throw new ArgumentException("Late Payment Fee cannot be negative.");
-            if (fund.Fee < 0)
-                throw new ArgumentException("Fee cannot be negative.");
+            ValidateNonNegative(fund.Fee, "Fee");
             if (fund.Fee > 99)
                 throw new ArgumentException("Fee cannot be greater than 99.");
-            if (fund.AssetAllocations == null || !fund.AssetAllocations.Any())
-                throw new ArgumentNullException("AssetAllocations");
-            if (fund.AssetAllocations.Sum(c => c.Percentage) != 100)
+            ValidateNonNegative(fund.BitcoinPercentage, "BitcoinPercentage");
+            ValidateNonNegative(fund.BONDSPercentage, "BONDSPercentage");
+            ValidateNonNegative(fund.GoldPercentage, "GoldPercentage");
+            ValidateNonNegative(fund.MSCIPercentage, "MSCIPercentage");
+            ValidateNonNegative(fund.SPPercentage, "SPPercentage");
+            if ((fund.BitcoinPercentage + fund.BONDSPercentage + fund.GoldPercentage +fund.MSCIPercentage + fund.SPPercentage) != 100)
                 throw new ArgumentException("Asset allocations must match 100 percentage.");
-            if (fund.AssetAllocations.Count() != fund.AssetAllocations.Select(c => c.ReferenceContractAddress).Distinct().Count())
-                throw new ArgumentException("Reference contract must be allocated only once.");
+        }
 
-            fund.AssetAllocations.Select(c => ReferenceType.Get(c.ReferenceContractAddress));
+        internal static void ValidateNonNegative(double value, String fieldName)
+        {
+            if (value < 0)
+                throw new ArgumentException($"{fieldName} cannot be negative.");
         }
     }
 }

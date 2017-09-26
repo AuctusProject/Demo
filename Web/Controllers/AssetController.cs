@@ -19,8 +19,7 @@ namespace Web.Controllers
         [HttpGet]
         public IActionResult GetGoldReference()
         {
-            //return GetJsonFromReferenceContract(ContractsServices.GetGoldReference());
-            return null;
+            return GetJsonFromReferenceContract(ContractsServices.GetGoldReference());
         }
 
         [HttpGet]

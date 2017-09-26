@@ -1,11 +1,18 @@
-﻿<Properties StartupConfiguration="{AB8B2586-6949-46F9-A061-980F60A0305E}|Default" NuGet.AddPackagesDialog.IncludePrerelease="True">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Web/wwwroot/css/dashboard.css">
+﻿<Properties StartupConfiguration="{D00E2A77-3F46-4480-AE15-3E3CD4AC387F}|Default" NuGet.AddPackagesDialog.IncludePrerelease="True">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Web/wwwroot/js/dashboard/charts.js">
     <Files>
-      <File FileName="Web/Views/PensionFund/Index.cshtml" Line="7" Column="25" />
-      <File FileName="Web/Views/PensionFund/_Charts.cshtml" Line="1" Column="1" />
-      <File FileName="Web/Views/PensionFund/_TransactionHistory.cshtml" Line="1" Column="1" />
-      <File FileName="Web/Views/PensionFund/_FundSummary.cshtml" Line="1" Column="25" />
-      <File FileName="Web/wwwroot/css/dashboard.css" Line="309" Column="18" />
+      <File FileName="Web/Views/PensionFund/Index.cshtml" Line="19" Column="63" />
+      <File FileName="Web/Views/PensionFund/_Charts.cshtml" Line="20" Column="27" />
+      <File FileName="Web/Views/PensionFund/_TransactionHistory.cshtml" Line="7" Column="107" />
+      <File FileName="Web/Views/PensionFund/_FundSummary.cshtml" Line="7" Column="119" />
+      <File FileName="Web/wwwroot/css/dashboard.css" Line="323" Column="2" />
+      <File FileName="Web/Views/Home/_RegisterCompany.cshtml" Line="34" Column="132" />
+      <File FileName="Web/Views/Shared/_Buttons.cshtml" Line="10" Column="30" />
+      <File FileName="Web/wwwroot/css/site.css" Line="284" Column="17" />
+      <File FileName="Web/Views/Home/Index.cshtml" Line="43" Column="35" />
+      <File FileName="Web/wwwroot/js/dashboard/charts.js" Line="3" Column="5" />
+      <File FileName="Web/wwwroot/js/registerCompany.js" Line="2" Column="1" />
+      <File FileName="Web/wwwroot/js/home.js" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
@@ -17,5 +24,6 @@
   <MonoDevelop.Ide.ItemProperties.WebApi PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.ItemProperties.6-UnitTest PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.ItemProperties.0-Web PreferredExecutionTarget="MonoDevelop.Default" />
   <MultiItemStartupConfigurations />
 </Properties>

@@ -46,27 +46,36 @@
     text-align: right;
 }
 
-.timeline-btn {
+.transaction-btn {
     width: 60px;
     height: 40px;
     border-radius: 50px;
     border: solid 2px;
     text-align: center;
+}
+
+.transaction-btn-img {
+    margin-top: 5px;
+}
+
+.btn-payment {
+    border-color: #0be6d0;
+}
+
+.btn-withdrawal {
+    border-color: #bcbec0;
+}
+
+.timeline-btn {
     cursor: pointer;
 }
 
 .timeline-btn-payment {
-    border-color: #0be6d0;
     margin-left: 50px;
 }
 
 .timeline-btn-withdrawal {
-    border-color: #bcbec0;
     margin-left: 10px;
-}
-
-.timeline-btn-img {
-    margin-top: 5px;
 }
 
 .timeline-container {
@@ -88,6 +97,51 @@
     position: absolute;
     left: -10px;
     width: 70px;
+}
+
+.popup-timeline-footer {
+    width: 100%;
+    text-align: center;
+    font-family: HelveticaNeue;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 0.9px;
+    color: #00bdff;
+}
+
+.popup-timeline-btn-text {
+    width: 70%;
+    margin-left: 5px;
+}
+
+.popup-timeline-btn {
+    margin-top: 5px;
+}
+
+.popup-share-footer-text {
+    width: 100%;
+    text-align: center;
+    font-family: HelveticaNeue;
+    font-size: 12px;
+    letter-spacing: 0.9px;
+    color: #231f20;
+}
+
+.popup-share-btn {
+    width: 33.333333%;
+    cursor: pointer;
+}
+
+.popup-share-btn-left {
+    text-align: right;
+}
+
+.popup-share-btn-right {
+    text-align: left;
+}
+
+.popup-share-btn-center {
+    text-align: center;
 }
 
 .timeline-grid-width-fraction {
@@ -316,9 +370,10 @@
     color: #231f20;
 }
 
-.card .icon {
-    width: 20px;
-    height: 20px;
+.card .title span {
+    margin-left: 10px;
+    line-height: 20px;
+    vertical-align: middle;
 }
 
 .fund-summary {

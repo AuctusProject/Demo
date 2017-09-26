@@ -1,8 +1,24 @@
+@model string
+@{
+    string tooltipContentShare = string.Format("<br/><div>This is the result of your investment. If you wish, you can start over e test another assets composition or fund characteristics to see how you perform!</div><br /><div>We are very excited about our project and we hope nao you are too! You can support it in the following link:</div><div><a target='_blank' href='https://demo.auctus.org/PensionFund/{0}'>demo.auctus.com/PensionFund/{0}</a></div><br /><div class='popup-share-footer-text'><span>SHARE YOUR SIMULATION</span></div><br /><div class='dashboard-container'><div class='popup-share-btn popup-share-btn-left'><img src='/images/twitter.png' height='40' width='40' /></div><div class='popup-share-btn popup-share-btn-center'><img src='/images/facebook.png' height='40' width='40' /></div><div class='popup-share-btn popup-share-btn-right'><img src='/images/linkedin.png' height='40' width='40' /></div></div>", Model);
+}
 <div class="dashboard-container dashboard-container-full header-dashboard">
     <div class="auctus-logo auctus-logo-margin"><a target="_blank" href="https://auctus.org"><img src="/images/logo.png" height="40" /></a></div>
     <div class="header-icon plus-circle plus-circle-width"><a target="_blank" href="https://demo.auctus.org"><img src="~/images/plus-circle.png" height="20" /></a></div>
     <div class="header-text new-simulation"><span onclick="window.open('https://demo.auctus.org');">NEW SIMULATION</span></div>
-    <div class="header-icon share-symbol"><img src="~/images/share.png" height="20" /></div>
-    <div class="header-text share"><span>SHARE</span></div>
+    <div class="header-icon share-symbol"
+        data-toggle="popover" 
+        data-trigger="click"
+        data-placement="bottom"
+        title=""
+        data-content="@tooltipContentShare"
+        data-html="true"><img src="~/images/share.png" height="20" /></div>
+    <div class="header-text share"
+        data-toggle="popover" 
+        data-trigger="click"
+        data-placement="bottom"
+        title=""
+        data-content="@tooltipContentShare"
+        data-html="true"><span>SHARE</span></div>
 </div>
 
