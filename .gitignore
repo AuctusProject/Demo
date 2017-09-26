@@ -78,3 +78,4 @@ orleans.codegen.cs
 *.ndf
 
 *.DS_Store
+/Web/wwwroot/images/Thumbs.db
