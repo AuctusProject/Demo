@@ -379,3 +379,38 @@
 .fund-summary {
     margin-top: 35px;
 }
+
+.sumary-info{
+   
+    text-align:center;
+}
+    .sumary-info > div{
+        margin-top:10px;
+    }
+
+        .sumary-info > div span:nth-child(2) {
+            margin: 0 10px;
+            font-size: 16px;
+        }
+    
+    .sumary-info span {
+        font-family: 'Helvetica Neue Light';
+        font-weight: 300;
+        font-size: 32px;
+    }
+
+    .sumary-info .money::before {
+        content: '$';
+        font-size: 16px;
+        margin: 0 0px 0 -15px;
+        position: absolute;
+        top: 12px;
+    }
+
+    .sumary-info .label {
+        font-family: 'Helvetica Neue';
+        font-size: 10px;
+        line-height: 1;
+        color: #939598;
+        margin:10px 0;
+    }
