@@ -10,18 +10,14 @@
     <link rel="stylesheet" href="~/lib/bootstrapcustom/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap-material-design/dist/css/bootstrap-material-design.css" />
     <link rel="stylesheet" href="~/lib/dygraph/dygraph.css" />
-    <link rel="stylesheet" href="~/css/site.css" />
-    <link rel="stylesheet" href="~/css/fundRegister.css" />
-    <link rel="stylesheet" href="~/css/companyRegister.css" />
-    <link rel="stylesheet" href="~/css/contractDeploy.css" />
-    <link rel="stylesheet" href="~/css/loading.css" />
     <link rel="stylesheet"
             href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.12.0/build/styles/default.min.css">
+    @RenderSection("Style", required: false)
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.6.14/beautify.min.js"></script>
     <script src="https://use.fontawesome.com/04d62b0ee0.js"></script>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     
-    @RenderSection("Style", required: false)
+   
     @Html.Raw(JavaScriptSnippet.FullScript)
 </head>
 <body style="background-color: rgb(250, 250, 252)">
