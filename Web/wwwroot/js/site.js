@@ -27,7 +27,7 @@ $(document).ready(function () {
 
     hub.on('deploy', deploy);
 
-    $.connection.hub.disconnected(function () {
+    $.connection.hub.disconnected && $.connection.hub.disconnected(function () {
         if ($.connection.hub.lastError)
         { alert("Disconnected. Reason: " + $.connection.hub.lastError.message); }
     });

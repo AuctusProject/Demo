@@ -14,8 +14,11 @@
 }
 
 @section scripts{
-    <script src="~/lib/d3/d3.min.js" charset="utf-8"></script>
+    <script src="~/lib/d3/d3.js" charset="utf-8"></script>
     <script src="~/lib/c3/c3.min.js"></script>
 
+    @*<script>
+        var assetsReferenceValue = @Html.Raw(Json.Encode(Model));
+    </script>*@
     <script type="text/javascript" src="~/js/dashboard/charts.js"></script>
 }   
