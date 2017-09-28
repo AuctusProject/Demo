@@ -23,10 +23,10 @@ namespace Web.Controllers
         [Route("/PensionFund/{contractAddress}")]
         public IActionResult Index(string contractAddress)
         {
-            //PensionFundInfo pensionFundInfo = PensionFundsServices.GetPensionFundInfo(contractAddress);
+            PensionFundInfo pensionFundInfo = PensionFundsServices.GetPensionFundInfo(contractAddress);
             //ReadWithdrawal(contractAddress);
             //ReadPayments(contractAddress);
-            return View();
+            return View(pensionFundInfo);
         }
 
         [HttpPost]

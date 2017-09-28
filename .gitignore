@@ -78,4 +78,6 @@ orleans.codegen.cs
 *.ndf
 
 *.DS_Store
+WebApi/subscribed_members.csv
 /Web/wwwroot/images/Thumbs.db
+WebApi/Controllers/PresaleController.cs
