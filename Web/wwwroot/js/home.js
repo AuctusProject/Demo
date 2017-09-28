@@ -1,6 +1,4 @@
 ﻿﻿$(document).ready(function () {
-    $('[data-toggle="popover"]').popover();
-
     $(".next-step").click(function (e) {
         if ($('.next-button').attr('disabled') == null) {
             var stepId = $(this).closest('.step').data('step-id');
@@ -13,20 +11,16 @@
 
     $('.asset-input-group input').blur(updateTotalAssets);
     $('#fundFeeInput').blur(validateFormToEnableNextButton);
-
-
+     
     $(".prev-step").click(function (e) {
         var stepId = $(this).closest('.step').data('step-id');
         prevTab(stepId);
     });
-
-
+     
     $(".asset-input-group-left").click(function (e) {
         var sequential = $(this).data('carousel-sequential');
         openAssetInformationModal(sequential);
     });
-
-    $('form').validate();
 
     Wizard.Components.ContractDeploy.CodeMirror = CodeMirror.fromTextArea(Wizard.Components.ContractDeploy.Code[0], {
         lineNumbers: true,
@@ -34,7 +28,7 @@
     });
 
     loadAssetsGraphs();
-
+    
     hub.on('deployCompleted', Wizard.Operations.OnDeployCompleted);
     hub.on('deployUncompleted', Wizard.Operations.OnDeployUncompleted);
     hub.on('deployError', Wizard.Operations.OnDeployError);

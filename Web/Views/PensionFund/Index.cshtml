@@ -8,14 +8,22 @@
 
 @Html.Partial("_TransactionHistory")
 
+@Html.Partial("_Withdraw")
+@Html.Partial("_Payment")
+
 @section style{
     <link rel=stylesheet href="~/css/dashboard.css">
     <link href="~/lib/c3/c3.min.css" rel="stylesheet">
+    <link rel=stylesheet href="~/lib/noUiSlider/nouislider.min.css">
 }
 
 @section scripts{
+    <script type="text/javascript">
+        var assetsPerfomance = '@Html.Raw(Model)';
+    </script>
     <script src="~/lib/d3/d3.min.js" charset="utf-8"></script>
     <script src="~/lib/c3/c3.min.js"></script>
-
+    <script type="text/javascript" src="~/js/dashboard/main.js"></script>
     <script type="text/javascript" src="~/js/dashboard/charts.js"></script>
+    <script type="text/javascript" src="~/lib/noUiSlider/nouislider.min.js"></script>
 }   
