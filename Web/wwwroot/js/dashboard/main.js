@@ -12,6 +12,7 @@ var Dashboard = {
     init: function () {
         Dashboard.configTimeline();
         Dashboard.configPaymentWindow();
+        Dashboard.configWithdrawWindow();
         Dashboard.readPayments();
         Dashboard.readWithdraw();
     },
@@ -44,42 +45,69 @@ var Dashboard = {
         $('#month').on('change', function () {
             document.getElementById('slider').noUiSlider.set([1, $(this).val()]);
         });
+        $('#comfirmPayment').on('click', function () {
+            Dashboard.payment();
+        });
+    },
+    configWithdrawWindow: function () {
+        $('#comfirmWithdraw').on('click', function () {
+            Dashboard.withdraw();
+        });
     },
     withdraw: function () {
         $('#withdrawModal').modal('toggle');
+        Dashboard.setActionButtons(true);
         Dashboard.ajaxHubCall(urlGenerateWithdraw, Dashboard.getBaseData(), Dashboard.withdrawalUncompleted);
     },
     payment: function () {
         $('#paymentModal').modal('toggle');
+        Dashboard.setActionButtons(true);
         var data = Dashboard.getBaseData();
         data["monthsAmount"] = $('#month').val();
         Dashboard.ajaxHubCall(urlGeneratePayment, data, Dashboard.paymentsUncompleted);
     },
     paymentsCompleted: function (response) {
-         
+
+
+
+
+        Dashboard.setActionButtons(false);
     },
     paymentsUncompleted: function (response) {
 
+
+
+        Dashboard.setActionButtons(true);
         Dashboard.readPayments();
     },
     readPaymentsError: function (response) {
-
+        Dashboard.readPayments();
     },
     withdrawalCompleted: function (response) {
 
+
+
+        Dashboard.setActionButtons(response);
     },
     withdrawalUncompleted: function (response) {
 
+
+
+        Dashboard.setActionButtons(true);
         Dashboard.readWithdraw();
     },
     readWithdrawalError: function (response) {
-
+        Dashboard.readWithdraw();
     },
     readPayments: function () {
         Dashboard.ajaxHubCall(urlReadPayment, Dashboard.getBaseData());
     },
     readWithdraw: function () {
         Dashboard.ajaxHubCall(urlReadWithdraw, Dashboard.getBaseData());
+    },
+    setActionButtons: function (disabled) {
+        $("#comfirmWithdraw").prop("disabled", enabled);
+        $("#comfirmPayment").prop("disabled", enabled);
     },
     getBaseData: function () {
         return {
