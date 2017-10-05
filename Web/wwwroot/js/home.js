@@ -256,7 +256,7 @@ Wizard.Components = {
     },
     AssetsCarousel: $("#carouselExampleIndicators"),
     ContractDeploy: {
-        //NextButton: $('.next-button'),
+        NextButton: $('.next-button'),
         ButtonsControl: $('.buttons-control-div'),
         GeneratingContract: $('.generating-contract'),
         ContractBeingDeployedDiv: $('#contract-being-deployed'),
@@ -301,7 +301,7 @@ Wizard.Operations = {
     OnSave: function (data) {
         Wizard.Components.ErrorMessage.hide();
         Wizard.Components.ContractDeploy.ContractDeployedDiv.hide();
-        Wizard.Components.ContractDeploy.TransactionIdLink.attr("href", "https://ropsten.etherscan.io/tx/" + data.transactionHash);
+        Wizard.Components.ContractDeploy.TransactionIdLink.attr("href", Parameter.BlockExplorerUrl + "/tx/" + data.transactionHash);
         Wizard.Components.ContractDeploy.CodeMirror.setValue(js_beautify(data.smartContractCode, { indent_size: 4 }));
         setTimeout(function () { Wizard.Components.ContractDeploy.CodeMirror.refresh(); }, 1);
         Wizard.Components.ContractDeploy.ContractCodeWrapper.show();
@@ -312,9 +312,11 @@ Wizard.Operations = {
         Wizard.Components.ErrorMessage.hide();
         Wizard.Components.ContractDeploy.ContractBeingDeployedDiv.hide();
         Wizard.Components.ContractDeploy.ContractDeployedDiv.show();
-        Wizard.Components.ContractDeploy.ContractAddressLink.attr("href", "https://ropsten.etherscan.io/tx/" + data.address);
+        Wizard.Components.ContractDeploy.ContractAddressLink.attr("href", Parameter.BlockExplorerUrl + "/address/" + data.Value.Address);
+        Wizard.Components.ContractDeploy.GeneratingContract.hide();
+        Wizard.Components.ContractDeploy.ButtonsControl.show()
         Wizard.Components.ContractDeploy.NextButton.removeAttr('disabled');
-        Wizard.Components.ContractDeploy.NextButton.unbind('click').click(function () { Wizard.Operations.GoToDashBoard(data.address); });
+        Wizard.Components.ContractDeploy.NextButton.unbind('click').click(function () { Wizard.Operations.GoToDashBoard(data.Value.Address); });
         Wizard.Components.ContractDeploy.NextButton.show();
     },
     OnDeployUncompleted: function (response) {
@@ -339,7 +341,7 @@ Wizard.Operations = {
         alert('Deploy error');
     },
     GoToDashBoard: function (ContractAddress) {
-        alert('Go to dashboard: ' + ContractAddress);
+        window.location = "/pensionFund/" + ContractAddress;
     },
     Validate: function (model) {
         return true;
@@ -363,7 +365,7 @@ function GetVestingRules() {
     var periods = $('.vesting-period');
     var rules = [];
     periods.each(function (index, elem) {
-        var vestingPeriod = elem.innerHtml;
+        var vestingPeriod = $(elem).html();
         var vestingPercentage = $(elem).siblings('.input-percentage').find('.vesting-percentage').val();
         rules.push({ Percentage: parseInt(vestingPercentage), Period: parseInt(vestingPeriod) });
     });

@@ -525,6 +525,13 @@
         color: #939598;
         margin:10px 0;
     }
+.values-chart {
+    height: 368px;
+}
+
+    .values-chart .chart-panel {
+
+    }
 
 .history-table {
     margin: 16px 60px;
@@ -548,3 +555,21 @@
         color: #00bdff;
         margin-left:20px;
     }
+        .history-table span.view-tx::after {
+            content: url('../images/dashboard//external-link.png');
+            margin: -4px 0 0 5px;
+        }
+
+
+    .history-table div.bullet {
+        margin-right: 8px;
+        display: inline-block;
+        width: 9px;
+        height: 9px;
+        background: #939598;
+        border-radius: 50%;
+    }
+    .history-table .confirmed div.bullet {
+        background: #0be6d0;
+    }
+    
