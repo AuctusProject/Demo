@@ -7,7 +7,7 @@ $(document).ready(function () {
 var dashboardCharts = {
 
     loadAssetsAllocationChart: function (data) {
-        var a = assetsReferenceValue;
+        var a = pensionFundData.assetsReferenceValue;
         var chart = c3.generate({
             bindto: '#assets-chart',
             data: {

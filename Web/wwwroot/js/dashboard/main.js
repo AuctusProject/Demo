@@ -66,5 +66,30 @@ var Dashboard = {
     },
     readWithdrawalError: function (response) {
 
+    },
+    getBaseData: function () {
+        return {
+            contractAddress: pensionFundData.ContractAddress
+        };
+    },
+    ajaxHubCall: function (url, data, successFunction, errorFunction) {
+        $.ajax({
+            url: url,
+            data: data,
+            method: "POST",
+            beforeSend: function (request) {
+                request.setRequestHeader("HubConnectionId", hub.connection.id);
+            },
+            success: function (response) {
+                if (successFunction) {
+                    successFunction(response);
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                if (errorFunction) {
+                    errorFunction();
+                }
+            }
+        });
     }
  };
