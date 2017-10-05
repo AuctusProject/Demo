@@ -1,20 +1,20 @@
 ﻿
 $(document).ready(function () {
-    var a = 2;
     dashboardCharts.loadAssetsAllocationChart();
 });
 
 var dashboardCharts = {
 
     loadAssetsAllocationChart: function (data) {
-        var a = assetsReferenceValue;
+        var assets = pensionFundData.assets;
+        var dataArray = [];
+        for (var i = 0; i < assets.length; ++i) {
+            dataArray.push([assets[i].name, assets[i].percentage]);
+        }
         var chart = c3.generate({
             bindto: '#assets-chart',
             data: {
-                columns: [
-                    ['data1', 30],
-                    ['data2', 120],
-                ],
+                columns: dataArray,
                 type: 'donut'
             }
         });

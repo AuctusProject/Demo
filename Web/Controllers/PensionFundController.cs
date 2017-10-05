@@ -23,13 +23,10 @@ namespace Web.Controllers
         [Route("/PensionFund/{contractAddress}")]
         public IActionResult Index(string contractAddress)
         {
-            PensionFundInfo pensionFundInfo = PensionFundsServices.GetPensionFundInfo(contractAddress);
-            //ReadWithdrawal(contractAddress);
-            //ReadPayments(contractAddress);
-            return View(pensionFundInfo);
+            return View(PensionFundsServices.GetPensionFundInfo(contractAddress));
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("/PensionFund/GetWithdrawalInfo")]
         public IActionResult GetWithdrawalInfo(string contractAddress)
         {
@@ -40,9 +37,7 @@ namespace Web.Controllers
         [Route("/PensionFund/GeneratePayment")]
         public IActionResult GeneratePayment(string contractAddress, int monthsAmount)
         {
-            Progress progress = PensionFundsServices.GeneratePayment(contractAddress, monthsAmount);
-            ReadPayments(contractAddress);
-            return Json(progress);
+            return Json(PensionFundsServices.GeneratePayment(contractAddress, monthsAmount));
         }
 
         [HttpPost]
@@ -72,9 +67,7 @@ namespace Web.Controllers
         [Route("/PensionFund/GenerateWithdrawal")]
         public IActionResult GenerateWithdrawal(string contractAddress)
         {
-            Withdrawal withdrawal = PensionFundsServices.GenerateWithdrawal(contractAddress);
-            ReadWithdrawal(contractAddress);
-            return Json(withdrawal);
+            return Json(PensionFundsServices.GenerateWithdrawal(contractAddress));
         }
 
         [HttpPost]

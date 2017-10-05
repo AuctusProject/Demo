@@ -1,8 +1,8 @@
 @using Auctus.Model
 @model PensionFundInfo
 
-@Html.Partial("_Header", "0xCf89E68C055435A67b57D7676091A56Df59f14b0")
-@Html.Partial("_Timeline", 60)
+@Html.Partial("_Header", Model?.ContractAddress)
+@Html.Partial("_Timeline", 0)
 @Html.Partial("_FundSummary")
 @Html.Partial("_Charts")
 
@@ -19,7 +19,12 @@
 
 @section scripts{
     <script type="text/javascript">
-        var assetsPerfomance = '@Html.Raw(Model)';
+        var urlGenerateWithdraw = '@Url.Action("GenerateWithdrawal", "PensionFund")';
+        var urlGeneratePayment = '@Url.Action("GeneratePayment", "PensionFund")';
+        var urlGetPaymentInfo = '@Url.Action("GeneratePayment", "PensionFund")';
+        var urlReadPayment = '@Url.Action("ReadPayments", "PensionFund")';
+        var urlReadWithdraw = '@Url.Action("ReadWithdrawal", "PensionFund")';
+        var pensionFundData = JSON.parse('@Html.Raw(Json.Serialize(Model))');
     </script>
     <script src="~/lib/d3/d3.min.js" charset="utf-8"></script>
     <script src="~/lib/c3/c3.min.js"></script>
