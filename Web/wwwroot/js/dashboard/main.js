@@ -12,6 +12,8 @@ var Dashboard = {
     init: function () {
         Dashboard.configTimeline();
         Dashboard.configPaymentWindow();
+        Dashboard.readPayments();
+        Dashboard.readWithdraw();
     },
     configTimeline: function () {
         $("#paymentBtn").on('click', function () {
@@ -45,15 +47,20 @@ var Dashboard = {
     },
     withdraw: function () {
         $('#withdrawModal').modal('toggle');
+        Dashboard.ajaxHubCall(urlGenerateWithdraw, Dashboard.getBaseData(), Dashboard.withdrawalUncompleted);
     },
-    payment: function (months) {
+    payment: function () {
         $('#paymentModal').modal('toggle');
+        var data = Dashboard.getBaseData();
+        data["monthsAmount"] = $('#month').val();
+        Dashboard.ajaxHubCall(urlGeneratePayment, data, Dashboard.paymentsUncompleted);
     },
     paymentsCompleted: function (response) {
          
     },
     paymentsUncompleted: function (response) {
 
+        Dashboard.readPayments();
     },
     readPaymentsError: function (response) {
 
@@ -63,13 +70,20 @@ var Dashboard = {
     },
     withdrawalUncompleted: function (response) {
 
+        Dashboard.readWithdraw();
     },
     readWithdrawalError: function (response) {
 
     },
+    readPayments: function () {
+        Dashboard.ajaxHubCall(urlReadPayment, Dashboard.getBaseData());
+    },
+    readWithdraw: function () {
+        Dashboard.ajaxHubCall(urlReadWithdraw, Dashboard.getBaseData());
+    },
     getBaseData: function () {
         return {
-            contractAddress: pensionFundData.ContractAddress
+            contractAddress: pensionFundData.contractAddress
         };
     },
     ajaxHubCall: function (url, data, successFunction, errorFunction) {
