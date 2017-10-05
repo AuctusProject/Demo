@@ -1,5 +1,7 @@
-﻿// Write your Javascript code.
-$(document).ready(function () {
+﻿$(document).ready(function () {
+
+    $('[data-toggle="popover"]').popover();
+
     $.validator.setDefaults({
         highlight: function (element) {
             $(element).closest('.bmd-form-group').addClass('has-error');
@@ -19,13 +21,9 @@ $(document).ready(function () {
         }
     });
 
+    $('form').validate();
+
     hljs.configure({ useBR: true });
-
-    var deploy = function (msg) {
-        $('.deploy-message').text(msg);
-    };
-
-    hub.on('deploy', deploy);
 
     $.connection.hub.disconnected(function () {
         if ($.connection.hub.lastError)

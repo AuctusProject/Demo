@@ -195,6 +195,117 @@
     border-bottom-width: 2px;
 }
 
+.modal-title-center {
+    justify-content: center;
+    text-align: center;
+}
+
+.modal-withdraw-container {
+    justify-content: center;
+    text-align: center;
+    width: 50%;
+}
+
+.modal-withdraw-internal {
+    width: 100%;
+}
+
+.modal-money {
+    font-family: HelveticaNeue;
+    font-weight: 300;
+    font-size: 32px;
+    line-height: 1;
+    letter-spacing: 1.1px;
+    color: #231f20;
+    margin-top: 12px;
+}
+
+.modal-money::before {
+    content: '$';
+    font-size: 16px;
+    margin: 0 0 0 -15px;
+    position: absolute;
+    top: 62px;
+}
+
+.modal-money-label {
+    font-family: HelveticaNeue;
+    font-size: 10px;
+    line-height: 1;
+    color: #939598;
+    margin-top: 12px;
+}
+
+.modal-slider {
+    width: 70%;
+}
+
+.modal-slider-text {
+    font-family: HelveticaNeue;
+    font-size: 10px;
+    line-height: 1;
+    color: #939598;
+}
+
+.modal-month {
+    width: 30%;
+}
+
+#slider {
+    margin-top: 20px;
+}
+
+#slider.noUi-target {
+    border: 0px;
+    height: 2px;
+}
+
+#slider .noUi-base {
+    border: 0px;
+}
+
+#slider .noUi-handle {
+    width: 12px;
+    height: 12px;
+    background-color: #07dce0;
+    border-radius: 50%;
+    border: 0px;
+    box-shadow: none;
+    left: -8px;
+    outline: none !important;
+}
+
+#slider .noUi-handle:nth-child(2) {
+    background: #0243b7;
+}
+
+#slider .noUi-handle:before {
+    content: none;
+}
+
+#slider .noUi-handle:after {
+    content: none;
+}
+
+#month {
+    display: inline-block;
+    vertical-align: top;
+    position: absolute;
+    top: 0px;
+    margin-left: 20px;
+    width: 50px;
+    height: 35px;
+    border-radius: 5px;
+    background-color: #ffffff;
+    border: solid 1px #d9e0e6;
+    text-align: center;
+}
+
+#month:focus {
+    border-color: #00bdff;
+    outline: none;
+}
+
 /* Mobile */
 @media (max-width: 576px) {
     .auctus-logo-margin {

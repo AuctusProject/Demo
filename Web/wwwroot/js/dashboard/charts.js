@@ -6,7 +6,8 @@ $(document).ready(function () {
 
 var dashboardCharts = {
 
-    loadAssetsAllocationChart: function(){
+    loadAssetsAllocationChart: function (data) {
+        var a = pensionFundData.assetsReferenceValue;
         var chart = c3.generate({
             bindto: '#assets-chart',
             data: {
@@ -14,13 +15,7 @@ var dashboardCharts = {
                     ['data1', 30],
                     ['data2', 120],
                 ],
-                type : 'donut',
-                onclick: function (d, i) { console.log("onclick", d, i); },
-                onmouseover: function (d, i) { console.log("onmouseover", d, i); },
-                onmouseout: function (d, i) { console.log("onmouseout", d, i); }
-            },
-            donut: {
-                title: "Iris Petal Width"
+                type: 'donut'
             }
         });
     }

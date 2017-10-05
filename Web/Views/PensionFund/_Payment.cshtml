@@ -1,0 +1,22 @@
+<div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-title-center modal-header">
+                <h4 class="modal-title"><span>MAKE PAYMENT</span></h4>
+            </div>
+            <div class="modal-body">
+                <div class="dashboard-container dashboard-container-full">
+                    <div class="modal-slider modal-slider-text">NUMBER OF MONTHS</div>
+                    <div class="modal-slider" id="slider"></div>
+                    <div class="modal-month form-group bmd-form-group">
+                        <input type="number" id="month" min="1" max="60" step="1" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">Cancel</span></button>
+                <button type="button" class="btn btn-primary" onclick="Dashboard.payment();"><span>Confirm</span></button>
+            </div>
+        </div>
+    </div>
+</div>
