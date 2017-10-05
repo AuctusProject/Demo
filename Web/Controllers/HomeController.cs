@@ -44,7 +44,9 @@ namespace Web.Controllers
             catch(Exception e)
             {
                 Response.StatusCode = 400;
-                return Json(e.Message);
+                if (e is ArgumentException)
+                    return Json(e.Message);
+                return Json("We’re sorry, we had an unexpected error! Please try again in a minute.");
             }
         }
 
