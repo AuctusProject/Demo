@@ -21,7 +21,7 @@
     <script type="text/javascript">
         var urlGenerateWithdraw = '@Url.Action("GenerateWithdrawal", "PensionFund")';
         var urlGeneratePayment = '@Url.Action("GeneratePayment", "PensionFund")';
-        var urlGetPaymentInfo = '@Url.Action("GeneratePayment", "PensionFund")';
+        var urlGetPaymentInfo = '@Url.Action("GetWithdrawalInfo", "PensionFund")';
         var urlReadPayment = '@Url.Action("ReadPayments", "PensionFund")';
         var urlReadWithdraw = '@Url.Action("ReadWithdrawal", "PensionFund")';
         var pensionFundData = JSON.parse('@Html.Raw(Json.Serialize(Model))');

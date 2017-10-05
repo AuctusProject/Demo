@@ -23,7 +23,14 @@ var Dashboard = {
             $('#paymentModal').modal('toggle');
         });
         $("#withdrawBtn").on('click', function () {
-            $('#withdrawModal').modal('toggle');
+            $.ajax({
+                url: urlGetPaymentInfo, data: Dashboard.getBaseData(), method: "GET",
+                success: function(response) {
+                    $('#employeeReceivable').text(response.employeeSzaboCashback);
+                    $('#companyReceivable').text(response.employerSzaboCashback);
+                    $('#withdrawModal').modal('toggle');
+                }
+            });
         });
     },
     configPaymentWindow: function () {
@@ -106,8 +113,8 @@ var Dashboard = {
         Dashboard.ajaxHubCall(urlReadWithdraw, Dashboard.getBaseData());
     },
     setActionButtons: function (disabled) {
-        $("#comfirmWithdraw").prop("disabled", enabled);
-        $("#comfirmPayment").prop("disabled", enabled);
+        $("#comfirmWithdraw").prop("disabled", disabled);
+        $("#comfirmPayment").prop("disabled", disabled);
     },
     getBaseData: function () {
         return {
