@@ -11,11 +11,11 @@
 		                </div>
 		                <div class="form-group bmd-form-group">
 		                    <label for="employerMatchingInput" class="bmd-label-static">EMPLOYER MATCHING</label>
-		                    <input type="number" class="form-control" id="employerMatchingInput" placeholder="00%">
+		                    <input type="number" pattern="[0-9]+([\.][0-9]+)?" class="form-control" id="employerMatchingInput" placeholder="00%">
 		                </div>
 		                <div class="form-group bmd-form-group">
 		                    <label for="maxCounterpartInput" class="bmd-label-static">MAX COUNTERPART</label>
-		                    <input type="number" class="form-control" id="maxCounterpartInput" placeholder="00%">
+		                    <input type="number" pattern="[0-9]+([\.][0-9]+)?" class="form-control" id="maxCounterpartInput" placeholder="00%">
 		                </div>
 		            </div>
 		            <div class="col-lg-1">
@@ -53,7 +53,7 @@
                             <span class="vesting-title">AFTER 1 YEAR OF SERVICE</span>
 						    <span class="vesting-period hidden">1</span>
                             <div class="input-percentage">
-                                <input id="afterOneYear" class="input text-center vesting-percentage" type="number" disabled="disabled" value="20"/>
+                                <input id="afterOneYear" class="input text-center vesting-percentage" type="number" pattern="[0-9]+([\.][0-9]+)?" disabled="disabled" value="20"/>
                                 <span class="percentage">%</span>
                             </div>
                         </div>  
@@ -67,7 +67,7 @@
                             <span class="vesting-title">AFTER 2 YEARS OF SERVICE</span>
 						    <span class="vesting-period hidden">2</span>
                             <div class="input-percentage">
-                                <input id="afterTwoYears" class="input text-center vesting-percentage" type="number" disabled="disabled" value="40"/>
+                                <input id="afterTwoYears" class="input text-center vesting-percentage" type="number" pattern="[0-9]+([\.][0-9]+)?" disabled="disabled" value="40"/>
                                 <span class="percentage">%</span>
                             </div>
                         </div>  
@@ -81,7 +81,7 @@
                             <span class="vesting-title">AFTER 3 YEARS OF SERVICE</span>
 						    <span class="vesting-period hidden">3</span>
                             <div class="input-percentage">
-                                <input id="afterThreeYears" class="input text-center vesting-percentage" type="number" disabled="disabled" value="60"/>
+                                <input id="afterThreeYears" class="input text-center vesting-percentage" type="number" pattern="[0-9]+([\.][0-9]+)?" disabled="disabled" value="60"/>
                                 <span class="percentage">%</span>
                             </div>
                         </div>  
@@ -95,7 +95,7 @@
                             <span class="vesting-title">AFTER 4 YEARS OF SERVICE</span>
 						    <span class="vesting-period hidden">4</span>
                             <div class="input-percentage">
-                                <input id="afterFourYears" class="input text-center vesting-percentage" type="number" disabled="disabled" value="80"/>
+                                <input id="afterFourYears" class="input text-center vesting-percentage" type="number" pattern="[0-9]+([\.][0-9]+)?" disabled="disabled" value="80"/>
                                 <span class="percentage">%</span>
                             </div>
                         </div>  
@@ -109,7 +109,7 @@
                             <span class="vesting-title">AFTER 5 YEARS OF SERVICE</span>
 						    <span class="vesting-period hidden">5</span>
                             <div class="input-percentage">
-                                <input id="afterFiveYears" class="input text-center vesting-percentage" type="number" disabled="disabled" value="100"/>
+                                <input id="afterFiveYears" class="input text-center vesting-percentage" type="number" pattern="[0-9]+([\.][0-9]+)?" disabled="disabled" value="100"/>
                                 <span class="percentage">%</span>
                             </div>
                         </div>  
