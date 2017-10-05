@@ -1,4 +1,4 @@
-<img src="http://dl.auctus.org/img/auctus-01.png" >
+<img src="http://dl.auctus.org/img/auctus-01.png" width="200px" >
 
 ---
 
