@@ -548,3 +548,28 @@
         color: #00bdff;
         margin-left:20px;
     }
+        .history-table span.view-tx::after {
+            content: url('../images/dashboard//external-link.png');
+            margin: -4px 0 0 5px;
+        }
+
+    .history-table div.confirmed span::before, .history-table div.pending span::before {
+        
+        content: '\25CF';
+        font-size: 18px;
+        color: #0be6d0;
+        margin-right: 8px;
+    }
+
+    .history-table div.pending span::before {
+        color: #939598;
+    }
+
+    .history-table div.pending span::before {
+        color: #939598;
+    }
+
+    .history-table img.external-link {
+        margin: -4px 0 0 5px;
+    }
+    
