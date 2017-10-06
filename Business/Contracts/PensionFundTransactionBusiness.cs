@@ -16,6 +16,8 @@ namespace Auctus.Business.Contracts
 {
     public class PensionFundTransactionBusiness : BaseBusiness<PensionFundTransaction, PensionFundTransactionData>
     {
+        public const int TRANSACTION_TOLERANCE = -3;
+
         public PensionFundTransactionBusiness(ILoggerFactory loggerFactory, Cache cache) : base(loggerFactory, cache) { }
         
         public Progress ReadPayments(string contractAddress)
@@ -30,42 +32,27 @@ namespace Auctus.Business.Contracts
             SmartContract smartContract = SmartContractBusiness.GetDefaultDemonstrationPensionFund();
             IEnumerable<PensionFundTransaction> transactions = Data.List(pensionFund.Option.PensionFundContract.TransactionHash).
                                                     Where(c => c.FunctionType == FunctionType.EmployeeBuy || c.FunctionType == FunctionType.CompanyBuy);
-            IEnumerable<PensionFundTransaction> pendingTransactions = transactions.Where(c => !c.BlockNumber.HasValue && !string.IsNullOrEmpty(c.TransactionHash));
+            IEnumerable<PensionFundTransaction> pendingCreateTransactions = transactions.Where(c => string.IsNullOrEmpty(c.TransactionHash));
+            IEnumerable<PensionFundTransaction> pendingCompleteTransactions = transactions.Where(c => !c.BlockNumber.HasValue && !string.IsNullOrEmpty(c.TransactionHash));
 
             if (!transactions.Any())
                 return PensionFundBusiness.GetProgress(pensionFund, new List<Payment>());
-            if (!pendingTransactions.Any())
+            else if (cachedPayment != null && cachedPayment.Count == transactions.Count())
+                return PensionFundBusiness.GetProgress(pensionFund, cachedPayment);
+            else if (cachedPayment != null && (cachedPayment.Count + pendingCreateTransactions.Count()) == transactions.Count())
             {
-                if (cachedPayment == null && !transactions.Any(c => c.BlockNumber.HasValue))
+                HandleTransactions(smartContract, pensionFund, pendingCreateTransactions, pendingCompleteTransactions, new BaseEventInfo[] { });
+                return PensionFundBusiness.GetProgress(pensionFund, pendingCreateTransactions.Select(c => new Payment()
                 {
-                    return PensionFundBusiness.GetProgress(pensionFund, transactions.Select(c => new Payment()
-                    {
-                        TransactionHash = c.TransactionHash,
-                        CreatedDate = c.CreationDate,
-                        Responsable = c.WalletAddress
-                    }).ToList());
-                }
-                else if (cachedPayment != null && cachedPayment.Count == transactions.Count())
-                    return PensionFundBusiness.GetProgress(pensionFund, cachedPayment);
-                else if (cachedPayment != null && cachedPayment.Count == transactions.Count(c => !string.IsNullOrEmpty(c.TransactionHash)))
-                {
-                    return PensionFundBusiness.GetProgress(pensionFund, transactions.Where(c => string.IsNullOrEmpty(c.TransactionHash)).Select(c => new Payment()
-                    {
-                        CreatedDate = c.CreationDate,
-                        Responsable = c.WalletAddress
-                    }).Concat(cachedPayment));
-                }
+                    CreatedDate = c.CreationDate,
+                    Responsable = c.WalletAddress
+                }).Concat(cachedPayment));
             }
 
             List<BuyInfo> buyEvents = EthereumManager.ReadBuyFromDefaultPensionFund(contractAddress);
-            HandleTransactions(smartContract, pensionFund, pendingTransactions, buyEvents.Select(c => new BaseEventInfo() { BlockNumber = c.BlockNumber, TransactionHash = c.TransactionHash }));
+            HandleTransactions(smartContract, pensionFund, pendingCreateTransactions, pendingCompleteTransactions, 
+                buyEvents.Select(c => new BaseEventInfo() { BlockNumber = c.BlockNumber, TransactionHash = c.TransactionHash }));
 
-            IEnumerable<Payment> payments = transactions.Where(c => !c.BlockNumber.HasValue).Select(c => new Payment()
-            {
-                TransactionHash = c.TransactionHash,
-                CreatedDate = c.CreationDate,
-                Responsable = c.WalletAddress
-            });
             List<Payment> completedPayments = new List<Payment>();
             if (buyEvents.Count > 0)
             {
@@ -94,7 +81,15 @@ namespace Auctus.Business.Contracts
                 if (completedPayments.Count > 0)
                     MemoryCache.Set<List<Payment>>(cacheKey, completedPayments);
             }
-            return PensionFundBusiness.GetProgress(pensionFund, payments.Concat(completedPayments));
+            IEnumerable<Payment> remainingPayments = transactions.Where(c => string.IsNullOrEmpty(c.TransactionHash) || 
+            !completedPayments.Any(l => l.TransactionHash == c.TransactionHash)).Select(c => new Payment()
+            {
+                TransactionHash = c.TransactionHash,
+                CreatedDate = c.CreationDate,
+                Responsable = c.WalletAddress
+            });
+            
+            return PensionFundBusiness.GetProgress(pensionFund, remainingPayments.Concat(completedPayments));
         }
 
         public Withdrawal ReadWithdrawal(string contractAddress)
@@ -111,15 +106,13 @@ namespace Auctus.Business.Contracts
                 return null;
 
             WithdrawalInfo withdrawalInfo = EthereumManager.ReadWithdrawalFromDefaultPensionFund(contractAddress);
-            List<BaseEventInfo> baseInfo = new List<BaseEventInfo>();
-            if (withdrawalInfo != null)
-                baseInfo.Add(withdrawalInfo);
 
-            List<PensionFundTransaction> pending = new List<PensionFundTransaction>();
-            if (!transaction.BlockNumber.HasValue)
-                pending.Add(transaction);
+            PensionFundTransaction[] pendingCreate = string.IsNullOrEmpty(transaction.TransactionHash) ? new PensionFundTransaction[] { transaction } : new PensionFundTransaction[0];
+            PensionFundTransaction[] pendingComplete = pendingCreate.Length == 0 && !transaction.BlockNumber.HasValue ? new PensionFundTransaction[] { transaction } : new PensionFundTransaction[0];
+            BaseEventInfo[] withdrawEvent = withdrawalInfo != null ? new BaseEventInfo[] { withdrawalInfo } : new BaseEventInfo[0];
 
-            HandleTransactions(smartContract, pensionFund, pending, baseInfo);
+            HandleTransactions(smartContract, pensionFund, pendingCreate, pendingComplete, withdrawEvent);
+
             Withdrawal withdrawal = null;
             if (withdrawalInfo != null)
             {
@@ -170,7 +163,7 @@ namespace Auctus.Business.Contracts
                 throw new InvalidOperationException("Withdrawal already made.");
 
             List<PensionFundTransaction> newTransactions = new List<PensionFundTransaction>();
-            Parallel.For(1, monthsAmount, new ParallelOptions() { MaxDegreeOfParallelism = 5 },
+            Parallel.For(1, monthsAmount + 1, new ParallelOptions() { MaxDegreeOfParallelism = 5 },
             month =>
             {
                 DateTime date = DateTime.UtcNow;
@@ -222,15 +215,35 @@ namespace Auctus.Business.Contracts
             };
         }
 
-        private void HandleTransactions(SmartContract smartContract, PensionFund pensionFund, IEnumerable<PensionFundTransaction> pendingTransactions, IEnumerable<BaseEventInfo> events)
+        private void HandleTransactions(SmartContract smartContract, PensionFund pensionFund, IEnumerable<PensionFundTransaction> pendingCreateTransactions,
+            IEnumerable<PensionFundTransaction> pendingCompleteTransactions, IEnumerable<BaseEventInfo> events)
         {
-            IEnumerable<PensionFundTransaction> completed = pendingTransactions.Where(c => events.Any(k => k.TransactionHash == c.TransactionHash));
-            DateTime tolerance = DateTime.UtcNow.AddMinutes(-2);
-            if (!completed.Any() && pendingTransactions.Count() > completed.Count() && pendingTransactions.Any(c => c.CreationDate < tolerance))
+            DateTime tolerance = DateTime.UtcNow.AddMinutes(TRANSACTION_TOLERANCE);
+
+            foreach (PensionFundTransaction notCreated in pendingCreateTransactions.Where(c => c.CreationDate < tolerance))
+            {
+                Logger.LogError(string.Format("Transaction not created for contract {1}.", pensionFund.Option.PensionFundContract.Address));
+                Delete(notCreated);
+                PensionFundTransaction newTransaction = CreateTransaction(DateTime.UtcNow, notCreated.FunctionType, notCreated.WalletAddress, pensionFund.Option.PensionFundContract.TransactionHash);
+                GenerateContractTransaction(newTransaction, pensionFund.Option.Company.Employee.Address, pensionFund.Option.PensionFundContract.Address,
+                    smartContract.ABI, smartContract.ContractFunctions.Single(c => c.FunctionType == newTransaction.FunctionType).GasLimit, 0);
+            }
+
+            IEnumerable<PensionFundTransaction> completed = pendingCompleteTransactions.Where(c => events.Any(k => k.TransactionHash == c.TransactionHash));
+            if (completed.Any())
+            {
+                Parallel.ForEach(completed, new ParallelOptions() { MaxDegreeOfParallelism = 5 },
+                    trans =>
+                    {
+                        trans.BlockNumber = events.Single(c => c.TransactionHash == trans.TransactionHash).BlockNumber;
+                        Update(trans);
+                    });
+            }
+            else if (pendingCompleteTransactions.Any(c => c.CreationDate < tolerance))
             {
                 PoolInfo poolInfo = GetPoolInfo();
-                IEnumerable<PensionFundTransaction> lostTransactions = pendingTransactions.Where(c => c.CreationDate < tolerance &&
-                    !poolInfo.Pending.Contains(c.TransactionHash) && !poolInfo.Queued.Contains(c.TransactionHash));
+                IEnumerable<PensionFundTransaction> lostTransactions = pendingCompleteTransactions.Where(c => c.CreationDate < tolerance &&
+                    !poolInfo.Pending.Contains(c.TransactionHash));
                 foreach (PensionFundTransaction lost in lostTransactions)
                 {
                     Logger.LogError(string.Format("Transaction {0} for contract {1} is lost.", lost.TransactionHash, pensionFund.Option.PensionFundContract.Address));
@@ -239,15 +252,6 @@ namespace Auctus.Business.Contracts
                     GenerateContractTransaction(newTransaction, pensionFund.Option.Company.Employee.Address, pensionFund.Option.PensionFundContract.Address, 
                         smartContract.ABI, smartContract.ContractFunctions.Single(c => c.FunctionType == newTransaction.FunctionType).GasLimit, 0);
                 }
-            }
-            else
-            {
-                Parallel.ForEach(completed, new ParallelOptions() { MaxDegreeOfParallelism = 5 },
-                    trans =>
-                    {
-                        trans.BlockNumber = events.Single(c => c.TransactionHash == trans.TransactionHash).BlockNumber;
-                        Update(trans);
-                    });
             }
         }
 

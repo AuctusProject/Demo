@@ -56,10 +56,10 @@ namespace Auctus.Business.Contracts
             Transaction demoContractTransaction = EthereumManager.GetTransaction(transactionHash);
             if (demoContractTransaction == null)
             {
-                if (pensionFundContract.CreationDate < DateTime.UtcNow.AddMinutes(-2))
+                if (pensionFundContract.CreationDate < DateTime.UtcNow.AddMinutes(PensionFundTransactionBusiness.TRANSACTION_TOLERANCE))
                 {
                     PoolInfo poolInfo = GetPoolInfo();
-                    if (!poolInfo.Pending.Contains(pensionFundContract.TransactionHash) && !poolInfo.Queued.Contains(pensionFundContract.TransactionHash))
+                    if (!poolInfo.Pending.Contains(pensionFundContract.TransactionHash))
                     {
                         Logger.LogError(string.Format("Transaction for creation contract {0} is lost.", pensionFundContract.TransactionHash));
                         List<PensionFundReferenceContract> referenceDistribution = PensionFundReferenceContractBusiness.List(pensionFundContract.TransactionHash);
