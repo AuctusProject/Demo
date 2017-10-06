@@ -2,6 +2,11 @@
     $(".next-step").click(function (e) {
         if ($('.next-button').attr('disabled') == null) {
             var stepId = $(this).closest('.step').data('step-id');
+            if (stepId == 1)
+                $('.asset-input-group input').each(function (index, element) {
+                    if (!$(element).val())
+                        $(element).val('0');
+                });
             if (stepId == 3)
                 deploy();
             else
@@ -288,7 +293,7 @@ Wizard.Operations = {
                 data: model,
                 success: Wizard.Operations.OnSave,
                 error: function (xhr, ajaxOptions, thrownError) {
-                    Wizard.Operations.OnSaveError();
+                    Wizard.Operations.OnSaveError(xhr.responseText);
                 }
             });
         }
@@ -332,9 +337,12 @@ Wizard.Operations = {
             }
         });
     },
-    OnSaveError: function () {
+    OnSaveError: function (errorDescription) {
         Wizard.Components.ContractDeploy.ButtonsControl.show();
         Wizard.Components.ContractDeploy.GeneratingContract.hide();
+        if (errorDescription) {
+            Wizard.Components.ErrorMessage.html('<span>' + errorDescription + '</span>');
+        }
         Wizard.Components.ErrorMessage.show();
     },
     OnDeployError: function () {
@@ -352,7 +360,17 @@ function convertModel(obj) {
     var model = {};
     for (prop in obj) {
         if (obj[prop] instanceof jQuery) {
-            model[prop] = obj[prop].val();
+            if (!isNaN(obj[prop].val())) {
+                if (obj[prop].val().indexOf('.') != -1) {
+                    model[prop] = JSON.stringify(parseFloat(obj[prop].val()));
+                }
+                else {
+                    model[prop] = parseInt(obj[prop].val());
+                }
+            }
+            else {
+                model[prop] = obj[prop].val();
+            }
         }
         else {
             model[prop] = convertModel(obj[prop]);
