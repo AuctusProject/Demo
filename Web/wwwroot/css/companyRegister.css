@@ -22,7 +22,7 @@
 }
 
 .company-register .vesting-title {
-    font-family: HelveticaNeue;
+    font-family: Helvetica Neue;
     font-size: 10px;
     line-height: 1;
     text-align: left;
@@ -64,7 +64,7 @@
 .company-register .percentage {
     width: 12px;
     height: 12px;
-    font-family: HelveticaNeue;
+    font-family: Helvetica Neue;
     font-size: 12px;
     line-height: 1;
     text-align: right;
@@ -72,7 +72,7 @@
 }
 
 .modal-title {
-    font-family: HelveticaNeue;
+    font-family: Helvetica Neue;
     font-size: 14px;
     letter-spacing: 0.9px;
     color: #231f20;
@@ -84,7 +84,7 @@
 }
 
 .modal-body p {
-    font-family: HelveticaNeue;
+    font-family: Helvetica Neue;
     font-size: 12px !important;
     font-weight: 300;
     line-height: 1. 8;
@@ -151,7 +151,7 @@
 
 #slider .noUi-tooltip .year {
     opacity: 0.4;
-    font-family: HelveticaNeue;
+    font-family: Helvetica Neue;
     font-size: 9px;
     letter-spacing: 0.2px;
     text-align: left;
@@ -159,7 +159,7 @@
 }
 
 #slider .noUi-tooltip .percentage {
-    font-family: HelveticaNeue;
+    font-family: Helvetica Neue;
     font-size: 11px;
     letter-spacing: 0.2px;  
     text-align: left;
