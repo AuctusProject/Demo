@@ -17,8 +17,21 @@
                          srcset="../images/dashboard/assets-icon@2x.png 2x, ../images/dashboard/assets-icon@3x.png 3x">
 				    <span>ASSETS</span>
 				</div>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="btn-group" data-toggle="buttons">
+                            <label class="btn active">
+                                <input type="radio" name="chart-options" id="allocation" autocomplete="off" checked> ALLOCATION
+                            </label>
+                            <label class="btn">
+                                <input type="radio" name="chart-options" id="variation" autocomplete="off"> VARIATION
+                            </label>
+                        </div>
+                    </div>
+                </div>
 				<div class="row">
-					<div id="assets-chart"></div>
+					<div id="allocation-chart"></div>
+                    <div id="variation-chart" style="display: none;"></div>
 				</div>
             </div>
         </div>

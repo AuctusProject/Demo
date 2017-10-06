@@ -572,4 +572,41 @@
     .history-table .confirmed div.bullet {
         background: #0be6d0;
     }
-    
+
+.btn-group input {
+    display: none;
+}
+
+.btn-group .btn {
+    font-family: 'Helvetica Neue Bold';
+    font-size: 10px;
+    padding: 9px 18px;
+}
+
+.btn-group .btn.active {
+    color: #00bdff !important;
+    background-color: white !important;
+    border: 2px solid #00bdff !important;
+}
+
+.btn-group .btn {
+    color: #bcbec0 !important;
+    background-color: white !important;
+    border: 2px solid #bcbec0 !important;
+}
+
+.btn-group .btn:first-child {
+    border-radius: 5px;
+    border-right: 0px !important;
+}
+.btn-group .btn:last-child {
+    border-radius: 5px;
+    border-left: 0px !important;
+}
+.btn-group .btn:last-child.active {
+    border-left: 2px solid #00bdff !important;
+}
+.btn-group .btn:first-child.active {
+    border-radius: 5px;
+    border-right: 2px solid #00bdff !important;
+}
