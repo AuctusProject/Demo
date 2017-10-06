@@ -1,4 +1,4 @@
-/*-- Chart --*/
+﻿/*-- Chart --*/
 .c3 svg {
   font: 10px sans-serif;
   -webkit-tap-highlight-color: transparent; }
@@ -8,9 +8,11 @@
   stroke: #000; }
 
 .c3 text {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  user-select: none; }
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    font-family: Helvetica Neue;
+}
 
 .c3-legend-item-tile,
 .c3-xgrid-focus,
