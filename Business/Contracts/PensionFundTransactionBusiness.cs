@@ -49,12 +49,11 @@ namespace Auctus.Business.Contracts
                     return PensionFundBusiness.GetProgress(pensionFund, cachedPayment);
                 else if (cachedPayment != null && cachedPayment.Count == transactions.Count(c => !string.IsNullOrEmpty(c.TransactionHash)))
                 {
-                    cachedPayment.AddRange(transactions.Where(c => string.IsNullOrEmpty(c.TransactionHash)).Select(c => new Payment()
+                    return PensionFundBusiness.GetProgress(pensionFund, transactions.Where(c => string.IsNullOrEmpty(c.TransactionHash)).Select(c => new Payment()
                     {
                         CreatedDate = c.CreationDate,
                         Responsable = c.WalletAddress
-                    }));
-                    return PensionFundBusiness.GetProgress(pensionFund, cachedPayment);
+                    }).Concat(cachedPayment));
                 }
             }
 
@@ -95,8 +94,7 @@ namespace Auctus.Business.Contracts
                 if (completedPayments.Count > 0)
                     MemoryCache.Set<List<Payment>>(cacheKey, completedPayments);
             }
-            completedPayments.AddRange(payments);
-            return PensionFundBusiness.GetProgress(pensionFund, completedPayments);
+            return PensionFundBusiness.GetProgress(pensionFund, payments.Concat(completedPayments));
         }
 
         public Withdrawal ReadWithdrawal(string contractAddress)
@@ -194,8 +192,7 @@ namespace Auctus.Business.Contracts
                 List<Payment> cachedPayment = MemoryCache.Get<List<Payment>>(GetCachePaymentKey(contractAddress));
                 if (cachedPayment != null && cachedPayment.Count == payments)
                 {
-                    cachedPayment.AddRange(newPayments);
-                    return PensionFundBusiness.GetProgress(pensionFund, cachedPayment);
+                    return PensionFundBusiness.GetProgress(pensionFund, newPayments.Concat(cachedPayment));
                 }
                 else
                     return ReadPayments(contractAddress);

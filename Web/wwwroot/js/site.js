@@ -30,16 +30,22 @@
         { alert("Disconnected. Reason: " + $.connection.hub.lastError.message); }
     });
 
-    connection.start();
+    connection.start().done(function ()
+    {
+        if (signalrDone) {
+            signalrDone();
+        }
+    });
 });
 
 var connection = $.hubConnection();
 var hub = connection.createHubProxy("AuctusDemo");
+var signalrDone = null;
 
 $('.form-control').focus(function () { $(this).parent().addClass('is-focused'); });
 $('.form-control').blur(function () { $(this).parent().removeClass('is-focused'); });
 
 
 var Parameter = {
-    BlockExplorerUrl: "https://ropsten.etherscan.io"
+    BlockExplorerUrl: "https://rinkeby.etherscan.io"
 };

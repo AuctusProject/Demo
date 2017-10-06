@@ -10,9 +10,11 @@
 
 var Dashboard = {
     init: function () {
+        signalrDone = Dashboard.readTransactions;
         Dashboard.configTimeline();
         Dashboard.configPaymentWindow();
-        Dashboard.configWithdrawWindow();
+    },
+    readTransactions: function () {
         Dashboard.readPayments();
         Dashboard.readWithdraw();
     },
@@ -52,14 +54,6 @@ var Dashboard = {
         $('#month').on('change', function () {
             document.getElementById('slider').noUiSlider.set([1, $(this).val()]);
         });
-        $('#comfirmPayment').on('click', function () {
-            Dashboard.payment();
-        });
-    },
-    configWithdrawWindow: function () {
-        $('#comfirmWithdraw').on('click', function () {
-            Dashboard.withdraw();
-        });
     },
     withdraw: function () {
         $('#withdrawModal').modal('toggle');
@@ -74,14 +68,14 @@ var Dashboard = {
         Dashboard.ajaxHubCall(urlGeneratePayment, data, Dashboard.paymentsUncompleted);
     },
     paymentsCompleted: function (response) {
-
-
+        Dashboard.setTimeline(response);
+        
 
 
         Dashboard.setActionButtons(false);
     },
     paymentsUncompleted: function (response) {
-
+        Dashboard.setTimeline(response);
 
 
         Dashboard.setActionButtons(true);
@@ -111,6 +105,20 @@ var Dashboard = {
     },
     readWithdraw: function () {
         Dashboard.ajaxHubCall(urlReadWithdraw, Dashboard.getBaseData());
+    },
+    setTimeline: function (progress) {
+        if (progress && progress.LastPeriod && progress.LastPeriod > 0) {
+            $('div.timeline-grid-horizontal-line').each(function (i) {
+                var current = $(this);
+                if (progress.LastPeriod >= parseInt(current.data('line'))) {
+                    current.removeClass('timeline-grid-horizontal-line-pending');
+                    current.addClass('timeline-grid-horizontal-line-complete');
+                } else {
+                    current.removeClass('timeline-grid-horizontal-line-complete');
+                    current.addClass('timeline-grid-horizontal-line-pending');
+                }
+            });  
+        }
     },
     setActionButtons: function (disabled) {
         $("#comfirmWithdraw").prop("disabled", disabled);

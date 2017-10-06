@@ -82,7 +82,7 @@ namespace Auctus.Business.Funds
             };
         }
 
-        internal Progress GetProgress(PensionFund pensionFund, List<Payment> payments)
+        internal Progress GetProgress(PensionFund pensionFund, IEnumerable<Payment> payments)
         {
             Progress progress = new Progress();
             progress.StartTime = pensionFund.Option.PensionFundContract.CreationDate;
@@ -115,6 +115,7 @@ namespace Auctus.Business.Funds
 
                         progressValue = new ProgressValue();
                         progressValue.Date = payment.ReferenceDate.Value;
+                        progressValue.Period = payment.Period.Value;
                         employeeTransaction = null; companyTransaction = null; employeeBlockNumber = null;
                         companyBlockNumber = null; employeeToken = null; companyToken = null;
                     }
@@ -144,13 +145,13 @@ namespace Auctus.Business.Funds
                 IEnumerable<DomainObjects.Accounts.BonusDistribution> bonusDistribution = pensionFund.Option.Company.BonusDistribution.Where(c => c.Period * 12 <= last.Period.Value);
                 progress.CurrentVestingBonus = bonusDistribution.Count() > 0 ? bonusDistribution.Max(c => c.ReleasedBonus) : 0;
             }
-            int lastPeriod = last != null ? last.Period.Value : 0;
+            progress.LastPeriod = last != null ? last.Period.Value : 0;
             DateTime lastDate = last != null ? last.ReferenceDate.Value : progress.StartTime;
-            IEnumerable<DomainObjects.Accounts.BonusDistribution> bonusAfterPeriod = pensionFund.Option.Company.BonusDistribution.Where(c => c.Period * 12 > lastPeriod);
+            IEnumerable<DomainObjects.Accounts.BonusDistribution> bonusAfterPeriod = pensionFund.Option.Company.BonusDistribution.Where(c => c.Period * 12 > progress.LastPeriod);
             if (bonusAfterPeriod.Count() > 0)
             {
                 progress.NextVestingBonus = bonusAfterPeriod.Min(c => c.ReleasedBonus);
-                progress.NextVestingDate = lastDate.AddMonths(bonusAfterPeriod.Min(c => c.Period) * 12 - lastPeriod).Date;
+                progress.NextVestingDate = lastDate.AddMonths(bonusAfterPeriod.Min(c => c.Period) * 12 - progress.LastPeriod).Date;
             }
             else
             {
@@ -186,7 +187,7 @@ namespace Auctus.Business.Funds
             progress.Values.Add(progressValue);
         }
 
-        private void AddProgressTransaction(Progress progress, List<Payment> payments, List<Payment> alreadyIdentified, DateTime createdDate, DateTime referenceDate,
+        private void AddProgressTransaction(Progress progress, IEnumerable<Payment> payments, List<Payment> alreadyIdentified, DateTime createdDate, DateTime referenceDate,
             string employeeAddress, string companyAddress, string employeeTransaction, string companyTransaction, int? employeeBlockNumber, int? companyBlockNumber, 
             double? employeeToken, double? companyToken)
         {
@@ -215,7 +216,7 @@ namespace Auctus.Business.Funds
             progress.TransactionHistory.Add(transaction);
         }
 
-        private Payment FindPaymentThatMatchWith(List<Payment> payments, List<Payment> alreadyIdentified, DateTime createdDate, string baseAddress, string searchAddress)
+        private Payment FindPaymentThatMatchWith(IEnumerable<Payment> payments, List<Payment> alreadyIdentified, DateTime createdDate, string baseAddress, string searchAddress)
         {
             IEnumerable<Payment> possibilities = payments.Where(c => c.Responsable == searchAddress && !c.BlockNumber.HasValue && !alreadyIdentified.Contains(c));
             Payment possiblePayment = possibilities.Where(c => c.CreatedDate == createdDate).FirstOrDefault();

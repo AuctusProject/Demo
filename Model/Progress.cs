@@ -10,12 +10,14 @@ namespace Auctus.Model
         public double NextVestingBonus { get; set; }
         public DateTime NextVestingDate { get; set; }
         public DateTime StartTime { get; set; }
+        public int LastPeriod { get; set; }
         public List<ProgressValue> Values { get; set; }
         public List<TransactionHistory> TransactionHistory { get; set; }
     }
 
     public class ProgressValue
     {
+        public int Period { get; set; }
         public DateTime Date { get; set; }
         public double Invested { get; set; }
         public double Vested { get; set; }
