@@ -51,9 +51,9 @@ namespace Web.Controllers
                 {
                     Progress progress = PensionFundsServices.ReadPayments(contractAddress);
                     if (!progress.TransactionHistory.Any(c => !c.PaymentDate.HasValue))
-                        hubContext.Clients.Client(ConnectionId).paymentsCompleted(Json(progress));
+                        hubContext.Clients.Client(ConnectionId).paymentsCompleted(Json(progress).Value);
                     else
-                        hubContext.Clients.Client(ConnectionId).paymentsUncompleted(Json(progress));
+                        hubContext.Clients.Client(ConnectionId).paymentsUncompleted(Json(progress).Value);
                 }
                 catch (Exception ex)
                 {
@@ -81,9 +81,9 @@ namespace Web.Controllers
                 {
                     Withdrawal withdrawal = PensionFundsServices.ReadWithdrawal(contractAddress);
                     if (withdrawal == null || withdrawal.BlockNumber.HasValue)
-                        hubContext.Clients.Client(ConnectionId).withdrawalCompleted(Json(withdrawal));
+                        hubContext.Clients.Client(ConnectionId).withdrawalCompleted(Json(withdrawal).Value);
                     else
-                        hubContext.Clients.Client(ConnectionId).withdrawalUncompleted(Json(withdrawal));
+                        hubContext.Clients.Client(ConnectionId).withdrawalUncompleted(Json(withdrawal).Value);
                 }
                 catch (Exception ex)
                 {
