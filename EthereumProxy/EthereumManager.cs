@@ -15,6 +15,9 @@ namespace Auctus.EthereumProxy
 {
     public class EthereumManager
     {
+        internal const int GWEI_FAST = 21;
+        internal const int GWEI_NORMAL = 7;
+
         public static Wallet CreateAccount(string encryptedPassword)
         {
             return Web3.CreateAccount(encryptedPassword);
@@ -66,7 +69,7 @@ namespace Auctus.EthereumProxy
                 .Replace("{BONUS_DISTRIBUTION}", string.Join("\n\t\t", bonusVestingDistribuition.Select(c => string.Format("bonusDistribution.push(BonusVesting({0}, {1}));", c.Key.ToString(), Web3.GetNumberFormatted(c.Value, rateDecimals)))));
 
             SCCompiled scCompiled = Solc.Compile("CompanyContract", smartContractStringified).Single(c => c.Name == "CompanyContract");
-            string transactionHash = Web3.DeployContract(scCompiled, gasLimit, GetGweiPrice());
+            string transactionHash = Web3.DeployContract(scCompiled, gasLimit, GWEI_FAST);
             return new KeyValuePair<string, string>(transactionHash, smartContractStringified);
         }
 
@@ -74,7 +77,7 @@ namespace Auctus.EthereumProxy
         {
             WithdrawalInfo withdrawalInfo = GetWithdrawalInfo(employeeAddress, smartContractAddress, abi);
             double szabo = withdrawalInfo.EmployeeSzaboCashback + withdrawalInfo.EmployerSzaboCashback + 0.0000000000000001;
-            return Web3.CallFunction(smartContractAddress, abi, "sell", Web3.ETHER(szabo), gasLimit, GetGweiPrice(), 
+            return Web3.CallFunction(smartContractAddress, abi, "sell", Web3.ETHER(szabo), gasLimit, GWEI_NORMAL, 
                 default(KeyValuePair<string, string>), new Variable(VariableType.Address, employeeAddress));
         }
 
@@ -176,7 +179,7 @@ namespace Auctus.EthereumProxy
             Variable requiredValue = Web3.CallConstFunction(new CompleteVariableType(VariableType.BigNumber), smartContractAddress, abi, getRequiredValueMethod,
                 new Variable(VariableType.Address, employeeAddress), new Variable(VariableType.Number, daysOverdue));
 
-            return Web3.CallFunction(smartContractAddress, abi, buyMethod, Web3.ETHER(((BigNumber)requiredValue.Value).Value), gasLimit, GetGweiPrice(), 
+            return Web3.CallFunction(smartContractAddress, abi, buyMethod, Web3.ETHER(((BigNumber)requiredValue.Value).Value), gasLimit, GWEI_NORMAL, 
                 default(KeyValuePair<string, string>), new Variable(VariableType.Address, employeeAddress), new Variable(VariableType.Number, daysOverdue));
         }
         
