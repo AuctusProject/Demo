@@ -28,16 +28,26 @@ namespace Web.Controllers
         [HttpPost]
         public IActionResult Save(Wizard model)
         {
-            if (model == null)
-                throw new ArgumentException("Invalid data.");
-            if (!IsValidRecaptcha(model.Captcha))
-                throw new InvalidOperationException("Invalid captcha.");
+            try
+            {
+                if (model == null)
+                    throw new ArgumentException("Invalid data.");
+                if (!IsValidRecaptcha(model.Captcha))
+                    throw new InvalidOperationException("Invalid captcha.");
 
-            var pensionFundContract = PensionFundsServices.CreateCompleteEntry(model.Fund, model.Company, model.Employee);
-            
-            CheckContractCreationTransaction(pensionFundContract.TransactionHash);
+                var pensionFundContract = PensionFundsServices.CreateCompleteEntry(model.Fund, model.Company, model.Employee);
 
-            return Json(pensionFundContract);
+                CheckContractCreationTransaction(pensionFundContract.TransactionHash);
+
+                return Json(pensionFundContract);
+            }
+            catch(Exception e)
+            {
+                Response.StatusCode = 400;
+                if (e is ArgumentException)
+                    return Json(e.Message);
+                return Json("We’re sorry, we had an unexpected error! Please try again in a minute.");
+            }
         }
 
         [HttpPost]

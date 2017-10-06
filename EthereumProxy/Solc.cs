@@ -44,7 +44,7 @@ namespace Auctus.EthereumProxy
             CompiledData = new List<SCCompiled>();
             BaseFilePath = filePath;
 
-            ConsoleOutput output = Execute(new Command() { Comm = string.Format("solc --optimize --bin {0}", BaseFilePath), ReturnFunction = AfterGenerateBinary });
+            ConsoleOutput output = Execute(new Command() { Comm = string.Format("solc --optimize --bin \"{0}\"", BaseFilePath), ReturnFunction = AfterGenerateBinary });
             if (!output.Ok)
                 throw new SolcException(string.Format("Failed to compile ABI.\n\n{0}", output.Output));
 

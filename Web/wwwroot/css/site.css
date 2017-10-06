@@ -275,6 +275,7 @@ h3 {
     margin-bottom: 20px;
     text-align: center;
     display: inline-block;
+    cursor: pointer;
 }
 
 .next-button-label {
@@ -293,6 +294,7 @@ h3 {
 
 .next-button[disabled] {
     border-color: #d9e0e6;
+    cursor: not-allowed;
 }
 
     .next-button[disabled] span {
@@ -325,6 +327,7 @@ h3 {
     position: relative;
     top: -6px;
     right: 7px;
+    cursor: pointer;
 }
 
 .back-button-icon {
