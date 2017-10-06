@@ -526,11 +526,19 @@
         margin:10px 0;
     }
 .values-chart {
-    height: 368px;
+    height: 430px;
 }
+    .values-chart .c3-ygrid {
+         stroke-dasharray: unset;
+         stroke:#d0d0d0;
+    }
 
-    .values-chart .chart-panel {
+    .values-chart .c3-line {
+        stroke-width: 2.2px;
+    }
 
+    .values-chart .c3-circle {
+        opacity: 0 !important;
     }
 
 .history-table {
