@@ -41,5 +41,5 @@ $('.form-control').blur(function () { $(this).parent().removeClass('is-focused')
 
 
 var Parameter = {
-    BlockExplorerUrl: "https://ropsten.etherscan.io"
+    BlockExplorerUrl: "https://rinkeby.etherscan.io"
 };
