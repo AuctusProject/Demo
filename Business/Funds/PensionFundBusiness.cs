@@ -144,15 +144,19 @@ namespace Auctus.Business.Funds
                     employeeBlockNumber, companyBlockNumber, employeeToken, companyToken);
                 IEnumerable<DomainObjects.Accounts.BonusDistribution> bonusDistribution = pensionFund.Option.Company.BonusDistribution.Where(c => c.Period * 12 <= last.Period.Value);
                 progress.CurrentVestingBonus = bonusDistribution.Count() > 0 ? bonusDistribution.Max(c => c.ReleasedBonus) : 0;
-
-                progress.TotalInvested = progress.Values.Sum(c => c.Invested);
-                progress.TotalToken = progress.Values.Sum(c => c.Token);
-                progress.TotalVested = progress.Values.Sum(c => c.Vested);
-                progress.TotalPensinonFundFee = progress.Values.Sum(c => c.PensinonFundFee);
-                progress.TotalAuctusFee = progress.Values.Sum(c => c.AuctusFee);
             }
             progress.LastPeriod = last != null ? last.Period.Value : 0;
             DateTime lastDate = last != null ? last.ReferenceDate.Value : pensionFund.Option.PensionFundContract.CreationDate;
+            if (progress.LastPeriod > 0)
+            {
+                ProgressValue progressValue = progress.Values.Where(c => c.Period == progress.LastPeriod).Single();
+                progress.TotalToken = progressValue.Token;
+                progress.TotalVested = progressValue.Vested;
+                progress.TotalPensinonFundFee = progressValue.PensinonFundFee;
+                progress.TotalAuctusFee = progressValue.AuctusFee;
+                progress.TotalInvested = progressValue.Invested;
+            }
+
             IEnumerable<DomainObjects.Accounts.BonusDistribution> bonusAfterPeriod = pensionFund.Option.Company.BonusDistribution.Where(c => c.Period * 12 > progress.LastPeriod);
             if (bonusAfterPeriod.Count() > 0)
             {

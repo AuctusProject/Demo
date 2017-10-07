@@ -181,6 +181,11 @@ contract ReferenceValue {
 	}
 
 	function getValueAt(uint64 period, uint64 daysOverdue) constant returns (uint256) {
+        if(period < 1) {
+            period = 1;
+        } else if(period > 61) {
+            period = 61;
+        }
 		uint256 value = getBaseValue(period);
 		if(daysOverdue > 0) {
 			uint256 nextValue = getBaseValue(period + 1);
@@ -284,6 +289,11 @@ contract ReferenceValue {
 	}
 
 	function getValueAt(uint64 period, uint64 daysOverdue) constant returns (uint256) {
+        if(period < 1) {
+            period = 1;
+        } else if(period > 61) {
+            period = 61;
+        }
 		uint256 value = getBaseValue(period);
 		if(daysOverdue > 0) {
 			uint256 nextValue = getBaseValue(period + 1);
@@ -387,6 +397,11 @@ contract ReferenceValue {
 	}
 
 	function getValueAt(uint64 period, uint64 daysOverdue) constant returns (uint256) {
+        if(period < 1) {
+            period = 1;
+        } else if(period > 61) {
+            period = 61;
+        }
 		uint256 value = getBaseValue(period);
 		if(daysOverdue > 0) {
 			uint256 nextValue = getBaseValue(period + 1);
@@ -490,6 +505,11 @@ contract ReferenceValue {
 	}
 
 	function getValueAt(uint64 period, uint64 daysOverdue) constant returns (uint256) {
+        if(period < 1) {
+            period = 1;
+        } else if(period > 61) {
+            period = 61;
+        }
 		uint256 value = getBaseValue(period);
 		if(daysOverdue > 0) {
 			uint256 nextValue = getBaseValue(period + 1);
@@ -593,6 +613,11 @@ contract ReferenceValue {
 	}
 
 	function getValueAt(uint64 period, uint64 daysOverdue) constant returns (uint256) {
+        if(period < 1) {
+            period = 1;
+        } else if(period > 61) {
+            period = 61;
+        }
 		uint256 value = getBaseValue(period);
 		if(daysOverdue > 0) {
 			uint256 nextValue = getBaseValue(period + 1);

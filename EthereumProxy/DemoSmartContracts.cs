@@ -99,7 +99,7 @@ contract DemoPensionFund {
 
     function buy(address responsable, uint256 baseInvestment, uint64 daysOverdue) internal returns (uint256) {
 	    investedPeriods[responsable] = investedPeriods[responsable] + 1;
-	    uint256 amount = getTokenReferenceValue(investedPeriods[responsable], daysOverdue).times(baseInvestment);
+	    uint256 amount = getTokenReferenceValue(investedPeriods[responsable], daysOverdue).times(baseInvestment).divided(1 szabo);
         addressBalance[responsable].amount = addressBalance[responsable].amount.plus(amount); 
 	    addressBalance[responsable].invested = addressBalance[responsable].invested.plus(baseInvestment);
 	    totalSupply = totalSupply.plus(amount);
@@ -111,7 +111,7 @@ contract DemoPensionFund {
 	    addressBalance[source].amount = 0;
     }
 	
-    function getBaseLatePenaltyFee(uint64 daysOverdue) internal returns(uint256, uint64) {
+    function getBaseLatePenaltyFee(uint64 daysOverdue) internal constant returns(uint256, uint64) {
         uint256 baseFee = latePenaltyFeePerDay.plus(decimalsToFraction);
         uint256 latePenalty = baseFee;
         uint64 remainingDivisions = daysOverdue;
@@ -125,23 +125,15 @@ contract DemoPensionFund {
         return (latePenalty, remainingDivisions);
     }
 
-    function getFee(uint256 baseValue) internal returns(uint256) {
+    function getFee(uint256 baseValue) internal constant returns(uint256) {
         return baseValue.times(fundFee).divided(decimalsToFraction);
     }
 
-    function getTokenReferenceValue(uint64 period, uint64 daysOverdue) internal returns(uint256) {
+    function getTokenReferenceValue(uint64 period, uint64 daysOverdue) internal constant returns(uint256) {
 		uint256 tokenValue = 0;
-		uint256 remainingDivisions = reference.length;
 		for(uint64 i = 0; i < reference.length; ++i) {
             ReferenceValue referenceValueContract = ReferenceValue(reference[i].referenceAddress);
-			tokenValue = tokenValue + (referenceValueContract.getValueAt(period, daysOverdue) * reference[i].participation);
-			if (tokenValue > overflowNumberControl) {
-				tokenValue = tokenValue.divided(decimalsToFraction);
-                remainingDivisions = remainingDivisions - 1;
-			}
-		}
-		for(uint64 j = 0; j < remainingDivisions; ++j) {
-			tokenValue = tokenValue.divided(decimalsToFraction);
+			tokenValue = tokenValue.plus(referenceValueContract.getValueAt(period, daysOverdue).times(reference[i].participation));
 		}
 		return tokenValue;
     }
@@ -276,7 +268,7 @@ contract CompanyContract is DemoPensionFund {
         Buy(investedPeriods[responsable], responsable, amount, baseInvestment, latePenalty, daysOverdue, totalFundFee, totalAuctusFee);
     }
 
-    function getEmployerBonusForWithdrawal(address employee) private returns(uint256) {
+    function getEmployerBonusForWithdrawal(address employee) private constant returns(uint256) {
         uint256 bonusApplied = 0;
         for (uint256 i = 0; i < bonusDistribution.length; i++) {
             if (investedPeriods[employee] >= bonusDistribution[i].period) {
@@ -286,26 +278,26 @@ contract CompanyContract is DemoPensionFund {
         return bonusApplied;
     }
 
-    function getBonusValuesForWithdrawal(address employee) private returns(uint256, uint256) {
+    function getBonusValuesForWithdrawal(address employee) private constant returns(uint256, uint256) {
         uint256 employerBonus = getEmployerBonusForWithdrawal(employee);
         uint256 employerAbsoluteBonus = addressBalance[employerAddress].amount.times(employerBonus).divided(decimalsToFraction);
         return (employerBonus, employerAbsoluteBonus);
     }
 
-    function getTokenCashback(address employee, uint256 employerAbsoluteBonus) private returns(uint256, uint256) {
+    function getTokenCashback(address employee, uint256 employerAbsoluteBonus) private constant returns(uint256, uint256) {
         uint256 employerTokenCashback = addressBalance[employerAddress].amount.minus(employerAbsoluteBonus);
         uint256 employeeTokenCashback = addressBalance[employee].amount.plus(employerAbsoluteBonus);
         return (employerTokenCashback, employeeTokenCashback);
     }
 
-    function getSzaboCashback(address employee, uint256 employerTokenCashback, uint256 employeeTokenCashback) private returns(uint256, uint256) {
+    function getSzaboCashback(address employee, uint256 employerTokenCashback, uint256 employeeTokenCashback) private constant returns(uint256, uint256) {
         uint256 value = getTokenReferenceValue(investedPeriods[employee] + 1, 0);
-        uint256 employerSzaboCashback = employerTokenCashback.divided(value);
-        uint256 employeeSzaboCashback = employeeTokenCashback.divided(value);
+        uint256 employerSzaboCashback = employerTokenCashback.times(1 szabo).divided(value);
+        uint256 employeeSzaboCashback = employeeTokenCashback.times(1 szabo).divided(value);
         return (employerSzaboCashback, employeeSzaboCashback);
     }
 
-    function getInvestmentValue(uint256 baseInvestment, uint64 daysOverdue) private returns(uint256) {
+    function getInvestmentValue(uint256 baseInvestment, uint64 daysOverdue) private constant returns(uint256) {
         if (baseInvestment > 0 && daysOverdue > 0) {
             var (latePenalty, remainingDivisions) = getBaseLatePenaltyFee(daysOverdue);
             baseInvestment = baseInvestment.times(latePenalty);
