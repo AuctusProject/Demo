@@ -85,9 +85,9 @@ namespace Auctus.Business.Funds
         internal Progress GetProgress(PensionFund pensionFund, IEnumerable<Payment> payments)
         {
             Progress progress = new Progress();
-            progress.StartTime = pensionFund.Option.PensionFundContract.CreationDate;
+            progress.StartTime = pensionFund.Option.PensionFundContract.CreationDate.Ticks;
             
-            IEnumerable<Payment> completed = payments.Where(c => c.ReferenceDate.HasValue).OrderBy(c => c.ReferenceDate.Value);
+            IEnumerable<Payment> completed = payments.Where(c => c.Period.HasValue).OrderBy(c => c.Period.Value);
             progress.Values = new List<ProgressValue>();
             progress.TransactionHistory = new List<TransactionHistory>();
             List<Payment> alreadyIdentified = new List<Payment>();
@@ -103,7 +103,7 @@ namespace Auctus.Business.Funds
                 double totalToken = 0, investedToken = 0, invested = 0, pensionFundFee = 0, auctusFee = 0;
                 foreach (Payment payment in completed)
                 {
-                    if (progressValue == null || payment.ReferenceDate.Value > progressValue.Date)
+                    if (progressValue == null || payment.Period.Value > progressValue.Period)
                     {
                         if (progressValue != null)
                         {
@@ -114,7 +114,7 @@ namespace Auctus.Business.Funds
                         }
 
                         progressValue = new ProgressValue();
-                        progressValue.Date = payment.ReferenceDate.Value;
+                        progressValue.Date = payment.ReferenceDate.Value.Ticks;
                         progressValue.Period = payment.Period.Value;
                         employeeTransaction = null; companyTransaction = null; employeeBlockNumber = null;
                         companyBlockNumber = null; employeeToken = null; companyToken = null;
@@ -144,19 +144,25 @@ namespace Auctus.Business.Funds
                     employeeBlockNumber, companyBlockNumber, employeeToken, companyToken);
                 IEnumerable<DomainObjects.Accounts.BonusDistribution> bonusDistribution = pensionFund.Option.Company.BonusDistribution.Where(c => c.Period * 12 <= last.Period.Value);
                 progress.CurrentVestingBonus = bonusDistribution.Count() > 0 ? bonusDistribution.Max(c => c.ReleasedBonus) : 0;
+
+                progress.TotalInvested = progress.Values.Sum(c => c.Invested);
+                progress.TotalToken = progress.Values.Sum(c => c.Token);
+                progress.TotalVested = progress.Values.Sum(c => c.Vested);
+                progress.TotalPensinonFundFee = progress.Values.Sum(c => c.PensinonFundFee);
+                progress.TotalAuctusFee = progress.Values.Sum(c => c.AuctusFee);
             }
             progress.LastPeriod = last != null ? last.Period.Value : 0;
-            DateTime lastDate = last != null ? last.ReferenceDate.Value : progress.StartTime;
+            DateTime lastDate = last != null ? last.ReferenceDate.Value : pensionFund.Option.PensionFundContract.CreationDate;
             IEnumerable<DomainObjects.Accounts.BonusDistribution> bonusAfterPeriod = pensionFund.Option.Company.BonusDistribution.Where(c => c.Period * 12 > progress.LastPeriod);
             if (bonusAfterPeriod.Count() > 0)
             {
                 progress.NextVestingBonus = bonusAfterPeriod.Min(c => c.ReleasedBonus);
-                progress.NextVestingDate = lastDate.AddMonths(bonusAfterPeriod.Min(c => c.Period) * 12 - progress.LastPeriod).Date;
+                progress.NextVestingDate = GetFormattedDate(lastDate.AddMonths(bonusAfterPeriod.Min(c => c.Period) * 12 - progress.LastPeriod).Date);
             }
             else
             {
                 progress.NextVestingBonus = progress.CurrentVestingBonus;
-                progress.NextVestingDate = lastDate;
+                progress.NextVestingDate = GetFormattedDate(lastDate);
             }
 
             IEnumerable<Payment> pendingToAdd = payments.Where(c => !c.ReferenceDate.HasValue && !alreadyIdentified.Contains(c));
@@ -165,12 +171,56 @@ namespace Auctus.Business.Funds
             foreach (var payment in employeeToAdd.Zip(companyToAdd, (e, c) => new { employee = e, company = c }))
             {
                 TransactionHistory transaction = new TransactionHistory();
-                transaction.CreationDate = payment.employee.CreatedDate;
+                transaction.CreationDate = payment.employee.CreatedDate.Ticks;
                 transaction.EmployeeTransactionHash = payment.employee.TransactionHash;
                 transaction.CompanyTransactionHash = payment.company.TransactionHash;
                 progress.TransactionHistory.Add(transaction);
             }
             return progress;
+        }
+
+        private string GetFormattedDate(DateTime date)
+        {
+            string month;
+            switch(date.Month) {
+                case 1:
+                    month = "JAN";
+                    break;
+                case 2:
+                    month = "FEB";
+                    break;
+                case 3:
+                    month = "MAR";
+                    break;
+                case 4:
+                    month = "APR";
+                    break;
+                case 5:
+                    month = "MAY";
+                    break;
+                case 6:
+                    month = "JUN";
+                    break;
+                case 7:
+                    month = "JUL";
+                    break;
+                case 8:
+                    month = "AUG";
+                    break;
+                case 9:
+                    month = "SEP";
+                    break;
+                case 10:
+                    month = "OCT";
+                    break;
+                case 11:
+                    month = "NOV";
+                    break;
+                default:
+                    month = "DEC";
+                    break;
+            }
+            return string.Format("{0} {1} {2}", date.Day, month, date.Year.ToString().Substring(2));
         }
 
         private void AddProgressValue(Progress progress, ProgressValue progressValue, PensionFund pensionFund, Payment payment, double totalToken, 
@@ -192,8 +242,8 @@ namespace Auctus.Business.Funds
             double? employeeToken, double? companyToken)
         {
             TransactionHistory transaction = new TransactionHistory();
-            transaction.CreationDate = createdDate;
-            transaction.PaymentDate = referenceDate;
+            transaction.CreationDate = createdDate.Ticks;
+            transaction.PaymentDate = referenceDate.Ticks;
             transaction.CompanyBlockNumber = companyBlockNumber;
             transaction.EmployeeBlockNumber = employeeBlockNumber;
             transaction.EmployeeToken = employeeToken;

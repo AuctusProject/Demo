@@ -222,7 +222,7 @@ namespace Auctus.Business.Contracts
 
             foreach (PensionFundTransaction notCreated in pendingCreateTransactions.Where(c => c.CreationDate < tolerance))
             {
-                Logger.LogError(string.Format("Transaction not created for contract {1}.", pensionFund.Option.PensionFundContract.Address));
+                Logger.LogError(string.Format("Transaction not created for contract {0}.", pensionFund.Option.PensionFundContract.Address));
                 Delete(notCreated);
                 PensionFundTransaction newTransaction = CreateTransaction(DateTime.UtcNow, notCreated.FunctionType, notCreated.WalletAddress, pensionFund.Option.PensionFundContract.TransactionHash);
                 GenerateContractTransaction(newTransaction, pensionFund.Option.Company.Employee.Address, pensionFund.Option.PensionFundContract.Address,

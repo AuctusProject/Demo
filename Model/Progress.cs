@@ -6,10 +6,15 @@ namespace Auctus.Model
 {
     public class Progress
     {
+        public double TotalInvested { get; set; }
+        public double TotalVested { get; set; }
+        public double TotalToken { get; set; }
+        public double TotalPensinonFundFee { get; set; }
+        public double TotalAuctusFee { get; set; }
         public double CurrentVestingBonus { get; set; }
         public double NextVestingBonus { get; set; }
-        public DateTime NextVestingDate { get; set; }
-        public DateTime StartTime { get; set; }
+        public string NextVestingDate { get; set; }
+        public long StartTime { get; set; }
         public int LastPeriod { get; set; }
         public List<ProgressValue> Values { get; set; }
         public List<TransactionHistory> TransactionHistory { get; set; }
@@ -18,7 +23,7 @@ namespace Auctus.Model
     public class ProgressValue
     {
         public int Period { get; set; }
-        public DateTime Date { get; set; }
+        public long Date { get; set; }
         public double Invested { get; set; }
         public double Vested { get; set; }
         public double Total { get; set; }
@@ -29,8 +34,8 @@ namespace Auctus.Model
 
     public class TransactionHistory
     {
-        public DateTime CreationDate { get; set; }
-        public DateTime? PaymentDate { get; set; }
+        public long CreationDate { get; set; }
+        public long? PaymentDate { get; set; }
         public string CompanyTransactionHash { get; set; }
         public int? CompanyBlockNumber { get; set; }
         public string EmployeeTransactionHash { get; set; }

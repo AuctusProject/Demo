@@ -27,9 +27,9 @@ var Dashboard = {
         $("#withdrawBtn").on('click', function () {
             $.ajax({
                 url: urlGetPaymentInfo, data: Dashboard.getBaseData(), method: "GET",
-                success: function(response) {
-                    $('#employeeReceivable').text(response.employeeSzaboCashback);
-                    $('#companyReceivable').text(response.employerSzaboCashback);
+                success: function (response) {
+                    $('#employeeReceivable').text(Dashboard.getFormattedNumber(response.employeeSzaboCashback));
+                    $('#companyReceivable').text(Dashboard.getFormattedNumber(response.employerSzaboCashback));
                     $('#withdrawModal').modal('toggle');
                 }
             });
@@ -69,14 +69,13 @@ var Dashboard = {
     },
     paymentsCompleted: function (response) {
         Dashboard.setTimeline(response);
+        Dashboard.setSummary(response);  
         
-
-
         Dashboard.setActionButtons(false);
     },
     paymentsUncompleted: function (response) {
         Dashboard.setTimeline(response);
-
+        Dashboard.setSummary(response);
 
         Dashboard.setActionButtons(true);
         Dashboard.readPayments();
@@ -106,6 +105,17 @@ var Dashboard = {
     readWithdraw: function () {
         Dashboard.ajaxHubCall(urlReadWithdraw, Dashboard.getBaseData());
     },
+    setSummary: function (progress) {
+        if (progress) {
+            $('#totalInvested').text(Dashboard.getFormattedNumber(progress.TotalInvested));
+            $('#totalVested').text(Dashboard.getFormattedNumber(progress.TotalVested));
+            $('#totalToken').text(Dashboard.getFormattedNumber(progress.TotalToken));
+            $('#feePaid').text(Dashboard.getFormattedNumber(progress.TotalPensinonFundFee));
+            $('#auctusFee').text(Dashboard.getFormattedNumber(progress.TotalAuctusFee));
+            var partialDates = progress.NextVestingDate.split(' ');
+            $('#nextVestingDate').html('<span>' + partialDates[0] + '</span><span>' + partialDates[1] + '</span><span>' + partialDates[2] + '</span>');
+        }
+    },
     setTimeline: function (progress) {
         if (progress && progress.LastPeriod && progress.LastPeriod > 0) {
             $('div.timeline-grid-horizontal-line').each(function (i) {
@@ -123,6 +133,9 @@ var Dashboard = {
     setActionButtons: function (disabled) {
         $("#comfirmWithdraw").prop("disabled", disabled);
         $("#comfirmPayment").prop("disabled", disabled);
+    },
+    getFormattedNumber: function (number) {
+        return (Math.round(number * 100) / 100).toLocaleString({ minimumFractionDigits: 2 });
     },
     getBaseData: function () {
         return {

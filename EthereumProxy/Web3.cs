@@ -635,7 +635,7 @@ namespace Auctus.EthereumProxy
         {
             if (gasLimit < 21000)
                 throw new Web3Exception("Invalid gas limit.");
-            if (gweiGasPrice < 10)
+            if (gweiGasPrice < 2)
                 throw new Web3Exception("Invalid gas price.");
         }
 
