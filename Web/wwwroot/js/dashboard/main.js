@@ -112,8 +112,10 @@ var Dashboard = {
             $('#totalToken').text(Dashboard.getFormattedNumber(progress.TotalToken));
             $('#feePaid').text(Dashboard.getFormattedNumber(progress.TotalPensinonFundFee));
             $('#auctusFee').text(Dashboard.getFormattedNumber(progress.TotalAuctusFee));
-            var partialDates = progress.NextVestingDate.split(' ');
-            $('#nextVestingDate').html('<span>' + partialDates[0] + '</span><span>' + partialDates[1] + '</span><span>' + partialDates[2] + '</span>');
+            if (progress.NextVestingDate) {
+                var partialDates = progress.NextVestingDate.split(' ');
+                $('#nextVestingDate').html('<span>' + partialDates[0] + '</span><span>' + partialDates[1] + '</span><span>' + partialDates[2] + '</span>');
+            }
         }
     },
     setTimeline: function (progress) {

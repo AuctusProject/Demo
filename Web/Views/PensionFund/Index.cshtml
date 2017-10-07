@@ -3,7 +3,7 @@
 
 @Html.Partial("_Header", Model?.ContractAddress)
 @Html.Partial("_Timeline", 0)
-@Html.Partial("_FundSummary")
+@Html.Partial("_FundSummary", Model?.PensionFundName)
 @Html.Partial("_Charts")
 
 @Html.Partial("_TransactionHistory")
