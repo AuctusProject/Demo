@@ -57,7 +57,7 @@ namespace Auctus.Business.Funds
                 {
                     if (!assetReference.ContainsKey(value.Period))
                         assetReference[value.Period] = 0;
-                    assetReference[value.Period] += (baseValue / value.Value) * reference.Percentage / 100;
+                    assetReference[value.Period] += (value.Value / baseValue) * reference.Percentage / 100;
                 }
             }
             return new PensionFundInfo()
@@ -74,7 +74,7 @@ namespace Auctus.Business.Funds
                 ContractAddress = pensionFund.Option.PensionFundContract.Address,
                 ContractTransactionHash = pensionFund.Option.PensionFundContract.TransactionHash,
                 ContractBlockNumber = pensionFund.Option.PensionFundContract.BlockNumber.Value,
-                AssetsReferenceValue = assetReference.Select(c => new AssetsReferenceValue() { Period = c.Key, Value = 1 / c.Value }),
+                AssetsReferenceValue = assetReference.Select(c => new AssetsReferenceValue() { Period = c.Key, Value = c.Value }),
                 Assets = assets,
                 EmployeeBaseContribution = pensionFund.Option.Company.Employee.Salary * pensionFund.Option.Company.Employee.Contribution / 100,
                 CompanyBaseContribution = pensionFund.Option.Company.Employee.Salary * pensionFund.Option.Company.BonusRate / 100 *

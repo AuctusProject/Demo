@@ -70,7 +70,7 @@ var Dashboard = {
     paymentsCompleted: function (response) {
         Dashboard.setTimeline(response);
         Dashboard.setSummary(response);  
-        
+        Dashboard.charts && Dashboard.charts.update(response);
         Dashboard.setActionButtons(false);
     },
     paymentsUncompleted: function (response) {

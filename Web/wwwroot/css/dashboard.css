@@ -471,6 +471,10 @@
     padding: 20px;
 }
 
+.card.chart {
+    min-height: 430px;   
+}
+
 .card .title {
     font-family: Helvetica Neue;
     font-size: 14px;

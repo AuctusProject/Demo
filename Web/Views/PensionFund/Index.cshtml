@@ -34,48 +34,4 @@
     <script type="text/javascript" src="~/js/dashboard/main.js"></script>
     <script type="text/javascript" src="~/js/dashboard/charts.js"></script>
     <script type="text/javascript" src="~/lib/noUiSlider/nouislider.min.js"></script>
-    <script>
-       //TODO: MIGRATE TO JS
-        c3.generate({
-            bindto: '#valuesChart',
-            padding: {
-                top: 30,
-                right: 10,
-                bottom: 0,
-                left: 50,
-            },
-            data: {
-                x: 'x',
-                columns: [
-                    ['x', '2010-01-01', '2011-01-01', '2012-01-01', '2013-01-01', '2014-01-01', '2015-01-01'],
-                    ['TOTAL VALUE', 0, 100, 200, 300, 400, 500],
-                    ['TOTAL VESTED', 0, 60, 130, 155, 240, 260],
-                    ['TOTAL INVESTED', 0, 50, 100, 150, 200, 250]
-                ]
-            },
-            color: {
-                pattern: ['#0be6d0', '#00bdff', '#0243b7']
-            },
-            axis: {
-                y: {
-                    tick: {
-                        count: 5,
-                        format: function (d) { return "$ " + d; }
-                    }
-                },
-                x: {
-                    type: 'timeseries',
-                    tick: {
-                        format: function (x) { return x.getFullYear(); }
-                        //format: '%Y' // format string is also available for timeseries data
-                    }
-                }
-            },
-            grid: {
-                y: {
-                    show: true
-                },
-            }
-        });
-    </script>
 }   
