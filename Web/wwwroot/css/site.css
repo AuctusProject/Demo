@@ -505,3 +505,20 @@ input[type=number]::-webkit-outer-spin-button {
     height: 205.6px;
     object-fit: contain;
 }
+
+.pig-container {
+    float: right;
+    padding: 110px 5px 110px 5px;
+}
+
+.img-landing-waves {
+    width: 276.8px;
+    height: 222.9px;
+    object-fit: contain;
+}
+
+.img-landing-dots {
+    width: 208px;
+    height: 105px;
+    object-fit: contain;
+}
