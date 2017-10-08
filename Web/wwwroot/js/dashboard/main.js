@@ -71,7 +71,8 @@ var Dashboard = {
         Dashboard.setTimeline(response);
         Dashboard.setSummary(response);  
         Dashboard.setTransactionHistory(response);
-        Dashboard.setActionButtons(false);        
+        Dashboard.charts && Dashboard.charts.update(response);
+        Dashboard.setActionButtons(false);
     },
     paymentsUncompleted: function (response) {
         Dashboard.setTimeline(response);

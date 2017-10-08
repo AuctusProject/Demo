@@ -264,12 +264,12 @@ namespace Auctus.Business.Funds
             else if (!string.IsNullOrEmpty(employeeTransaction))
             {
                 transaction.EmployeeTransactionHash = employeeTransaction;
-                transaction.CompanyTransactionHash = FindPaymentThatMatchWith(payments, alreadyIdentified, createdDate, employeeAddress, companyAddress).TransactionHash;
+                transaction.CompanyTransactionHash = FindPaymentThatMatchWith(payments, alreadyIdentified, createdDate, employeeAddress, companyAddress)?.TransactionHash;
             }
             else
             {
                 transaction.CompanyTransactionHash = companyTransaction;
-                transaction.EmployeeTransactionHash = FindPaymentThatMatchWith(payments, alreadyIdentified, createdDate, companyAddress, employeeAddress).TransactionHash;
+                transaction.EmployeeTransactionHash = FindPaymentThatMatchWith(payments, alreadyIdentified, createdDate, companyAddress, employeeAddress)?.TransactionHash;
             }
             progress.TransactionHistory.Add(transaction);
         }
@@ -279,9 +279,10 @@ namespace Auctus.Business.Funds
             IEnumerable<Payment> possibilities = payments.Where(c => c.Responsable == searchAddress && !c.BlockNumber.HasValue && !alreadyIdentified.Contains(c));
             Payment possiblePayment = possibilities.Where(c => c.CreatedDate == createdDate).FirstOrDefault();
             if (possiblePayment == null)
-                possiblePayment = possibilities.Where(c => !payments.Any(l => l.Responsable == baseAddress && c.CreatedDate == l.CreatedDate)).OrderBy(c => c.CreatedDate).First();
+                possiblePayment = possibilities.Where(c => !payments.Any(l => l.Responsable == baseAddress && c.CreatedDate == l.CreatedDate)).OrderBy(c => c.CreatedDate).FirstOrDefault();
 
-            alreadyIdentified.Add(possiblePayment);
+            if (possiblePayment != null)
+                alreadyIdentified.Add(possiblePayment);
             return possiblePayment;
         }
 
