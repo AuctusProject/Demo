@@ -37,6 +37,24 @@ p {
     font-size: 18px;
 }
 
+.welcome {
+    font-family: 'Helvetica Neue Bold';
+    font-size: 28px !important;
+    color: #231f20;
+    display: inline-block;
+    margin-right: 16px;
+}
+
+.get-to-know {
+    font-family: 'Helvetica Neue Light';
+    font-size: 12px !important;
+    color: #231f20;
+    display: inline-block;
+    border-bottom: solid 2px;
+    border-color: #243773;
+    line-height: 0.6;
+}
+
 h2 {
     font-family: 'Helvetica Neue Bold';
     font-size: 36px !important;
