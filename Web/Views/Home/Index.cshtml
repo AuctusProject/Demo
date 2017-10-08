@@ -4,41 +4,35 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-12 wizard-container" style="text-align: center;">
-            <div class="error-message" style="display: none">
-                <span>We’re sorry, we had an unexpected error! Please try again in a minute.</span>
-            </div>
             <div class="row">
-                <div class="step active" id="step1" data-step-id="1">
-                    @Html.Partial("_Stepper", 1)
-                    @Html.Partial("_RegisterFund")
-					@Html.Partial("_Buttons", false)
-                </div>
-                <div class="container step" id="step2" data-step-id="2" style="display:none">
-                    @Html.Partial("_Stepper", 2)
-                    @Html.Partial("_RegisterCompany")
-					@Html.Partial("_Buttons", true)
-                </div>
-                <div class="step" id="step3" data-step-id="3" style="display:none">
-                    @Html.Partial("_Stepper", 3)
-                    @Html.Partial("_RegisterEmployee")
-					@Html.Partial("_Buttons", true)
-                </div>
-                <div class="step" id="step4" data-step-id="4" style="display:none">
-                    @Html.Partial("_ContractDeploy")
-                    @Html.Partial("_Buttons", false)
+                <div class="step active" id="step0" data-step-id="0">
+                    <div class="row">
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 left">
+                            <div class="row">
+                                <img src="~/images/landing/img-pig.png" srcset="~/images/landing/img-pig@2x.png 2x, ~/images/landing/img-pig@3x.png 3x" class="img-pig">
+                            </div>
+                        </div>
+                        <div class="col-lg-6 right">
+                            <div class="row">
+                                <h1>WELCOME</h1>
+                            </div>
+                            <div class="buttons-control-div" onclick="window.location.href = '@Url.Action("StartDemo", "Home")';">
+                                <div class="start-button">
+                                    <span class="next-button-label">START&nbsp;DEMO</span>
+                                    <img src="~/images/landing/play.png" srcset="~/images/landing/play@2x.png 2x, ~/images/landing/play@3x.png 3x" class="play-ico">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<div class="about-auctus">
-    <label>Want to know more about our project?<br /><a href="https://auctus.org/">https://auctus.org/</a></label>
-</div>
 @section style{
     <link rel="stylesheet" href="~/css/site.css" />
-    <link rel="stylesheet" href="~/css/fundRegister.css" />
-    <link rel="stylesheet" href="~/css/companyRegister.css" />
-    <link rel="stylesheet" href="~/css/contractDeploy.css" />
     <link rel="stylesheet" href="~/css/loading.css" />
     <link rel=stylesheet href="~/lib/codemirror/codemirror.css">
     <link rel=stylesheet href="~/lib/noUiSlider/nouislider.min.css">

@@ -25,6 +25,11 @@ namespace Web.Controllers
             return View();
         }
 
+        public IActionResult StartDemo()
+        {
+            return View();
+        }
+
         [HttpPost]
         public IActionResult Save(Wizard model)
         {

@@ -48,6 +48,7 @@
   <ItemGroup>
     <Folder Include="Views\Accounts\" />
     <Folder Include="wwwroot\fonts\" />
+    <Folder Include="wwwroot\images\landing\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Controller\1-Service.csproj" />

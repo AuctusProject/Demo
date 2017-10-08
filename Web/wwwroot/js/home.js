@@ -1,4 +1,4 @@
-﻿﻿$(document).ready(function () {
+﻿$(document).ready(function () {
     $(".next-step").click(function (e) {
         if ($('.next-button').attr('disabled') == null) {
             var stepId = $(this).closest('.step').data('step-id');
@@ -61,7 +61,7 @@ function openAssetInformationModal(sequential) {
 
 function loadAssetsGraphs() {
     $.ajax({
-        url: "Asset/GetGoldReference",
+        url: urlGetGoldReference,
         method: "GET",
         success: loadGoldGraph,
         error: function (xhr, ajaxOptions, thrownError) {
@@ -69,7 +69,7 @@ function loadAssetsGraphs() {
         }
     });           
     $.ajax({
-        url: "Asset/GetSP500Reference",
+        url: urlGetSP500Reference,
         method: "GET",
         success: loadSPGraph,
         error: function (xhr, ajaxOptions, thrownError) {
@@ -77,7 +77,7 @@ function loadAssetsGraphs() {
         }
     });    
     $.ajax({
-        url: "Asset/GetVWEHXReference",
+        url: urlGetVWEHXReference,
         method: "GET",
         success: loadBondsGraph,
         error: function (xhr, ajaxOptions, thrownError) {
@@ -85,7 +85,7 @@ function loadAssetsGraphs() {
         }
     }); 
     $.ajax({
-        url: "Asset/GetMSCIWorldReference",
+        url: urlGetMSCIWorldReference,
         method: "GET",
         success: loadMsciGraph,
         error: function (xhr, ajaxOptions, thrownError) {
@@ -93,7 +93,7 @@ function loadAssetsGraphs() {
         }
     }); 
     $.ajax({
-        url: "Asset/GetBitcoinReference",
+        url: urlGetBitcoinReference,
         method: "GET",
         success: loadBtcGraph,
         error: function (xhr, ajaxOptions, thrownError) {

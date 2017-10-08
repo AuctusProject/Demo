@@ -264,6 +264,24 @@ h3 {
     display: inline-block;
 }
 
+.start-button {
+    width: 200px;
+    height: 45px;
+    border-radius: 50px;
+    border: solid 2px;
+    border-color: #00bdff;
+    padding-top: 3px;
+    text-align: center;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.play-ico {
+    width: 14px;
+    height: 18px;
+    object-fit: contain;
+}
+
 .next-button {
     width: 140px;
     height: 40px;
@@ -481,3 +499,9 @@ input[type=number]::-webkit-outer-spin-button {
         width: 20px;
         vertical-align: middle;
     }
+
+.img-pig {
+    width: 206.2px;
+    height: 205.6px;
+    object-fit: contain;
+}
