@@ -20,82 +20,91 @@ Dashboard.charts = {
         this.loadVestingChart();
     },
     update: function (response) {
-        var a = 2;
+        this.loadVestingChart(response.Values);
     },
-    loadVestingChart: function () {
-        //var openDate = new Date();
-        //g = new Dygraph(
-        //    document.getElementById('valuesChart'), dataArray,
-        //    {
-        //        labels: ["Year", "Value"],
-        //        color: "#00bdff",
-        //        width: 400,
-        //        height: 200,
-        //        axisLabelFontSize: 10,
-        //        strokeWidth: 2,
-        //        axes: {
-        //            x: {
-        //                drawGrid: false,
-        //                axisLabelFormatter: function (x) {
-        //                    //return x;
-        //                    var date = new Date(openDate.getFullYear(), openDate.getMonth() + parseInt(x));
-        //                    return date.getMonth() + 1 + "/" + date.getFullYear();
-        //                },
-        //                axisLineColor: 'white'
-        //            },
-        //            y: {
-        //                axisLabelFormatter: function (y) {
-        //                    return '$' + y.toFixed(2);
-        //                },
-        //                axisLineColor: 'white'
-        //            },
-        //        },
-        //        gridLineColor: '#d9e0e6',
-        //        legend: 'follow',
-        //        digitsAfterDecimal: 2
-        //    }
-        //);
-        c3.generate({
-            bindto: '#valuesChart',
-            padding: {
-                top: 30,
-                right: 10,
-                bottom: 0,
-                left: 50,
-            },
-            data: {
-                x: 'x',
-                columns: [
-                    ['x', '2010-01-01', '2011-01-01', '2012-01-01', '2013-01-01', '2014-01-01', '2015-01-01'],
-                    ['TOTAL VALUE', 0, 100, 200, 300, 400, 500],
-                    ['TOTAL VESTED', 0, 60, 130, 155, 240, 260],
-                    ['TOTAL INVESTED', 0, 50, 100, 150, 200, 250]
-                ]
-            },
-            color: {
-                pattern: ['#0be6d0', '#00bdff', '#0243b7']
-            },
-            axis: {
-                y: {
-                    tick: {
-                        count: 5,
-                        format: function (d) { return "$ " + d; }
-                    }
+    loadVestingChart: function (values) {
+        if (!values) {
+            return;
+        }
+
+        var dataArray = [];
+        for (var i = 0; i < values.length; ++i) {
+            dataArray.push([values[i].Period, values[i].Total, values[i].Invested, values[i].Vested]);
+        }
+
+        var openDate = new Date();
+        g = new Dygraph(
+            document.getElementById('valuesChart'), dataArray,
+            {
+                labels: ["Date", "Total Value", "Total Invested", "Total Vested"],
+                colors: ['#0243b7', '#25C9A0', '#5ABCBB', '#00bdff', '#0be6d0'],
+                //width: 400,
+                height: 300,
+                axisLabelFontSize: 10,
+                strokeWidth: 2,
+                axes: {
+                    x: {
+                        drawGrid: false,
+                        axisLabelFormatter: function (x) {
+                            //return x;
+                            var date = new Date(openDate.getFullYear(), openDate.getMonth() + parseInt(x));
+                            return date.getMonth() + 1 + "/" + date.getFullYear();
+                        },
+                        axisLineColor: 'white'
+                    },
+                    y: {
+                        axisLabelFormatter: function (y) {
+                            return '$' + y.toFixed(2);
+                        },
+                        axisLineColor: 'white'
+                    },
                 },
-                x: {
-                    type: 'timeseries',
-                    tick: {
-                        format: function (x) { return x.getFullYear(); }
-                        //format: '%Y' // format string is also available for timeseries data
-                    }
-                }
-            },
-            grid: {
-                y: {
-                    show: true
-                },
+                gridLineColor: '#d9e0e6',
+                legend: 'follow',
+                digitsAfterDecimal: 2
             }
-        });
+        );
+        //c3.generate({
+        //    bindto: '#valuesChart',
+        //    padding: {
+        //        top: 30,
+        //        right: 10,
+        //        bottom: 0,
+        //        left: 50,
+        //    },
+        //    data: {
+        //        x: 'x',
+        //        columns: [
+        //            ['x', '2010-01-01', '2011-01-01', '2012-01-01', '2013-01-01', '2014-01-01', '2015-01-01'],
+        //            ['TOTAL VALUE', 0, 100, 200, 300, 400, 500],
+        //            ['TOTAL VESTED', 0, 60, 130, 155, 240, 260],
+        //            ['TOTAL INVESTED', 0, 50, 100, 150, 200, 250]
+        //        ]
+        //    },
+        //    color: {
+        //        pattern: ['#0be6d0', '#00bdff', '#0243b7']
+        //    },
+        //    axis: {
+        //        y: {
+        //            tick: {
+        //                count: 5,
+        //                format: function (d) { return "$ " + d; }
+        //            }
+        //        },
+        //        x: {
+        //            type: 'timeseries',
+        //            tick: {
+        //                format: function (x) { return x.getFullYear(); }
+        //                //format: '%Y' // format string is also available for timeseries data
+        //            }
+        //        }
+        //    },
+        //    grid: {
+        //        y: {
+        //            show: true
+        //        },
+        //    }
+        //});
     },
     loadAssetsAllocationChart: function () {
         var assets = pensionFundData.assets;

@@ -460,6 +460,15 @@
     }
 }
 
+#valuesChart {
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    top: 40px;
+    bottom: 10px;
+    margin-top: 20px;
+}
+
 .card {
     border-radius: 2px;
     background-color: #ffffff;
