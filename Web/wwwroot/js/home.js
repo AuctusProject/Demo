@@ -285,7 +285,7 @@ Wizard.Operations = {
             Wizard.Operations.ShowGeneratingContract(model);
 
             $.ajax({
-                url: "Home/Save",
+                url: urlSaveFund,
                 method: "POST",
                 beforeSend: function (request) {
                     request.setRequestHeader("HubConnectionId", hub.connection.id);
