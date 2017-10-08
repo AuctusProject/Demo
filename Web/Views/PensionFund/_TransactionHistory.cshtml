@@ -1,7 +1,7 @@
 <div class="fund-summary container">
     <div class="row">
         <div class="col-xs-12">
-            <div class="card">
+            <div class="card history-card">
                 <div class="title">
                     <img src="../images/dashboard/clock.png"
                          srcset="../images/dashboard/clock@2x.png 2x, ../images/dashboard/clock@3x.png 3x">
@@ -13,56 +13,29 @@
                             <span>TRANSACTION DATE</span>
                         </div>
                         <div class="col-3">
-                            <span>EMPLOYEE CONTRIBUTION</span>
+                            <span>EMPLOYEE TOKEN</span>
                         </div>
                         <div class="col-3">
-                            <span>EMPLOYER CONTRIBUTION</span>
+                            <span>EMPLOYER TOKEN</span>
                         </div>
                         <div class="col-3">
                             <span>STATUS</span>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-3">
-                            <span>18 - 09 - 2017</span>
-                        </div>
-                        <div class="col-3">
-                            <span>$ 100</span> <span class="view-tx">View Tx</span>
-                        </div>
-                        <div class="col-3">
-                            <span>$ 100</span> <span  class="view-tx">View Tx</span>
-                        </div>
-                        <div class="col-3 pending">
-                            <div class="bullet"></div><span>Pending</span>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-3">
-                            <span>18 - 09 - 2017</span>
-                        </div>
-                        <div class="col-3">
-                            <span>$ 100</span> <span class="view-tx">View Tx</span>
-                        </div>
-                        <div class="col-3">
-                            <span>$ 100</span> <span class="view-tx">View Tx</span>
-                        </div>
-                        <div class="col-3 confirmed">
-                            <div class="bullet"></div><span>Confirmed</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-3">
-                            <span>18 - 09 - 2017</span>
-                        </div>
-                        <div class="col-3">
-                            <span>$ 100</span> <span class="view-tx">View Tx</span>
-                        </div>
-                        <div class="col-3">
-                            <span>$ 100</span> <span class="view-tx">View Tx</span>
-                        </div>
-                        <div class="col-3 confirmed">
-                            <div class="bullet"></div><span>Confirmed</span>
+                    <div class="table-content" style="display:none">
+                        <div class="row row-template">
+                            <div class="col-3">
+                                <span>{TRANSACTION_DATE}</span>
+                            </div>
+                            <div class="col-3">
+                                <span style="width: 40px; display: inline-block;">{EMPLOYEE_TOKEN}</span> <a class="{EMPLOYEE_TRANSACTION_LINK_CLASS}" href="{EMPLOYEE_TRANSACTION_LINK}" target="_blank"><span class="view-tx">View Tx</span></a>
+                            </div>
+                            <div class="col-3">
+                                <span style="width: 40px; display: inline-block;">{EMPLOYER_TOKEN}</span> <a class="{EMPLOYER_TRANSACTION_LINK_CLASS}" href="{EMPLOYER_TRANSACTION_LINK}" target="_blank"><span class="view-tx">View Tx</span></a>
+                            </div>
+                            <div class="col-3 {TRANSACTION_STATUS_CLASS}">
+                                <div class="bullet"></div><span>{TRANSACTION_STATUS}</span>
+                            </div>
                         </div>
                     </div>
                 </div>

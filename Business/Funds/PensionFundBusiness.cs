@@ -180,6 +180,10 @@ namespace Auctus.Business.Funds
                 transaction.CompanyTransactionHash = payment.company.TransactionHash;
                 progress.TransactionHistory.Add(transaction);
             }
+
+            progress.TransactionHistory = progress.TransactionHistory.OrderByDescending(transactionHistory => transactionHistory.Status)
+                .ThenByDescending(transactionHistory => transactionHistory.PaymentDate)
+                .ThenByDescending(transactionHistory => transactionHistory.CreationDate).ToList();
             return progress;
         }
 
@@ -247,7 +251,7 @@ namespace Auctus.Business.Funds
         {
             TransactionHistory transaction = new TransactionHistory();
             transaction.CreationDate = createdDate.Ticks;
-            transaction.PaymentDate = referenceDate.Ticks;
+            transaction.PaymentDate = referenceDate.ToString("yyyy - MM - dd");
             transaction.CompanyBlockNumber = companyBlockNumber;
             transaction.EmployeeBlockNumber = employeeBlockNumber;
             transaction.EmployeeToken = employeeToken;

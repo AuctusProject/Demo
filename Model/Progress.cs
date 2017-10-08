@@ -35,12 +35,22 @@ namespace Auctus.Model
     public class TransactionHistory
     {
         public long CreationDate { get; set; }
-        public long? PaymentDate { get; set; }
+        public string PaymentDate { get; set; }
         public string CompanyTransactionHash { get; set; }
         public int? CompanyBlockNumber { get; set; }
         public string EmployeeTransactionHash { get; set; }
         public int? EmployeeBlockNumber { get; set; }
         public double? EmployeeToken { get; set; }
         public double? CompanyToken { get; set; }
+
+        public string Status {
+            get {
+                if (CompanyBlockNumber.HasValue && EmployeeBlockNumber.HasValue)
+                {
+                    return "Confirmed";
+                }
+                return "Pending";
+            }
+        }
     }
 }

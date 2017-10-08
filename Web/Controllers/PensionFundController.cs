@@ -50,7 +50,7 @@ namespace Web.Controllers
                 try
                 {
                     Progress progress = PensionFundsServices.ReadPayments(contractAddress);
-                    if (!progress.TransactionHistory.Any(c => !c.PaymentDate.HasValue))
+                    if (!progress.TransactionHistory.Any(c => !String.IsNullOrWhiteSpace(c.PaymentDate)))
                         hubContext.Clients.Client(ConnectionId).paymentsCompleted(Json(progress).Value);
                     else
                         hubContext.Clients.Client(ConnectionId).paymentsUncompleted(Json(progress).Value);

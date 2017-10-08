@@ -70,13 +70,13 @@ var Dashboard = {
     paymentsCompleted: function (response) {
         Dashboard.setTimeline(response);
         Dashboard.setSummary(response);  
-        
-        Dashboard.setActionButtons(false);
+        Dashboard.setTransactionHistory(response);
+        Dashboard.setActionButtons(false);        
     },
     paymentsUncompleted: function (response) {
         Dashboard.setTimeline(response);
         Dashboard.setSummary(response);
-
+        Dashboard.setTransactionHistory(response);
         Dashboard.setActionButtons(true);
         Dashboard.readPayments();
     },
@@ -84,15 +84,9 @@ var Dashboard = {
         Dashboard.readPayments();
     },
     withdrawalCompleted: function (response) {
-
-
-
         Dashboard.setActionButtons(response);
     },
     withdrawalUncompleted: function (response) {
-
-
-
         Dashboard.setActionButtons(true);
         Dashboard.readWithdraw();
     },
@@ -138,6 +132,40 @@ var Dashboard = {
     },
     getFormattedNumber: function (number) {
         return (Math.round(number * 100) / 100).toLocaleString({ minimumFractionDigits: 2 });
+    },
+    TransactionHistoryRowTemplate: $('.row-template').outerHTML(),
+    setTransactionHistory: function (response) {
+
+        if (response.TransactionHistory != undefined && response.TransactionHistory != null) {
+            $('.table-content').html('');
+            $('.table-content').show();
+            for (var i = 0; i < response.TransactionHistory.length; i++) {
+                var transaction = response.TransactionHistory[i];
+                var row = Dashboard.TransactionHistoryRowTemplate;
+                row = row.replace('{TRANSACTION_DATE}', transaction.PaymentDate == undefined ? " - " : transaction.PaymentDate);
+                row = row.replace('{TRANSACTION_STATUS}', transaction.Status);
+                row = row.replace('{TRANSACTION_STATUS_CLASS}', transaction.Status.toLowerCase());
+                row = row.replace('{EMPLOYEE_TOKEN}', (transaction.EmployeeToken == undefined || transaction.EmployeeToken == null)? " - " : transaction.EmployeeToken.toFixed(2));
+                row = row.replace('{EMPLOYER_TOKEN}', (transaction.CompanyToken == undefined || transaction.CompanyToken == null) ? " - " : transaction.CompanyToken.toFixed(2));
+                if (transaction.EmployeeTransactionHash != null && transaction.EmployeeTransactionHash != '') {
+                    row = row.replace('{EMPLOYEE_TRANSACTION_LINK}', Parameter.BlockExplorerUrl + "/tx/" + transaction.EmployeeTransactionHash);
+                    row = row.replace('{EMPLOYEE_TRANSACTION_LINK_CLASS}', 'visible');
+                }
+                else {
+                    row = row.replace('{EMPLOYEE_TRANSACTION_LINK_CLASS}', 'hidden');
+                }
+                if (transaction.CompanyTransactionHash != null && transaction.CompanyTransactionHash != '') {
+                    row = row.replace('{EMPLOYER_TRANSACTION_LINK}', Parameter.BlockExplorerUrl + "/tx/" + transaction.CompanyTransactionHash);
+                    row = row.replace('{EMPLOYER_TRANSACTION_LINK_CLASS}', 'visible');
+                }
+                else {
+                    row = row.replace('{EMPLOYER_TRANSACTION_LINK_CLASS}', 'hidden');
+                }
+                $('.row-template').show();
+
+                $('.table-content').append(row);
+            }
+        }        
     },
     getBaseData: function () {
         return {
