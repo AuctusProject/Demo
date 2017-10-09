@@ -6,13 +6,13 @@ namespace Auctus.Model
 {
     public class Progress
     {
-        public double TotalInvested { get; set; }
-        public double TotalVested { get; set; }
-        public double TotalToken { get; set; }
-        public double TotalPensinonFundFee { get; set; }
-        public double TotalAuctusFee { get; set; }
-        public double CurrentVestingBonus { get; set; }
-        public double NextVestingBonus { get; set; }
+        public double TotalInvested { get; set; } = 0;
+        public double TotalVested { get; set; } = 0;
+        public double TotalToken { get; set; } = 0;
+        public double TotalPensinonFundFee { get; set; } = 0;
+        public double TotalAuctusFee { get; set; } = 0;
+        public double CurrentVestingBonus { get; set; } = 0;
+        public double NextVestingBonus { get; set; } = 0;
         public string NextVestingDate { get; set; }
         public long StartTime { get; set; }
         public int LastPeriod { get; set; }
