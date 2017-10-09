@@ -561,3 +561,9 @@ input[type=number]::-webkit-outer-spin-button {
     text-align: left;
     color: #707070;
 }
+
+.landing-logo {
+    width: 228px;
+    height: 60px;
+    object-fit: contain;
+}
