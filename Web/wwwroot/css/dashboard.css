@@ -107,6 +107,7 @@
     font-weight: bold;
     letter-spacing: 0.9px;
     color: #00bdff;
+    cursor: pointer;
 }
 
 .popup-timeline-btn-text {

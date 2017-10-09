@@ -9,10 +9,12 @@
 });
 
 var Dashboard = {
+    remainingPayments: 60,
     init: function () {
         signalrDone = Dashboard.readTransactions;
         Dashboard.configTimeline();
         Dashboard.configPaymentWindow();
+        $('div.timeline-grid').click();
     },
     readTransactions: function () {
         Dashboard.readPayments();
@@ -20,8 +22,10 @@ var Dashboard = {
     },
     configTimeline: function () {
         $("#paymentBtn").on('click', function () {
-            document.getElementById('slider').noUiSlider.set([1, 4]);
-            $('#month').val(4);
+            Dashboard.setPaymentSlider();
+            var startValue = (Dashboard.remainingPayments > 4 ? 4 : Dashboard.remainingPayments);
+            document.getElementById('slider').noUiSlider.set([1, startValue]);
+            $('#month').val(startValue);
             $('#paymentModal').modal('toggle');
         });
         $("#withdrawBtn").on('click', function () {
@@ -34,23 +38,13 @@ var Dashboard = {
                 }
             });
         });
+        $('div.timeline-grid').on('click', function () {
+            $('div.popup-timeline-footer').on('click', function () {
+                $('div.timeline-grid').click();
+            });
+        });
     },
     configPaymentWindow: function () {
-        this.paymentSlider = document.getElementById('slider');
-        noUiSlider.create(this.paymentSlider, {
-            start: [1, 60],
-            step: 1,
-            connect: true,
-            tooltips: false,
-            range: { 'min': 1, 'max': 60 }
-        });
-        $($('.noUi-connect')[0]).css('background-color', '#07dce0');
-        $($('.noUi-origin')[0]).attr('disabled', 'disabled');
-        $($('div.noUi-base div.noUi-origin div.noUi-handle')[0]).removeClass('noUi-handle');
-
-        this.paymentSlider.noUiSlider.on('slide', function (values, handle) {
-            $('#month').val(parseInt(values[1]));
-        });
         $('#month').on('change', function () {
             document.getElementById('slider').noUiSlider.set([1, $(this).val()]);
         });
@@ -68,16 +62,11 @@ var Dashboard = {
         Dashboard.ajaxHubCall(urlGeneratePayment, data, Dashboard.paymentsUncompleted);
     },
     paymentsCompleted: function (response) {
-        Dashboard.setTimeline(response);
-        Dashboard.setSummary(response);  
-        Dashboard.setTransactionHistory(response);
-        Dashboard.charts && Dashboard.charts.update(response);
+        Dashboard.setPayment(response);
         Dashboard.setActionButtons(false);
     },
     paymentsUncompleted: function (response) {
-        Dashboard.setTimeline(response);
-        Dashboard.setSummary(response);
-        Dashboard.setTransactionHistory(response);
+        Dashboard.setPayment(response);
         Dashboard.setActionButtons(true);
         Dashboard.readPayments();
     },
@@ -99,6 +88,34 @@ var Dashboard = {
     },
     readWithdraw: function () {
         Dashboard.ajaxHubCall(urlReadWithdraw, Dashboard.getBaseData());
+    },
+    setPayment: function (response) {
+        Dashboard.setTimeline(response);
+        Dashboard.setSummary(response);
+        Dashboard.setTransactionHistory(response);
+        Dashboard.charts && Dashboard.charts.update(response);
+        if (response && response.TransactionHistory) {
+            Dashboard.remainingPayments = 60 - response.TransactionHistory.length;
+        }
+    },
+    setPaymentSlider: function () {
+        this.paymentSlider = document.getElementById('slider');
+        if (this.paymentSlider.noUiSlider) {
+            this.paymentSlider.noUiSlider.destroy();
+        }
+        noUiSlider.create(this.paymentSlider, {
+            start: [1, Dashboard.remainingPayments],
+            step: 1,
+            connect: true,
+            tooltips: false,
+            range: { 'min': 1, 'max': Dashboard.remainingPayments }
+        });
+        $($('.noUi-connect')[0]).css('background-color', '#07dce0');
+        $($('.noUi-origin')[0]).attr('disabled', 'disabled');
+        $($('div.noUi-base div.noUi-origin div.noUi-handle')[0]).removeClass('noUi-handle');
+        this.paymentSlider.noUiSlider.on('slide', function (values, handle) {
+            $('#month').val(parseInt(values[1]));
+        });
     },
     setSummary: function (progress) {
         if (progress) {
@@ -137,7 +154,7 @@ var Dashboard = {
     TransactionHistoryRowTemplate: $('.row-template').outerHTML(),
     setTransactionHistory: function (response) {
 
-        if (response.TransactionHistory != undefined && response.TransactionHistory != null) {
+        if (response.TransactionHistory) {
             $('.table-content').html('');
             $('.table-content').show();
             for (var i = 0; i < response.TransactionHistory.length; i++) {
