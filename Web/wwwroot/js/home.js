@@ -326,7 +326,7 @@ Wizard.Operations = {
     },
     OnDeployUncompleted: function (response) {
         $.ajax({
-            url: "Home/CheckContractCreationTransaction",
+            url: urlCheckDeploy,
             method: "POST",
             data: { transactionHash: response },
             beforeSend: function (request) {
