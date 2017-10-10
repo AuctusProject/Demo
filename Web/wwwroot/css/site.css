@@ -588,3 +588,7 @@ input[type=number]::-webkit-outer-spin-button {
     left: 173px;
     z-index: -1;
 }
+
+.g-recaptcha div{
+    width:100% !important;
+}

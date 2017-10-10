@@ -220,6 +220,14 @@ function prevTab(currentStepId) {
     $('.next-button').removeAttr('disabled');
 }
 
+function goToTab(currentStepId, stepId) {
+    var $active = $('#step' + currentStepId);
+    var $prevTab = $('#step' + (stepId));
+    $active.hide();
+    $prevTab.show();
+    $('.next-button').removeAttr('disabled');
+}
+
 function deploy() {
     Wizard.Operations.Save();
 }
