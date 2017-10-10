@@ -23,10 +23,12 @@ Dashboard.charts = {
         this.loadVestingChart(response.Values);
     },
     loadVestingChart: function (values) {
-        if (!values) {
+        if (!values || (Array.isArray(values) && values.length === 0)) {
+            $('#noDataValuesChart').css('display', 'block');
             return;
         }
 
+        $('#noDataValuesChart').css('display', 'none');
         var dataArray = [];
         for (var i = 0; i < values.length; ++i) {
             dataArray.push([values[i].Period, values[i].Total, values[i].Invested, values[i].Vested]);
@@ -61,50 +63,10 @@ Dashboard.charts = {
                 },
                 gridLineColor: '#d9e0e6',
                 legend: 'follow',
+                legendFormatter: valuesChartLegendFormatter,
                 digitsAfterDecimal: 2
             }
         );
-        //c3.generate({
-        //    bindto: '#valuesChart',
-        //    padding: {
-        //        top: 30,
-        //        right: 10,
-        //        bottom: 0,
-        //        left: 50,
-        //    },
-        //    data: {
-        //        x: 'x',
-        //        columns: [
-        //            ['x', '2010-01-01', '2011-01-01', '2012-01-01', '2013-01-01', '2014-01-01', '2015-01-01'],
-        //            ['TOTAL VALUE', 0, 100, 200, 300, 400, 500],
-        //            ['TOTAL VESTED', 0, 60, 130, 155, 240, 260],
-        //            ['TOTAL INVESTED', 0, 50, 100, 150, 200, 250]
-        //        ]
-        //    },
-        //    color: {
-        //        pattern: ['#0be6d0', '#00bdff', '#0243b7']
-        //    },
-        //    axis: {
-        //        y: {
-        //            tick: {
-        //                count: 5,
-        //                format: function (d) { return "$ " + d; }
-        //            }
-        //        },
-        //        x: {
-        //            type: 'timeseries',
-        //            tick: {
-        //                format: function (x) { return x.getFullYear(); }
-        //                //format: '%Y' // format string is also available for timeseries data
-        //            }
-        //        }
-        //    },
-        //    grid: {
-        //        y: {
-        //            show: true
-        //        },
-        //    }
-        //});
     },
     loadAssetsAllocationChart: function () {
         var assets = pensionFundData.assets;
@@ -158,9 +120,47 @@ Dashboard.charts = {
                 },
                 gridLineColor: '#d9e0e6',
                 legend: 'follow',
+                legendFormatter: assetsVariationLegendFormatter,
                 digitsAfterDecimal: 2
             }
         );
 
     }
 };
+
+function valuesChartLegendFormatter(data) {
+    if (data.x == null) {
+        // This happens when there's no selection and {legend: 'always'} is set.
+        return '';
+    }
+
+    var openDate = new Date();
+    var date = new Date(openDate.getFullYear(), openDate.getMonth() + parseInt(data.xHTML));
+    var html = "<span class='legend-x-value'>" + (parseInt(date.getMonth()) + 1) + "/" + date.getFullYear() + "</span>";
+    data.series.forEach(function (series) {
+        if (!series.isVisible) return;
+        var labeledData = series.labelHTML +': $' + series.yHTML;
+        html += "<span class='legend-y-value'>" + '<br>' + labeledData + "</span>";
+    });
+    return html;
+}
+
+function assetsVariationLegendFormatter(data) {
+    if (data.x == null) {
+        // This happens when there's no selection and {legend: 'always'} is set.
+        return '';
+    }
+
+    var openDate = new Date();
+    var date = new Date(openDate.getFullYear(), openDate.getMonth() + parseInt(data.xHTML));
+    var html = "<span class='legend-x-value'>" + (parseInt(date.getMonth()) + 1) + "/" + date.getFullYear() + "</span>";
+    data.series.forEach(function (series) {
+        if (!series.isVisible) return;
+        var labeledData = '$' + series.yHTML;
+        if (series.isHighlighted) {
+            labeledData = '<b>' + labeledData + '</b>';
+        }
+        html += "<span class='legend-y-value'>" + '<br>' + labeledData + "</span>";
+    });
+    return html;
+}
