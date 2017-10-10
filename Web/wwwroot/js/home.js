@@ -79,7 +79,7 @@ function loadAssetsGraphs() {
     $.ajax({
         url: urlGetVWEHXReference,
         method: "GET",
-        success: loadBondsGraph,
+        success: loadVWEHXGraph,
         error: function (xhr, ajaxOptions, thrownError) {
             
         }
@@ -110,8 +110,8 @@ function loadSPGraph(data) {
     createGraph("sandpGraph", data.values);
 }
 
-function loadBondsGraph(data) {
-    createGraph("bondsGraph", data.values);
+function loadVWEHXGraph(data) {
+    createGraph("vwehxGraph", data.values);
 }
 
 function loadMsciGraph(data) {
@@ -220,6 +220,14 @@ function prevTab(currentStepId) {
     $('.next-button').removeAttr('disabled');
 }
 
+function goToTab(currentStepId, stepId) {
+    var $active = $('#step' + currentStepId);
+    var $prevTab = $('#step' + (stepId));
+    $active.hide();
+    $prevTab.show();
+    $('.next-button').removeAttr('disabled');
+}
+
 function deploy() {
     Wizard.Operations.Save();
 }
@@ -233,7 +241,7 @@ Wizard.Components = {
             Fee: $('#fundFeeInput'),
             GoldPercentage: $('#goldAllocationInput'),
             SPPercentage: $('#spAllocationInput'),
-            BONDSPercentage: $('#bondsAllocationInput'),
+            VWEHXPercentage: $('#vwehxAllocationInput'),
             MSCIPercentage: $('#msciAllocationInput'),
             BitcoinPercentage: $('#bitcoinAllocationInput'),
         },
@@ -346,7 +354,12 @@ Wizard.Operations = {
         Wizard.Components.ErrorMessage.show();
     },
     OnDeployError: function () {
-        alert('Deploy error');
+        grecaptcha.reset();
+        goToTab(4, 3);
+        Wizard.Components.ContractDeploy.ButtonsControl.show();
+        Wizard.Components.ContractDeploy.GeneratingContract.hide();
+        Wizard.Components.ErrorMessage.html('<span> We’re sorry, we had an unexpected error! Please try again in a minute.</span>');
+        Wizard.Components.ErrorMessage.show();
     },
     GoToDashBoard: function (ContractAddress) {
         window.location = "/pensionFund/" + ContractAddress;

@@ -13,6 +13,8 @@ using Auctus.Util;
 using Microsoft.AspNetCore.SignalR.Infrastructure;
 using Auctus.Web.Hubs;
 using Auctus.DomainObjects.Contracts;
+using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace Web.Controllers
 {
@@ -37,7 +39,8 @@ namespace Web.Controllers
         [Route("/PensionFund/GeneratePayment")]
         public IActionResult GeneratePayment(string contractAddress, int monthsAmount)
         {
-            return Json(PensionFundsServices.GeneratePayment(contractAddress, monthsAmount));
+            return Json(PensionFundsServices.GeneratePayment(contractAddress, monthsAmount),
+                new JsonSerializerSettings { ContractResolver = new DefaultContractResolver() });
         }
 
         [HttpPost]
@@ -58,7 +61,8 @@ namespace Web.Controllers
                 catch (Exception ex)
                 {
                     Logger.LogError(new EventId(2), ex, string.Format("Erro on ReadPayments {0}.", contractAddress));
-                    hubContext.Clients.Client(ConnectionId).readPaymentsError();
+                    if (!string.IsNullOrEmpty(ConnectionId))
+                        hubContext.Clients.Client(ConnectionId).readPaymentsError();
                 }
             });
         }
@@ -67,7 +71,8 @@ namespace Web.Controllers
         [Route("/PensionFund/GenerateWithdrawal")]
         public IActionResult GenerateWithdrawal(string contractAddress)
         {
-            return Json(PensionFundsServices.GenerateWithdrawal(contractAddress));
+            return Json(PensionFundsServices.GenerateWithdrawal(contractAddress),
+                new JsonSerializerSettings { ContractResolver = new DefaultContractResolver() });
         }
 
         [HttpPost]
@@ -88,7 +93,8 @@ namespace Web.Controllers
                 catch (Exception ex)
                 {
                     Logger.LogError(new EventId(3), ex, string.Format("Erro on ReadWithdrawal {0}.", contractAddress));
-                    hubContext.Clients.Client(ConnectionId).readWithdrawalError();
+                    if (!string.IsNullOrEmpty(ConnectionId))
+                        hubContext.Clients.Client(ConnectionId).readWithdrawalError();
                 }
             });
         }
