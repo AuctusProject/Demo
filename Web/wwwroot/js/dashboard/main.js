@@ -22,7 +22,7 @@ var Dashboard = {
     },
     readTransactions: function () {
         Dashboard.readPayments();
-        //Dashboard.readWithdraw();
+        Dashboard.readWithdraw();
     },
     configTimeline: function () {
         $("#paymentBtn").on('click', function () {
@@ -56,14 +56,14 @@ var Dashboard = {
     withdraw: function () {
         $('#withdrawModal').modal('toggle');
         Dashboard.setActionButtons(true);
-        Dashboard.ajaxHubCall(urlGenerateWithdraw, Dashboard.getBaseData(), Dashboard.withdrawalCompleted, Dashboard.withdrawalUncompleted);
+        Dashboard.ajaxHubCall(urlGenerateWithdraw, Dashboard.getBaseData(), Dashboard.withdrawalUncompleted);
     },
     payment: function () {
         $('#paymentModal').modal('toggle');
         Dashboard.setActionButtons(true);
         var data = Dashboard.getBaseData();
         data["monthsAmount"] = $('#month').val();
-        Dashboard.ajaxHubCall(urlGeneratePayment, data, Dashboard.paymentsCompleted, Dashboard.paymentsUncompleted);
+        Dashboard.ajaxHubCall(urlGeneratePayment, data, Dashboard.paymentsUncompleted);
     },
     paymentsCompleted: function (response) {
         Dashboard.setPayment(response);
