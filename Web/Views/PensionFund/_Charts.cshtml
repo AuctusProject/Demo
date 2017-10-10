@@ -7,7 +7,10 @@
                          srcset="../images/dashboard/trending-up@2x.png 2x, ../images/dashboard/trending-up@3x.png 3x">
 				    <span>VALUES CHART</span>
 				</div>
-                <div><div id="valuesChart"></div></div>
+                <div>
+                    <div id="valuesChart"></div>
+                    <span id="noDataValuesChart" style="display: none;">No data to display chart</span>
+                </div>
             </div>
         </div>
 		<div class="col-lg-5">
@@ -20,12 +23,12 @@
                 <div class="row">
                     <div class="col-md-12 text-center">
                         <div class="btn-group" data-toggle="buttons">
-                            <label class="btn active">
+                            <span class="btn active">
                                 <input type="radio" name="chart-options" id="allocation" autocomplete="off" checked> ALLOCATION
-                            </label>
-                            <label class="btn">
+                            </span>
+                            <span class="btn">
                                 <input type="radio" name="chart-options" id="variation" autocomplete="off"> VARIATION
-                            </label>
+                            </span>
                         </div>
                     </div>
                 </div>
