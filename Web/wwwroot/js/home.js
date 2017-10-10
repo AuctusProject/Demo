@@ -79,7 +79,7 @@ function loadAssetsGraphs() {
     $.ajax({
         url: urlGetVWEHXReference,
         method: "GET",
-        success: loadBondsGraph,
+        success: loadVWEHXGraph,
         error: function (xhr, ajaxOptions, thrownError) {
             
         }
@@ -110,8 +110,8 @@ function loadSPGraph(data) {
     createGraph("sandpGraph", data.values);
 }
 
-function loadBondsGraph(data) {
-    createGraph("bondsGraph", data.values);
+function loadVWEHXGraph(data) {
+    createGraph("vwehxGraph", data.values);
 }
 
 function loadMsciGraph(data) {
@@ -233,7 +233,7 @@ Wizard.Components = {
             Fee: $('#fundFeeInput'),
             GoldPercentage: $('#goldAllocationInput'),
             SPPercentage: $('#spAllocationInput'),
-            BONDSPercentage: $('#bondsAllocationInput'),
+            VWEHXPercentage: $('#vwehxAllocationInput'),
             MSCIPercentage: $('#msciAllocationInput'),
             BitcoinPercentage: $('#bitcoinAllocationInput'),
         },

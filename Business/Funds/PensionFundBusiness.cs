@@ -355,8 +355,8 @@ namespace Auctus.Business.Funds
                 dictionary.Add(ReferenceType.MSCIWorld.Address, fund.MSCIPercentage);
             if (fund.SPPercentage > 0)
                 dictionary.Add(ReferenceType.SP500.Address, fund.SPPercentage);
-            if (fund.BONDSPercentage > 0)
-                dictionary.Add(ReferenceType.VWEHX.Address, fund.BONDSPercentage);
+            if (fund.VWEHXPercentage > 0)
+                dictionary.Add(ReferenceType.VWEHX.Address, fund.VWEHXPercentage);
             if (fund.BitcoinPercentage > 0)
                 dictionary.Add(ReferenceType.Bitcoin.Address, fund.BitcoinPercentage);
             return dictionary;
@@ -387,11 +387,11 @@ namespace Auctus.Business.Funds
             if (fund.Fee > 99)
                 throw new ArgumentException("Fee cannot be greater than 99.");
             ValidateNonNegative(fund.BitcoinPercentage, "BitcoinPercentage");
-            ValidateNonNegative(fund.BONDSPercentage, "BONDSPercentage");
+            ValidateNonNegative(fund.VWEHXPercentage, "VWEHXPercentage");
             ValidateNonNegative(fund.GoldPercentage, "GoldPercentage");
             ValidateNonNegative(fund.MSCIPercentage, "MSCIPercentage");
             ValidateNonNegative(fund.SPPercentage, "SPPercentage");
-            if ((fund.BitcoinPercentage + fund.BONDSPercentage + fund.GoldPercentage +fund.MSCIPercentage + fund.SPPercentage) != 100)
+            if ((fund.BitcoinPercentage + fund.VWEHXPercentage + fund.GoldPercentage +fund.MSCIPercentage + fund.SPPercentage) != 100)
                 throw new ArgumentException("Asset allocations must match 100 percentage.");
         }
 
