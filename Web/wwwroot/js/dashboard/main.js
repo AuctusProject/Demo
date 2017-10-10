@@ -78,11 +78,12 @@ var Dashboard = {
         Dashboard.readPayments();
     },
     withdrawalCompleted: function (response) {
-        $('#employeeWalletLink').attr("href", Parameter.BlockExplorerUrl + "/address/" + response.Responsable);
-        $('#employerWalletLink').attr("href", Parameter.BlockExplorerUrl + "/address/" + response.Responsable);
-        $('#withdrawTransactionLink').attr("href", Parameter.BlockExplorerUrl + "/tx/" + response.TransactionHash);
-        
-        $('#withdrawCompletedModal').modal('toggle');
+        if (response) {
+            $('#employeeWalletLink').attr("href", Parameter.BlockExplorerUrl + "/address/" + response.Responsable);
+            $('#employerWalletLink').attr("href", Parameter.BlockExplorerUrl + "/address/" + response.Responsable);
+            $('#withdrawTransactionLink').attr("href", Parameter.BlockExplorerUrl + "/tx/" + response.TransactionHash);
+            $('#withdrawCompletedModal').modal('toggle');
+        }
         Dashboard.setActionButtons(response);
     },
     withdrawalUncompleted: function (response) {
