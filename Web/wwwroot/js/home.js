@@ -220,6 +220,14 @@ function prevTab(currentStepId) {
     $('.next-button').removeAttr('disabled');
 }
 
+function goToTab(currentStepId, stepId) {
+    var $active = $('#step' + currentStepId);
+    var $prevTab = $('#step' + (stepId));
+    $active.hide();
+    $prevTab.show();
+    $('.next-button').removeAttr('disabled');
+}
+
 function deploy() {
     Wizard.Operations.Save();
 }
@@ -346,7 +354,12 @@ Wizard.Operations = {
         Wizard.Components.ErrorMessage.show();
     },
     OnDeployError: function () {
-        alert('Deploy error');
+        grecaptcha.reset();
+        goToTab(4, 3);
+        Wizard.Components.ContractDeploy.ButtonsControl.show();
+        Wizard.Components.ContractDeploy.GeneratingContract.hide();
+        Wizard.Components.ErrorMessage.html('<span> We’re sorry, we had an unexpected error! Please try again in a minute.</span>');
+        Wizard.Components.ErrorMessage.show();
     },
     GoToDashBoard: function (ContractAddress) {
         window.location = "/pensionFund/" + ContractAddress;

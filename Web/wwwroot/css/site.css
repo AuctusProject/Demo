@@ -546,7 +546,7 @@ input[type=number]::-webkit-outer-spin-button {
     font-family: 'Helvetica Neue', sans-serif;
     font-size: 12px;
     line-height: 1.83;
-    text-align: left;
+    text-align: justify;
     color: #707070;
 }
 
@@ -587,4 +587,8 @@ input[type=number]::-webkit-outer-spin-button {
     top: 112px;
     left: 173px;
     z-index: -1;
+}
+
+.g-recaptcha div{
+    width:100% !important;
 }

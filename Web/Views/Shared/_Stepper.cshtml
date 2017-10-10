@@ -1,7 +1,10 @@
 ﻿@model int
 <div class="row">
     <div class="col-md-12">
-        <img src="/images/logo.png" style="position: absolute;left: 25px;top: 15px;height: 54%;">
+        <img src="/images/logo.png" style="position: absolute;left: 25px;top: 15px;height: 45px;">
+        <div class="error-message" style="display: none">
+            <span> We’re sorry, we had an unexpected error! Please try again in a minute.</span>
+        </div>
         <div class="stepper">
             <ul style="margin: auto;padding: 0;">
                 @if (Model == 1)
@@ -15,15 +18,15 @@
                 @if (Model == 2)
                 {
                     <text>
-                    <li style="border:0"><img src="~/images/ok.png" /></li>
+                    <li style="border:0;"><img style="cursor:pointer" onclick="goToTab(2, 1)" src="~/images/ok.png" /></li>
                     <li class="active">2</li>
                     <li>3</li>
                     </text>
                 }@if (Model == 3)
                 {
                     <text>
-                    <li style="border:0"><img src="~/images/ok.png" /></li>
-                    <li style="border:0"><img src="~/images/ok.png" /></li>
+                    <li style="border:0;"><img style="cursor:pointer" onclick="goToTab(3, 1)" src="~/images/ok.png" /></li>
+                    <li style="border:0;"><img style="cursor:pointer" onclick="goToTab(3, 2)" src="~/images/ok.png" /></li>
                     <li class="active">3</li>
                     </text>
                 }
