@@ -12,7 +12,7 @@
                     </div>
                     <div class="form-group bmd-form-group">
                         <label for="fundFeeInput" class="bmd-label-static">FUND FEE</label>
-                        <input type="number" min="0" max="100" class="form-control onlyInteger" id="fundFeeInput" placeholder="00%" 
+                        <input type="number" pattern="[0-9]" min="0" max="100" class="form-control onlyInteger" id="fundFeeInput" placeholder="00%" 
                                data-toggle="popover" 
                                data-trigger="focus"
                                data-placement="right"
@@ -38,7 +38,9 @@
                         <div class="asset-input-group-label">
                             GOLD
                         </div>
-                        <input id="goldAllocationInput" class="onlyInteger" placeholder="00" type="number" step="1" data-toggle="popover" data-trigger="focus"
+                        <input id="goldAllocationInput" class="onlyInteger" placeholder="00" type="number" pattern="[0-9]" min="0" max="100" step="1" 
+                               data-toggle="popover" 
+                               data-trigger="focus"
                                title="ASSETS ALLOCATION"
                                data-content="<div>This is the asset allocation of your fund. You decide which percentage of your total portfolio to invest in different assets. Just remember: <strong>the final total must be 100%.</strong></div><br/><div class='inline-content'><span class='btn-chart-img'><img src='/images/chart.png'></span><div class='btn-chart-help'>To help you decide, you can click in this icon and check, for each asset, its performance history for the last 5 years.</div></div>"
                                data-html="true"
@@ -53,7 +55,7 @@
                         <div class="asset-input-group-label">
                             S&P
                         </div>
-                        <input id="spAllocationInput" class="onlyInteger" placeholder="00" type="number" step="1" />
+                        <input id="spAllocationInput" class="onlyInteger" placeholder="00" type="number" pattern="[0-9]" min="0" max="100" step="1" />
                         <div class="asset-input-group-percent-label">%</div>
                     </div>
                     <div class="form-group bmd-form-group asset-input-group">
@@ -63,7 +65,7 @@
                         <div class="asset-input-group-label">
                             VWEHX
                         </div>
-                        <input id="vwehxAllocationInput" class="onlyInteger" placeholder="00" type="number" step="1" />
+                        <input id="vwehxAllocationInput" class="onlyInteger" placeholder="00" type="number" pattern="[0-9]" min="0" max="100" step="1" />
                         <div class="asset-input-group-percent-label">%</div>
                     </div>
                     <div class="form-group bmd-form-group asset-input-group">
@@ -73,7 +75,7 @@
                         <div class="asset-input-group-label">
                             MSCI WORLD
                         </div>
-                        <input id="msciAllocationInput" class="onlyInteger" placeholder="00" type="number" step="1" />
+                        <input id="msciAllocationInput" class="onlyInteger" placeholder="00" type="number" pattern="[0-9]" min="0" max="100" step="1" />
                         <div class="asset-input-group-percent-label">%</div>
                     </div>
                     <div class="form-group bmd-form-group asset-input-group">
@@ -83,7 +85,7 @@
                         <div class="asset-input-group-label">
                             BITCOIN
                         </div>
-                        <input id="bitcoinAllocationInput" class="onlyInteger" placeholder="00" type="number" step="1" />
+                        <input id="bitcoinAllocationInput" class="onlyInteger" placeholder="00" type="number" pattern="[0-9]" min="0" max="100" step="1" />
                         <div class="asset-input-group-percent-label">%</div>
                     </div>
                     <div class="total-assets">

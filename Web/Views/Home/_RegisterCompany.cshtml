@@ -1,123 +1,127 @@
-﻿<div class="col-md-12 company-register">
-	<div class="col-md-6 left">
-		        <div class="row">
-		            <div class="col-lg-4">
-		            </div>
-		            <div class="col-lg-7">
-		                <div class="form-group col-title">COMPANY REGISTER</div>
-		                <div class="form-group bmd-form-group">
-		                    <label for="companyNameInput" class="bmd-label-static">COMPANY NAME</label>
-		                    <input type="text" class="form-control" id="companyNameInput" placeholder="My company">
-		                </div>
-		                <div class="form-group bmd-form-group">
-		                    <label for="employerMatchingInput" class="bmd-label-static">EMPLOYER MATCHING</label>
-		                    <input type="number" pattern="[0-9]+([\.][0-9]+)?" class="form-control onlyInteger" id="employerMatchingInput" placeholder="00%">
-		                </div>
-		                <div class="form-group bmd-form-group">
-		                    <label for="maxCounterpartInput" class="bmd-label-static">MAX COUNTERPART</label>
-		                    <input type="number" pattern="[0-9]+([\.][0-9]+)?" class="form-control onlyInteger" id="maxCounterpartInput" placeholder="00%">
-		                </div>
-		            </div>
-		            <div class="col-lg-1">
-		            </div>
-		        </div>
-		    </div>
-	    <div class="col-md-6 right">
-	        <div class="row">
-	            <div class="col-lg-1">
-	            </div>
-	            <div class="col-lg-11">
-	                <div class="form-group text-left"><span class="col-title no-padding col-xs-5">VESTING</span><a class="link" data-toggle="modal" href="#" data-target="#advancedOptions">Advanced options</a></div>
-				    <div class="row form-group">
-		                <div class="col-md-12">
-						    <div class="img-container">
+﻿<form id="registerCompany">
+    <div class="col-md-12 company-register">
+        <div class="col-md-6 left">
+            <div class="row">
+                <div class="col-lg-4">
+                </div>
+                <div class="col-lg-7">
+                    <div class="form-group col-title">COMPANY REGISTER</div>
+                    <div class="form-group bmd-form-group">
+                        <label for="companyNameInput" class="bmd-label-static">COMPANY NAME</label>
+                        <input type="text" class="form-control" id="companyNameInput" placeholder="My company">
+                    </div>
+                    <div class="form-group bmd-form-group">
+                        <label for="employerMatchingInput" class="bmd-label-static">EMPLOYER MATCHING</label>
+                        <input type="number" min="0" max="10000" pattern="[0-9]" class="form-control onlyInteger" id="employerMatchingInput" placeholder="00%">
+                    </div>
+                    <div class="form-group bmd-form-group">
+                        <label for="maxCounterpartInput" class="bmd-label-static">MAX COUNTERPART</label>
+                        <input type="number" min="0" max="100" pattern="[0-9]" class="form-control onlyInteger" id="maxCounterpartInput" placeholder="00%">
+                    </div>
+                </div>
+                <div class="col-lg-1">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 right">
+            <div class="row">
+                <div class="col-lg-1">
+                </div>
+                <div class="col-lg-11">
+                    <div class="form-group text-left"><span class="col-title no-padding col-xs-5">VESTING</span><a class="link" data-toggle="modal" href="#" data-target="#advancedOptions">Advanced options</a></div>
+                    <div class="row form-group">
+                        <div class="col-md-12">
+                            <div class="img-container">
                                 <img class="Vesting" src="~/images/companyRegister/vesting_icons/vesting-calendar.png" srcset="~/images/companyRegister/vesting_icons/vesting-calendar@2x.png 2x, ~/images/companyRegister/vesting_icons/vesting-calendar@3x.png 3x">
                                 <span class="number less">&lt;1</span>
                             </div>
-						    <span class="vesting-title">BEFORE 1 YEAR OF SERVICE</span>
-						    <span class="vesting-period hidden">0.5</span>                  
-							<div class="input-percentage">
-							    <a tabindex="0" class="" role="button" data-toggle="popover" data-trigger="focus" title="VESTING"
-                                   data-content="<div>Under graduated vesting, there is partial vesting for each year of service. Here, we have suggested the most common values for this type of benefit. <br><br>You can click on <a class='link' data-toggle='modal' href='#' data-target='#advancedOptions'>Advanced options</a> to  customize these values.</div>"
-                                   data-html="true"><input id="lessOneYear" class="input text-center vesting-percentage" type="number" disabled="disabled" value="0"/>
-                                <span class="percentage">%</span></a>
-							</div>
-		                </div>  
-					</div>
-				    <div class="row form-group">
-                        <div class="col-md-12">
-						    <div class="img-container">
-						        <img class="Vesting" src="~/images/companyRegister/vesting_icons/vesting-calendar.png" srcset="~/images/companyRegister/vesting_icons/vesting-calendar@2x.png 2x, ~/images/companyRegister/vesting_icons/vesting-calendar@3x.png 3x">
-							    <span class="number">1</span>
-							</div>
-                            <span class="vesting-title">AFTER 1 YEAR OF SERVICE</span>
-						    <span class="vesting-period hidden">1</span>
+                            <span class="vesting-title">BEFORE 1 YEAR OF SERVICE</span>
+                            <span class="vesting-period hidden">0.5</span>
                             <div class="input-percentage">
-                                <input id="afterOneYear" class="input text-center vesting-percentage" type="number" pattern="[0-9]+([\.][0-9]+)?" disabled="disabled" value="20"/>
+                                <a tabindex="0" class="" role="button" data-toggle="popover" data-trigger="focus" title="VESTING"
+                                   data-content="<div>Under graduated vesting, there is partial vesting for each year of service. Here, we have suggested the most common values for this type of benefit. <br><br>You can click on <a class='link' data-toggle='modal' href='#' data-target='#advancedOptions'>Advanced options</a> to  customize these values.</div>"
+                                   data-html="true">
+                                    <input id="lessOneYear" class="input text-center vesting-percentage" type="number" pattern="[0-9]" min="0" max="100" disabled="disabled" value="0" />
+                                    <span class="percentage">%</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-12">
+                            <div class="img-container">
+                                <img class="Vesting" src="~/images/companyRegister/vesting_icons/vesting-calendar.png" srcset="~/images/companyRegister/vesting_icons/vesting-calendar@2x.png 2x, ~/images/companyRegister/vesting_icons/vesting-calendar@3x.png 3x">
+                                <span class="number">1</span>
+                            </div>
+                            <span class="vesting-title">AFTER 1 YEAR OF SERVICE</span>
+                            <span class="vesting-period hidden">1</span>
+                            <div class="input-percentage">
+                                <input id="afterOneYear" class="input text-center vesting-percentage" type="number" pattern="[0-9]" min="0" max="100" disabled="disabled" value="20" />
                                 <span class="percentage">%</span>
                             </div>
-                        </div>  
+                        </div>
                     </div>
-				    <div class="row form-group">
+                    <div class="row form-group">
                         <div class="col-md-12">
                             <div class="img-container">
                                 <img class="Vesting" src="~/images/companyRegister/vesting_icons/vesting-calendar.png" srcset="~/images/companyRegister/vesting_icons/vesting-calendar@2x.png 2x, ~/images/companyRegister/vesting_icons/vesting-calendar@3x.png 3x">
                                 <span class="number">2</span>
                             </div>
                             <span class="vesting-title">AFTER 2 YEARS OF SERVICE</span>
-						    <span class="vesting-period hidden">2</span>
+                            <span class="vesting-period hidden">2</span>
                             <div class="input-percentage">
-                                <input id="afterTwoYears" class="input text-center vesting-percentage" type="number" pattern="[0-9]+([\.][0-9]+)?" disabled="disabled" value="40"/>
+                                <input id="afterTwoYears" class="input text-center vesting-percentage" type="number" pattern="[0-9]" min="0" max="100" disabled="disabled" value="40" />
                                 <span class="percentage">%</span>
                             </div>
-                        </div>  
+                        </div>
                     </div>
-				    <div class="row form-group">
+                    <div class="row form-group">
                         <div class="col-md-12">
                             <div class="img-container">
                                 <img class="Vesting" src="~/images/companyRegister/vesting_icons/vesting-calendar.png" srcset="~/images/companyRegister/vesting_icons/vesting-calendar@2x.png 2x, ~/images/companyRegister/vesting_icons/vesting-calendar@3x.png 3x">
                                 <span class="number">3</span>
                             </div>
                             <span class="vesting-title">AFTER 3 YEARS OF SERVICE</span>
-						    <span class="vesting-period hidden">3</span>
+                            <span class="vesting-period hidden">3</span>
                             <div class="input-percentage">
-                                <input id="afterThreeYears" class="input text-center vesting-percentage" type="number" pattern="[0-9]+([\.][0-9]+)?" disabled="disabled" value="60"/>
+                                <input id="afterThreeYears" class="input text-center vesting-percentage" type="number" pattern="[0-9]" min="0" max="100" disabled="disabled" value="60" />
                                 <span class="percentage">%</span>
                             </div>
-                        </div>  
+                        </div>
                     </div>
-				    <div class="row form-group">
+                    <div class="row form-group">
                         <div class="col-md-12">
                             <div class="img-container">
                                 <img class="Vesting" src="~/images/companyRegister/vesting_icons/vesting-calendar.png" srcset="~/images/companyRegister/vesting_icons/vesting-calendar@2x.png 2x, ~/images/companyRegister/vesting_icons/vesting-calendar@3x.png 3x">
                                 <span class="number">4</span>
                             </div>
                             <span class="vesting-title">AFTER 4 YEARS OF SERVICE</span>
-						    <span class="vesting-period hidden">4</span>
+                            <span class="vesting-period hidden">4</span>
                             <div class="input-percentage">
-                                <input id="afterFourYears" class="input text-center vesting-percentage" type="number" pattern="[0-9]+([\.][0-9]+)?" disabled="disabled" value="80"/>
+                                <input id="afterFourYears" class="input text-center vesting-percentage" type="number" pattern="[0-9]" min="0" max="100" disabled="disabled" value="80" />
                                 <span class="percentage">%</span>
                             </div>
-                        </div>  
+                        </div>
                     </div>
-				    <div class="row form-group">
+                    <div class="row form-group">
                         <div class="col-md-12">
                             <div class="img-container">
                                 <img class="Vesting" src="~/images/companyRegister/vesting_icons/vesting-calendar.png" srcset="~/images/companyRegister/vesting_icons/vesting-calendar@2x.png 2x, ~/images/companyRegister/vesting_icons/vesting-calendar@3x.png 3x">
                                 <span class="number">5</span>
                             </div>
                             <span class="vesting-title">AFTER 5 YEARS OF SERVICE</span>
-						    <span class="vesting-period hidden">5</span>
+                            <span class="vesting-period hidden">5</span>
                             <div class="input-percentage">
-                                <input id="afterFiveYears" class="input text-center vesting-percentage" type="number" pattern="[0-9]+([\.][0-9]+)?" disabled="disabled" value="100"/>
+                                <input id="afterFiveYears" class="input text-center vesting-percentage" type="number" pattern="[0-9]" min="0" max="100" disabled="disabled" value="100" />
                                 <span class="percentage">%</span>
                             </div>
-                        </div>  
+                        </div>
                     </div>
-	            </div>
-	        </div>
-	    </div>
-</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
 <div class="modal fade" id="advancedOptions" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">

@@ -1,5 +1,6 @@
 ﻿
 $(document).ready(function () {
+    $('#registerCompany').validate();
     registerCompanyForm.configVestingSlider();
     registerCompanyForm.configModal();
     registerCompanyForm.configInputs();
@@ -16,7 +17,7 @@ var registerCompanyForm = {
 	    $('#maxCounterpartInput').blur(registerCompanyForm.enableNextButtonIfApplicable);
 	},
     enableNextButtonIfApplicable: function() {
-	    if ($('#companyNameInput').val() != "" && $('#employerMatchingInput').val() != "" && $('#maxCounterpartInput').val() != "")
+        if ($('#companyNameInput').val() != "" && $('#employerMatchingInput').val() != "" && $('#maxCounterpartInput').val() != "" && $('#registerCompany').valid())
 	        $('.next-button').removeAttr('disabled');
 	    else
 	        $('.next-button').attr('disabled', 'disabled');

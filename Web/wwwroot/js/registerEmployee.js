@@ -1,5 +1,6 @@
 ﻿
 $(document).ready(function () {
+    $('#registerEmployee').validate();
     registerEmployeeForm.configInputs();
 });
 
@@ -14,7 +15,7 @@ var registerEmployeeForm = {
         $('#contributionInput').blur(registerEmployeeForm.enableNextButtonIfApplicable);
 	},
     enableNextButtonIfApplicable: function() {
-        if ($('#employeeNameInput').val() != "" && $('#salaryInput').val() != "" && $('#contributionInput').val() != "")
+        if ($('#employeeNameInput').val() != "" && $('#salaryInput').val() != "" && $('#contributionInput').val() != "" && $('#registerEmployee').valid())
 	        $('.next-button').removeAttr('disabled');
 	    else
 	        $('.next-button').attr('disabled', 'disabled');
