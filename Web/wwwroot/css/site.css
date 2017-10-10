@@ -392,6 +392,11 @@ h3 {
     color: #ababab;
 }
 
+.modal-content button.close span{
+    position:relative;
+    top:-2px;
+}
+
 ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
     color: #d9e0e6;
 }
