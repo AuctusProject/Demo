@@ -18,7 +18,7 @@ var Dashboard = {
     },
     readTransactions: function () {
         Dashboard.readPayments();
-        Dashboard.readWithdraw();
+        //Dashboard.readWithdraw();
     },
     configTimeline: function () {
         $("#paymentBtn").on('click', function () {
@@ -32,8 +32,8 @@ var Dashboard = {
             $.ajax({
                 url: urlGetPaymentInfo, data: Dashboard.getBaseData(), method: "GET",
                 success: function (response) {
-                    $('#employeeReceivable').text(Dashboard.getFormattedNumber(response.employeeSzaboCashback));
-                    $('#companyReceivable').text(Dashboard.getFormattedNumber(response.employerSzaboCashback));
+                    $('.employee-receivable').text(Dashboard.getFormattedNumber(response.employeeSzaboCashback));
+                    $('.company-receivable').text(Dashboard.getFormattedNumber(response.employerSzaboCashback));
                     $('#withdrawModal').modal('toggle');
                 }
             });
@@ -52,14 +52,14 @@ var Dashboard = {
     withdraw: function () {
         $('#withdrawModal').modal('toggle');
         Dashboard.setActionButtons(true);
-        Dashboard.ajaxHubCall(urlGenerateWithdraw, Dashboard.getBaseData(), Dashboard.withdrawalUncompleted);
+        Dashboard.ajaxHubCall(urlGenerateWithdraw, Dashboard.getBaseData(), Dashboard.withdrawalCompleted, Dashboard.withdrawalUncompleted);
     },
     payment: function () {
         $('#paymentModal').modal('toggle');
         Dashboard.setActionButtons(true);
         var data = Dashboard.getBaseData();
         data["monthsAmount"] = $('#month').val();
-        Dashboard.ajaxHubCall(urlGeneratePayment, data, Dashboard.paymentsUncompleted);
+        Dashboard.ajaxHubCall(urlGeneratePayment, data, Dashboard.paymentsCompleted, Dashboard.paymentsUncompleted);
     },
     paymentsCompleted: function (response) {
         Dashboard.setPayment(response);
@@ -74,6 +74,11 @@ var Dashboard = {
         Dashboard.readPayments();
     },
     withdrawalCompleted: function (response) {
+        $('#employeeWalletLink').attr("href", Parameter.BlockExplorerUrl + "/address/" + response.Responsable);
+        $('#employerWalletLink').attr("href", Parameter.BlockExplorerUrl + "/address/" + response.Responsable);
+        $('#withdrawTransactionLink').attr("href", Parameter.BlockExplorerUrl + "/tx/" + response.TransactionHash);
+        
+        $('#withdrawCompletedModal').modal('toggle');
         Dashboard.setActionButtons(response);
     },
     withdrawalUncompleted: function (response) {
