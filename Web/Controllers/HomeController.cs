@@ -25,6 +25,7 @@ namespace Web.Controllers
             return View();
         }
 
+        [Route("/Register")]
         public IActionResult StartDemo()
         {
             return View();

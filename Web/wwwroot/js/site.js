@@ -34,6 +34,8 @@
     {
         if (signalrDone) {
             signalrDone();
+        } else {
+            signalrDone = function () { };
         }
     });
 });

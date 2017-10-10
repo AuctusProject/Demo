@@ -11,7 +11,11 @@
 var Dashboard = {
     remainingPayments: 60,
     init: function () {
-        signalrDone = Dashboard.readTransactions;
+        if (!signalrDone) {
+            signalrDone = Dashboard.readTransactions;
+        } else {
+            Dashboard.readTransactions();
+        }
         Dashboard.configTimeline();
         Dashboard.configPaymentWindow();
         $('div.timeline-grid').click();
