@@ -10,7 +10,7 @@ namespace Auctus.Model
         public Double LatePaymentFee { get; set; }
         public Double GoldPercentage { get; set; }
         public Double SPPercentage { get; set; }
-        public Double BONDSPercentage { get; set; }
+        public Double VWEHXPercentage { get; set; }
         public Double MSCIPercentage { get; set; }
         public Double BitcoinPercentage { get; set; }
     }
