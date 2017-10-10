@@ -1,7 +1,10 @@
 ﻿@model int
 <div class="row">
     <div class="col-md-12">
-        <img src="/images/logo.png" style="position: absolute;left: 25px;top: 15px;height: 54%;">
+        <img src="/images/logo.png" style="position: absolute;left: 25px;top: 15px;height: 45px;">
+        <div class="error-message" style="display: none">
+            <span> We’re sorry, we had an unexpected error! Please try again in a minute.</span>
+        </div>
         <div class="stepper">
             <ul style="margin: auto;padding: 0;">
                 @if (Model == 1)
