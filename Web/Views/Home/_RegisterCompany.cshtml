@@ -11,12 +11,26 @@
                         <input type="text" class="form-control" id="companyNameInput" placeholder="My company">
                     </div>
                     <div class="form-group bmd-form-group">
-                        <label for="employerMatchingInput" class="bmd-label-static">EMPLOYER MATCHING</label>
-                        <input type="number" min="0" max="10000" pattern="[0-9]" class="form-control onlyInteger" id="employerMatchingInput" placeholder="00%">
+                        <label for="employerMatchingInput" class="bmd-label-static">MATCH RATE</label>
+                        <input type="number" min="0" max="10000" pattern="[0-9]" class="form-control onlyInteger" id="employerMatchingInput" placeholder="00%"
+                               data-toggle="popover" 
+                               data-trigger="focus"
+                               data-placement="right"
+                               title="MATCH RATE"
+                               data-content="<div>The percentage of each dollar of employee contributions that is matched (e.g., 50 cents on the dollar or 50 percent).</div>"
+                               data-html="true"
+                               value="100">
                     </div>
                     <div class="form-group bmd-form-group">
-                        <label for="maxCounterpartInput" class="bmd-label-static">MAX COUNTERPART</label>
-                        <input type="number" min="0" max="100" pattern="[0-9]" class="form-control onlyInteger" id="maxCounterpartInput" placeholder="00%">
+                        <label for="maxCounterpartInput" class="bmd-label-static">MATCH CEILING</label>
+                        <input type="number" min="0" max="100" pattern="[0-9]" class="form-control onlyInteger" id="maxCounterpartInput" placeholder="00%"
+                               data-toggle="popover" 
+                               data-trigger="focus"
+                               data-placement="right"
+                               title="MATCH CEILING"
+                               data-content="<div>The limit on the percentage of employee contributions that is matched (e.g., employee’s contribution is matched up to 4 percent of pay).</div>"
+                               data-html="true"
+                               value="4">
                     </div>
                 </div>
                 <div class="col-lg-1">
