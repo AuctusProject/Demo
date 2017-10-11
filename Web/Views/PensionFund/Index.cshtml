@@ -25,6 +25,8 @@
         var urlGetPaymentInfo = '@Url.Action("GetWithdrawalInfo", "PensionFund")';
         var urlReadPayment = '@Url.Action("ReadPayments", "PensionFund")';
         var urlReadWithdraw = '@Url.Action("ReadWithdrawal", "PensionFund")';
+        var urlGetPayments = '@Url.Action("Payments", "PensionFund")';
+        var urlGetWithdraw = '@Url.Action("Withdrawal", "PensionFund")';
         var pensionFundData = JSON.parse('@Html.Raw(Json.Serialize(Model))');
     </script>
     <script src="~/lib/d3/d3.min.js" charset="utf-8"></script>
