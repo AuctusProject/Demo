@@ -40,11 +40,13 @@ var Dashboard = {
     },
     withdraw: function () {
         $('#withdrawModal').modal('toggle');
+        Dashboard.showLoading();
         Dashboard.disableActionButtons();
         Dashboard.ajaxHubCall(urlGenerateWithdraw, Dashboard.getBaseData(), Dashboard.withdrawalUncompleted);
     },
     payment: function () {
         $('#paymentModal').modal('toggle');
+        Dashboard.showLoading();
         Dashboard.disableActionButtons();
         var data = Dashboard.getBaseData();
         data["monthsAmount"] = $('#month').val();
@@ -70,6 +72,7 @@ var Dashboard = {
         if (response) {
             Dashboard.finished = true;
             Dashboard.disableActionButtons();
+            Dashboard.hideLoading();
             $('.employee-receivable').text(Dashboard.getFormattedNumber(response.EmployeeSzaboCashback));
             $('.company-receivable').text(Dashboard.getFormattedNumber(response.EmployerSzaboCashback));
             $('#employeeWalletLink').attr("href", Parameter.BlockExplorerUrl + "/address/" + pensionFundData.employeeAddress);
@@ -80,6 +83,7 @@ var Dashboard = {
         } 
     },
     withdrawalUncompleted: function (response) {
+        Dashboard.showLoading();
         Dashboard.disableActionButtons();
         Dashboard.readWithdraw();
     },
