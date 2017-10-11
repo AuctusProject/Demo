@@ -61,7 +61,7 @@ contract DemoPensionFund {
     }
 	
 	string public name = ""Pension Fund Demo Token""; 
-    uint8 public decimals = 18;
+    uint8 public decimals = 12;
     uint256 public totalSupply = 0;
 	address public owner;
 	address public pensionFundAccount = {PENSION_FUND_ADDRESS};
@@ -99,7 +99,7 @@ contract DemoPensionFund {
 
     function buy(address responsable, uint256 baseInvestment, uint64 daysOverdue) internal returns (uint256) {
 	    investedPeriods[responsable] = investedPeriods[responsable] + 1;
-	    uint256 amount = getTokenReferenceValue(investedPeriods[responsable], daysOverdue).times(baseInvestment).divided(1 szabo);
+	    uint256 amount = baseInvestment.times(1 ether).divided(getTokenReferenceValue(investedPeriods[responsable], daysOverdue));
         addressBalance[responsable].amount = addressBalance[responsable].amount.plus(amount); 
 	    addressBalance[responsable].invested = addressBalance[responsable].invested.plus(baseInvestment);
 	    totalSupply = totalSupply.plus(amount);
@@ -292,8 +292,8 @@ contract CompanyContract is DemoPensionFund {
 
     function getSzaboCashback(address employee, uint256 employerTokenCashback, uint256 employeeTokenCashback) private constant returns(uint256, uint256) {
         uint256 value = getTokenReferenceValue(investedPeriods[employee] + 1, 0);
-        uint256 employerSzaboCashback = employerTokenCashback.times(1 szabo).divided(value);
-        uint256 employeeSzaboCashback = employeeTokenCashback.times(1 szabo).divided(value);
+        uint256 employerSzaboCashback = employerTokenCashback.times(value).divided(1 ether);
+        uint256 employeeSzaboCashback = employeeTokenCashback.times(value).divided(1 ether);
         return (employerSzaboCashback, employeeSzaboCashback);
     }
 

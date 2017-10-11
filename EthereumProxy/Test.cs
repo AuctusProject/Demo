@@ -211,7 +211,7 @@ contract ReferenceValue {
 	}
 	
 	function getBaseValue(uint64 period) constant internal returns (uint256) {
-		return (values[1] * 1 szabo) / values[period];
+		return (values[period] * 1 szabo) / values[1];
 	}
 }";
 
@@ -319,7 +319,7 @@ contract ReferenceValue {
 	}
 	
 	function getBaseValue(uint64 period) constant internal returns (uint256) {
-		return (values[1] * 1 szabo) / values[period];
+		return (values[period] * 1 szabo) / values[1];
 	}
 }";
 
@@ -427,7 +427,7 @@ contract ReferenceValue {
 	}
 	
 	function getBaseValue(uint64 period) constant internal returns (uint256) {
-		return (values[1] * 1 szabo) / values[period];
+		return (values[period] * 1 szabo) / values[1];
 	}
 }";
 
@@ -535,7 +535,7 @@ contract ReferenceValue {
 	}
 	
 	function getBaseValue(uint64 period) constant internal returns (uint256) {
-		return (values[1] * 1 szabo) / values[period];
+		return (values[period] * 1 szabo) / values[1];
 	}
 }";
 
@@ -643,7 +643,7 @@ contract ReferenceValue {
 	}
 	
 	function getBaseValue(uint64 period) constant internal returns (uint256) {
-		return (values[1] * 1 szabo) / values[period];
+		return (values[period] * 1 szabo) / values[1];
 	}
 }";
         #endregion
