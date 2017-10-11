@@ -78,6 +78,10 @@ var Dashboard = {
             $('#employeeWalletLink').attr("href", Parameter.BlockExplorerUrl + "/address/" + pensionFundData.employeeAddress);
             $('#employerWalletLink').attr("href", Parameter.BlockExplorerUrl + "/address/" + pensionFundData.companyAddress);
             $('#withdrawTransactionLink').attr("href", Parameter.BlockExplorerUrl + "/tx/" + response.TransactionHash);
+            $("#withdrawBtn").on('click', function () {
+                $('#withdrawCompletedModal').modal('toggle');
+            });
+            $("#withdrawBtn").addClass("timeline-btn");
             $('.share-symbol').click();
             $('#withdrawCompletedModal').modal('toggle');
         } 
