@@ -173,7 +173,7 @@ var Dashboard = {
         $("#withdrawBtn").addClass("timeline-btn");
     },
     getFormattedNumber: function (number) {
-        return (Math.round(number * 100) / 100).toLocaleString({ minimumFractionDigits: 2 });
+        return numeral((Math.round(number * 100) / 100)).format('0.000 a');
     },
     TransactionHistoryRowTemplate: $('.row-template').outerHTML(),
     setTransactionHistory: function (response) {
