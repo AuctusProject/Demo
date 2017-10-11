@@ -22,6 +22,7 @@ var Dashboard = {
         $('div.timeline-grid').click();
     },
     readTransactions: function () {
+        Dashboard.showLoading();
         Dashboard.readPayments();
         Dashboard.readWithdraw();
     },
@@ -82,6 +83,9 @@ var Dashboard = {
                 $('#withdrawCompletedModal').modal('toggle');
             });
             $("#withdrawBtn").addClass("timeline-btn");
+            if ($('div.popup-timeline-footer').is(':visible')) {
+                $('div.timeline-grid').click();
+            }
             $('.share-symbol').click();
             $('#withdrawCompletedModal').modal('toggle');
         } 
