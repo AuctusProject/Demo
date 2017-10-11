@@ -1,15 +1,19 @@
 @model int
 
 <div class="dashboard-container dashboard-container-full timeline-container">
+    <div class="loading-container" hidden="hidden" >
+        <div class="progress">
+            <div class="indeterminate"></div>
+        </div>
+    </div>
     <div class="timeline-space"></div>
     <div class="dashboard-container timeline-grid"
-        data-toggle="popover" 
-        data-trigger="click"
-        data-placement="bottom"
-        title="THIS IS YOUR TIMELINE"
-        data-content="<div>Here you can simulate how your fund will perform for a period of up to 5 years. We'll be using the historical performance of the assets to simulate the results.</div><br/><div class='dashboard-container'><div class='transaction-btn btn-payment popup-timeline-btn'><img src='/images/payment.png' class='transaction-btn-img' height='25' width='30' /></div><div class='popup-timeline-btn-text'>Press this button to <b>simulate a payment</b> for a desired period of time.</div></div><br/><div class='dashboard-container'><div class='transaction-btn btn-withdrawal popup-timeline-btn'><img src='/images/withdrawal.png' class='transaction-btn-img' height='25' width='37' /></div><div class='popup-timeline-btn-text'>Press this button when you are ready to <b>withdraw</b> your investiment.</div></div><br/><div class='popup-timeline-footer'><span>LET'S DO THIS!</span></div>"
-        data-html="true">
-
+         data-toggle="popover"
+         data-trigger="click"
+         data-placement="bottom"
+         title="THIS IS YOUR TIMELINE"
+         data-content="<div>Here you can simulate how your fund will perform for a period of up to 5 years. We'll be using the historical performance of the assets to simulate the results.</div><br/><div class='dashboard-container'><div class='transaction-btn btn-payment popup-timeline-btn'><img src='/images/payment.png' class='transaction-btn-img' height='25' width='30' /></div><div class='popup-timeline-btn-text'>Press this button to <b>simulate a payment</b> for a desired period of time.</div></div><br/><div class='dashboard-container'><div class='transaction-btn btn-withdrawal popup-timeline-btn'><img src='/images/withdrawal.png' class='transaction-btn-img' height='25' width='37' /></div><div class='popup-timeline-btn-text'>Press this button when you are ready to <b>withdraw</b> your investiment.</div></div><br/><div class='popup-timeline-footer'><span>LET'S DO THIS!</span></div>"
+         data-html="true">
         @for (int line = 1; line <= 60; ++line)
         {
             string externalVerticalLine = "";
@@ -17,10 +21,10 @@
             string horizontalLine = "";
             if (line % 12 == 0)
             {
-                if (line != 60)
-                {
-                    externalVerticalLine += "timeline-grid-vertical-line timeline-grid-vertical-line-big";
-                }
+                // if (line != 60)
+                // {
+                externalVerticalLine += "timeline-grid-vertical-line timeline-grid-vertical-line-big";
+                // }
                 internalVerticalLine = "timeline-grid-height-half";
                 horizontalLine += " timeline-grid-height-half";
             }

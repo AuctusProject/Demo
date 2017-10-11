@@ -52,11 +52,13 @@ var Dashboard = {
     },
     paymentsCompleted: function (response) {
         Dashboard.setPayment(response);
+        Dashboard.hideLoading();
         if (!Dashboard.finished) {
             Dashboard.enableActionButtons();
         }
     },
     paymentsUncompleted: function (response) {
+        Dashboard.showLoading();
         Dashboard.setPayment(response);
         Dashboard.disableActionButtons();
         Dashboard.readPayments();
@@ -208,6 +210,12 @@ var Dashboard = {
                 $('.table-content').append(row);
             }
         }        
+    },
+    showLoading: function () {
+        $('.loading-container').removeAttr('hidden');
+    },
+    hideLoading: function () {
+        $('.loading-container').attr('hidden','hidden');
     },
     getBaseData: function () {
         return {
