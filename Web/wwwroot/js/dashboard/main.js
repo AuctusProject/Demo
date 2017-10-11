@@ -22,6 +22,7 @@ var Dashboard = {
         $('div.timeline-grid').click();
     },
     readTransactions: function () {
+        Dashboard.showLoading();
         Dashboard.readPayments();
         Dashboard.readWithdraw();
     },
@@ -40,11 +41,13 @@ var Dashboard = {
     },
     withdraw: function () {
         $('#withdrawModal').modal('toggle');
+        Dashboard.showLoading();
         Dashboard.disableActionButtons();
         Dashboard.ajaxHubCall(urlGenerateWithdraw, Dashboard.getBaseData(), Dashboard.withdrawalUncompleted);
     },
     payment: function () {
         $('#paymentModal').modal('toggle');
+        Dashboard.showLoading();
         Dashboard.disableActionButtons();
         var data = Dashboard.getBaseData();
         data["monthsAmount"] = $('#month').val();
@@ -52,11 +55,13 @@ var Dashboard = {
     },
     paymentsCompleted: function (response) {
         Dashboard.setPayment(response);
+        Dashboard.hideLoading();
         if (!Dashboard.finished) {
             Dashboard.enableActionButtons();
         }
     },
     paymentsUncompleted: function (response) {
+        Dashboard.showLoading();
         Dashboard.setPayment(response);
         Dashboard.disableActionButtons();
         Dashboard.readPayments();
@@ -68,16 +73,25 @@ var Dashboard = {
         if (response) {
             Dashboard.finished = true;
             Dashboard.disableActionButtons();
+            Dashboard.hideLoading();
             $('.employee-receivable').text(Dashboard.getFormattedNumber(response.EmployeeSzaboCashback));
             $('.company-receivable').text(Dashboard.getFormattedNumber(response.EmployerSzaboCashback));
             $('#employeeWalletLink').attr("href", Parameter.BlockExplorerUrl + "/address/" + pensionFundData.employeeAddress);
             $('#employerWalletLink').attr("href", Parameter.BlockExplorerUrl + "/address/" + pensionFundData.companyAddress);
             $('#withdrawTransactionLink').attr("href", Parameter.BlockExplorerUrl + "/tx/" + response.TransactionHash);
+            $("#withdrawBtn").on('click', function () {
+                $('#withdrawCompletedModal').modal('toggle');
+            });
+            $("#withdrawBtn").addClass("timeline-btn");
+            if ($('div.popup-timeline-footer').is(':visible')) {
+                $('div.timeline-grid').click();
+            }
             $('.share-symbol').click();
             $('#withdrawCompletedModal').modal('toggle');
         } 
     },
     withdrawalUncompleted: function (response) {
+        Dashboard.showLoading();
         Dashboard.disableActionButtons();
         Dashboard.readWithdraw();
     },
@@ -208,6 +222,12 @@ var Dashboard = {
                 $('.table-content').append(row);
             }
         }        
+    },
+    showLoading: function () {
+        $('.loading-container').removeAttr('hidden');
+    },
+    hideLoading: function () {
+        $('.loading-container').attr('hidden','hidden');
     },
     getBaseData: function () {
         return {
