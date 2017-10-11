@@ -76,8 +76,8 @@ namespace Auctus.EthereumProxy
         public static string WithdrawalFromDefaultPensionFund(string employeeAddress, string smartContractAddress, string abi, int gasLimit)
         {
             WithdrawalInfo withdrawalInfo = GetWithdrawalInfo(employeeAddress, smartContractAddress, abi);
-            double szabo = withdrawalInfo.EmployeeSzaboCashback + withdrawalInfo.EmployerSzaboCashback + 0.0000000000000001;
-            return Web3.CallFunction(smartContractAddress, abi, "sell", Web3.ETHER(szabo), gasLimit, GWEI_NORMAL, 
+            double szabo = withdrawalInfo.EmployeeSzaboCashback + withdrawalInfo.EmployerSzaboCashback + 0.0000000001;
+            return Web3.CallFunction(smartContractAddress, abi, "sell", new BigNumber(szabo, 12), gasLimit, GWEI_NORMAL, 
                 default(KeyValuePair<string, string>), new Variable(VariableType.Address, employeeAddress));
         }
 
@@ -85,11 +85,11 @@ namespace Auctus.EthereumProxy
         {
             List<CompleteVariableType> returnTypes = new List<CompleteVariableType>();
             returnTypes.Add(new CompleteVariableType(VariableType.BigNumber, 4));
-            returnTypes.Add(new CompleteVariableType(VariableType.BigNumber));
-            returnTypes.Add(new CompleteVariableType(VariableType.BigNumber));
-            returnTypes.Add(new CompleteVariableType(VariableType.BigNumber));
-            returnTypes.Add(new CompleteVariableType(VariableType.BigNumber));
-            returnTypes.Add(new CompleteVariableType(VariableType.BigNumber));
+            returnTypes.Add(new CompleteVariableType(VariableType.BigNumber, 12));
+            returnTypes.Add(new CompleteVariableType(VariableType.BigNumber, 12));
+            returnTypes.Add(new CompleteVariableType(VariableType.BigNumber, 12));
+            returnTypes.Add(new CompleteVariableType(VariableType.BigNumber, 12));
+            returnTypes.Add(new CompleteVariableType(VariableType.BigNumber, 12));
             List<Variable> withdrawalValues = Web3.CallConstFunction(returnTypes, smartContractAddress, abi, "getWithdrawalValues", new Variable(VariableType.Address, employeeAddress));
             return new WithdrawalInfo()
             {
@@ -117,7 +117,7 @@ namespace Auctus.EthereumProxy
             List<CompleteVariableType> buyEventParameters = new List<CompleteVariableType>();
             buyEventParameters.Add(new CompleteVariableType(VariableType.Number, 0, true));
             buyEventParameters.Add(new CompleteVariableType(VariableType.Address, 0, true));
-            buyEventParameters.Add(new CompleteVariableType(VariableType.BigNumber));
+            buyEventParameters.Add(new CompleteVariableType(VariableType.BigNumber, 12));
             buyEventParameters.Add(new CompleteVariableType(VariableType.BigNumber, 12));
             buyEventParameters.Add(new CompleteVariableType(VariableType.BigNumber, 12));
             buyEventParameters.Add(new CompleteVariableType(VariableType.Number));
@@ -151,9 +151,9 @@ namespace Auctus.EthereumProxy
             withdrawalEventParameters.Add(new CompleteVariableType(VariableType.Number, 0, true));
             withdrawalEventParameters.Add(new CompleteVariableType(VariableType.Address, 0, true));
             withdrawalEventParameters.Add(new CompleteVariableType(VariableType.BigNumber, 4));
-            withdrawalEventParameters.Add(new CompleteVariableType(VariableType.BigNumber));
-            withdrawalEventParameters.Add(new CompleteVariableType(VariableType.BigNumber));
-            withdrawalEventParameters.Add(new CompleteVariableType(VariableType.BigNumber));
+            withdrawalEventParameters.Add(new CompleteVariableType(VariableType.BigNumber, 12));
+            withdrawalEventParameters.Add(new CompleteVariableType(VariableType.BigNumber, 12));
+            withdrawalEventParameters.Add(new CompleteVariableType(VariableType.BigNumber, 12));
             withdrawalEventParameters.Add(new CompleteVariableType(VariableType.BigNumber, 12));
             withdrawalEventParameters.Add(new CompleteVariableType(VariableType.BigNumber, 12));
             Event withdrawalEvent = Web3.ReadEvent(smartContractAddress, "Withdrawal", withdrawalEventParameters).SingleOrDefault();
