@@ -225,7 +225,7 @@
     }
 
 .modal-body .dashboard-container {
-    padding:20px 0 0 0;
+    padding:20px;
 }
 
 .modal-withdraw-container {
@@ -265,7 +265,7 @@
 }
 
 .modal-slider {
-    width: 70%;
+    width: 80%;
 }
 
 .modal-slider-text {
@@ -276,7 +276,7 @@
 }
 
 .modal-month {
-    width: 30%;
+    width: 20%;
 }
 
 #slider {
@@ -321,7 +321,7 @@
     position: absolute;
     top: 0px;
     margin-left: 20px;
-    width: 50px;
+    width: calc(100% - 20px);
     height: 35px;
     border-radius: 5px;
     background-color: #ffffff;
