@@ -10,6 +10,7 @@
 
 var Dashboard = {
     remainingPayments: 60,
+    finished: false,
     init: function () {
         if (!signalrDone) {
             signalrDone = Dashboard.readTransactions;
@@ -25,23 +26,7 @@ var Dashboard = {
         Dashboard.readWithdraw();
     },
     configTimeline: function () {
-        $("#paymentBtn").on('click', function () {
-            Dashboard.setPaymentSlider();
-            var startValue = (Dashboard.remainingPayments > 4 ? 4 : Dashboard.remainingPayments);
-            document.getElementById('slider').noUiSlider.set([1, startValue]);
-            $('#month').val(startValue);
-            $('#paymentModal').modal('toggle');
-        });
-        $("#withdrawBtn").on('click', function () {
-            $.ajax({
-                url: urlGetPaymentInfo, data: Dashboard.getBaseData(), method: "GET",
-                success: function (response) {
-                    $('.employee-receivable').text(Dashboard.getFormattedNumber(response.employeeSzaboCashback));
-                    $('.company-receivable').text(Dashboard.getFormattedNumber(response.employerSzaboCashback));
-                    $('#withdrawModal').modal('toggle');
-                }
-            });
-        });
+        Dashboard.disableActionButtons();
         $('div.timeline-grid').on('click', function () {
             $('div.popup-timeline-footer').on('click', function () {
                 $('div.timeline-grid').click();
@@ -55,23 +40,25 @@ var Dashboard = {
     },
     withdraw: function () {
         $('#withdrawModal').modal('toggle');
-        Dashboard.setActionButtons(true);
+        Dashboard.disableActionButtons();
         Dashboard.ajaxHubCall(urlGenerateWithdraw, Dashboard.getBaseData(), Dashboard.withdrawalUncompleted);
     },
     payment: function () {
         $('#paymentModal').modal('toggle');
-        Dashboard.setActionButtons(true);
+        Dashboard.disableActionButtons();
         var data = Dashboard.getBaseData();
         data["monthsAmount"] = $('#month').val();
         Dashboard.ajaxHubCall(urlGeneratePayment, data, Dashboard.paymentsUncompleted);
     },
     paymentsCompleted: function (response) {
         Dashboard.setPayment(response);
-        Dashboard.setActionButtons(false);
+        if (!Dashboard.finished) {
+            Dashboard.enableActionButtons();
+        }
     },
     paymentsUncompleted: function (response) {
         Dashboard.setPayment(response);
-        Dashboard.setActionButtons(true);
+        Dashboard.disableActionButtons();
         Dashboard.readPayments();
     },
     readPaymentsError: function (response) {
@@ -79,15 +66,19 @@ var Dashboard = {
     },
     withdrawalCompleted: function (response) {
         if (response) {
-            $('#employeeWalletLink').attr("href", Parameter.BlockExplorerUrl + "/address/" + response.Responsable);
-            $('#employerWalletLink').attr("href", Parameter.BlockExplorerUrl + "/address/" + response.Responsable);
+            Dashboard.finished = true;
+            Dashboard.disableActionButtons();
+            $('.employee-receivable').text(Dashboard.getFormattedNumber(response.EmployeeSzaboCashback));
+            $('.company-receivable').text(Dashboard.getFormattedNumber(response.EmployerSzaboCashback));
+            $('#employeeWalletLink').attr("href", Parameter.BlockExplorerUrl + "/address/" + pensionFundData.employeeAddress);
+            $('#employerWalletLink').attr("href", Parameter.BlockExplorerUrl + "/address/" + pensionFundData.companyAddress);
             $('#withdrawTransactionLink').attr("href", Parameter.BlockExplorerUrl + "/tx/" + response.TransactionHash);
+            $('.share-symbol').click();
             $('#withdrawCompletedModal').modal('toggle');
-        }
-        Dashboard.setActionButtons(response);
+        } 
     },
     withdrawalUncompleted: function (response) {
-        Dashboard.setActionButtons(true);
+        Dashboard.disableActionButtons();
         Dashboard.readWithdraw();
     },
     readWithdrawalError: function (response) {
@@ -154,9 +145,32 @@ var Dashboard = {
             });  
         }
     },
-    setActionButtons: function (disabled) {
-        $("#comfirmWithdraw").prop("disabled", disabled);
-        $("#comfirmPayment").prop("disabled", disabled);
+    disableActionButtons: function () {
+        $("#paymentBtn").off("click");
+        $("#paymentBtn").removeClass("timeline-btn");
+        $("#withdrawBtn").off("click");
+        $("#withdrawBtn").removeClass("timeline-btn");
+    },
+    enableActionButtons: function () {
+        $("#paymentBtn").on('click', function () {
+            Dashboard.setPaymentSlider();
+            var startValue = (Dashboard.remainingPayments > 4 ? 4 : Dashboard.remainingPayments);
+            document.getElementById('slider').noUiSlider.set([1, startValue]);
+            $('#month').val(startValue);
+            $('#paymentModal').modal('toggle');
+        });
+        $("#withdrawBtn").on('click', function () {
+            $.ajax({
+                url: urlGetPaymentInfo, data: Dashboard.getBaseData(), method: "GET",
+                success: function (response) {
+                    $('.employee-receivable').text(Dashboard.getFormattedNumber(response.employeeSzaboCashback));
+                    $('.company-receivable').text(Dashboard.getFormattedNumber(response.employerSzaboCashback));
+                    $('#withdrawModal').modal('toggle');
+                }
+            });
+        });
+        $("#paymentBtn").addClass("timeline-btn");
+        $("#withdrawBtn").addClass("timeline-btn");
     },
     getFormattedNumber: function (number) {
         return (Math.round(number * 100) / 100).toLocaleString({ minimumFractionDigits: 2 });
