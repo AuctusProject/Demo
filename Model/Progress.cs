@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace Auctus.Model
 {
@@ -18,6 +18,14 @@ namespace Auctus.Model
         public int LastPeriod { get; set; }
         public List<ProgressValue> Values { get; set; }
         public List<TransactionHistory> TransactionHistory { get; set; }
+
+        public bool Completed
+        {
+            get
+            {
+                return !TransactionHistory.Any(c => !c.CompanyBlockNumber.HasValue || !c.EmployeeBlockNumber.HasValue);
+            }
+        }
     }
 
     public class ProgressValue
@@ -43,8 +51,10 @@ namespace Auctus.Model
         public double? EmployeeToken { get; set; }
         public double? CompanyToken { get; set; }
 
-        public string Status {
-            get {
+        public string Status
+        {
+            get
+            {
                 if (CompanyBlockNumber.HasValue && EmployeeBlockNumber.HasValue)
                 {
                     return "Confirmed";

@@ -12,5 +12,6 @@ namespace Auctus.Model
         public double? EmployeeTokenCashback { get; set; }
         public double? EmployerSzaboCashback { get; set; }
         public double? EmployeeSzaboCashback { get; set; }
+        public bool Completed { get { return BlockNumber.HasValue; } }
     }
 }

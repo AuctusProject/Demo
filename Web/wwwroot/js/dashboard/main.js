@@ -9,22 +9,61 @@
 });
 
 var Dashboard = {
-    remainingPayments: 60,
+    checkTransactionInterval: 5000,
+    remainingPayments: 60,    
     finished: false,
+    checkPaymentTransactionsTimer: null,
+    checkWithdrawTransactionTimer: null,
     init: function () {
-        if (!signalrDone) {
-            signalrDone = Dashboard.readTransactions;
-        } else {
-            Dashboard.readTransactions();
-        }
+        Dashboard.readTransactions();
         Dashboard.configTimeline();
         Dashboard.configPaymentWindow();
         $('div.timeline-grid').click();
     },
+    startCheckPaymentTransactions: function () {
+        Dashboard.checkPaymentTransactionsTimer = setInterval(Dashboard.checkPayments, Dashboard.checkTransactionInterval);
+    },
+    startCheckWithdrawTransaction: function () {
+        Dashboard.checkWithdrawTransactionTimer = setInterval(Dashboard.checkWithdrawal, Dashboard.checkTransactionInterval);
+    },
+    stopCheckPaymentTransactions: function () {
+        clearInterval(Dashboard.checkPaymentTransactionsTimer);
+    },
+    stopCheckWithdrawTransaction: function () {
+        clearInterval(Dashboard.checkWithdrawTransactionTimer);
+    },
+    checkPayments: function () {
+        var data = Dashboard.getBaseData();
+        Dashboard.ajaxCall(urlGetPayments, data, "GET", Dashboard.checkPaymentsResponse);
+    },
+    checkPaymentsResponse: function (response) {
+        if (response) {
+            if (response.Completed) {
+                Dashboard.paymentsCompleted(response);
+            }
+            else {
+                Dashboard.paymentsUncompleted(response);
+            }
+        }
+    },
+    checkWithdrawal: function (response) {
+        var data = Dashboard.getBaseData();
+        Dashboard.ajaxCall(urlGetWithdraw, data, "GET", Dashboard.checkWithdrawalResponse);
+    },
+    checkWithdrawalResponse: function (response) {
+        if (response) {
+            if (response.Completed) {
+                Dashboard.withdrawalCompleted(response);
+            }
+            else {
+                Dashboard.withdrawalUncompleted(response);
+            }
+        }
+    },
     readTransactions: function () {
         Dashboard.showLoading();
-        Dashboard.readPayments();
-        Dashboard.readWithdraw();
+        Dashboard.checkPayments();
+        Dashboard.checkWithdrawal();
     },
     configTimeline: function () {
         Dashboard.disableActionButtons();
@@ -44,6 +83,7 @@ var Dashboard = {
         Dashboard.showLoading();
         Dashboard.disableActionButtons();
         Dashboard.ajaxHubCall(urlGenerateWithdraw, Dashboard.getBaseData(), Dashboard.withdrawalUncompleted);
+        Dashboard.startCheckWithdrawTransaction();
     },
     payment: function () {
         $('#paymentModal').modal('toggle');
@@ -52,6 +92,7 @@ var Dashboard = {
         var data = Dashboard.getBaseData();
         data["monthsAmount"] = $('#month').val();
         Dashboard.ajaxHubCall(urlGeneratePayment, data, Dashboard.paymentsUncompleted);
+        Dashboard.startCheckPaymentTransactions();
     },
     paymentsCompleted: function (response) {
         Dashboard.setPayment(response);
@@ -59,15 +100,14 @@ var Dashboard = {
         if (!Dashboard.finished) {
             Dashboard.enableActionButtons();
         }
+        Dashboard.stopCheckPaymentTransactions();
     },
     paymentsUncompleted: function (response) {
         Dashboard.showLoading();
         Dashboard.setPayment(response);
         Dashboard.disableActionButtons();
-        Dashboard.readPayments();
     },
     readPaymentsError: function (response) {
-        Dashboard.readPayments();
     },
     withdrawalCompleted: function (response) {
         if (response) {
@@ -88,21 +128,14 @@ var Dashboard = {
             }
             $('.share-symbol').click();
             $('#withdrawCompletedModal').modal('toggle');
-        } 
+        }
+        Dashboard.stopCheckWithdrawTransaction();
     },
     withdrawalUncompleted: function (response) {
         Dashboard.showLoading();
         Dashboard.disableActionButtons();
-        Dashboard.readWithdraw();
     },
     readWithdrawalError: function (response) {
-        Dashboard.readWithdraw();
-    },
-    readPayments: function () {
-        Dashboard.ajaxHubCall(urlReadPayment, Dashboard.getBaseData());
-    },
-    readWithdraw: function () {
-        Dashboard.ajaxHubCall(urlReadWithdraw, Dashboard.getBaseData());
     },
     setPayment: function (response) {
         Dashboard.setTimeline(response);
@@ -187,7 +220,7 @@ var Dashboard = {
         $("#withdrawBtn").addClass("timeline-btn");
     },
     getFormattedNumber: function (number) {
-        return (Math.round(number * 100) / 100).toLocaleString({ minimumFractionDigits: 2 });
+        return numeral((Math.round(number * 100) / 100)).format('0.000 a');
     },
     TransactionHistoryRowTemplate: $('.row-template').outerHTML(),
     setTransactionHistory: function (response) {
@@ -235,10 +268,13 @@ var Dashboard = {
         };
     },
     ajaxHubCall: function (url, data, successFunction, errorFunction) {
+        Dashboard.ajaxCall(url, data, "POST", successFunction, errorFunction);
+    },
+    ajaxCall: function (url, data, method, successFunction, errorFunction) {
         $.ajax({
             url: url,
             data: data,
-            method: "POST",
+            method: method,
             beforeSend: function (request) {
                 request.setRequestHeader("HubConnectionId", hub.connection.id);
             },

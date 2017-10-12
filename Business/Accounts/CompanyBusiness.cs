@@ -17,13 +17,13 @@ namespace Auctus.Business.Accounts
             if (company == null)
                 throw new ArgumentNullException("company");
             if (company.BonusFee <= 0)
-                throw new ArgumentException("Bonus Fee must be greater then zero.");
-            if (company.BonusFee >= 1000)
-                throw new ArgumentException("Bonus Fee must be lesser then 1000.");
+                throw new ArgumentException("Match Rate must be greater then zero.");
+            if (company.BonusFee > 1000)
+                throw new ArgumentException("Match Rate must be lesser or equal to 1000.");
             if (company.MaxBonusFee <= 0)
-                throw new ArgumentException("Max Bonus Fee must be greater then zero.");
+                throw new ArgumentException("Match Ceiling must be greater then zero.");
             if (company.MaxBonusFee > 100)
-                throw new ArgumentException("Max Bonus Fee must be lesser then 100.");
+                throw new ArgumentException("Match Ceiling Fee must be lesser then 100.");
 
             ValidateVestingRules(company.VestingRules);
         }

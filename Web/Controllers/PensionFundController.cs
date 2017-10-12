@@ -53,7 +53,7 @@ namespace Web.Controllers
                 try
                 {
                     Progress progress = PensionFundsServices.ReadPayments(contractAddress);
-                    if (!progress.TransactionHistory.Any(c => !c.CompanyBlockNumber.HasValue || !c.EmployeeBlockNumber.HasValue))
+                    if (progress.Completed)
                         hubContext.Clients.Client(ConnectionId).paymentsCompleted(Json(progress).Value);
                     else
                         hubContext.Clients.Client(ConnectionId).paymentsUncompleted(Json(progress).Value);
@@ -65,6 +65,15 @@ namespace Web.Controllers
                         hubContext.Clients.Client(ConnectionId).readPaymentsError();
                 }
             });
+        }
+
+        [HttpGet]
+        [Route("/PensionFund/Payments")]
+        public IActionResult GetPayments(string contractAddress)
+        {
+            Progress progress = PensionFundsServices.ReadPayments(contractAddress);
+            return Json(progress,
+                new JsonSerializerSettings { ContractResolver = new DefaultContractResolver() });
         }
 
         [HttpPost]
@@ -85,7 +94,7 @@ namespace Web.Controllers
                 try
                 {
                     Withdrawal withdrawal = PensionFundsServices.ReadWithdrawal(contractAddress);
-                    if (withdrawal == null || withdrawal.BlockNumber.HasValue)
+                    if (withdrawal == null || withdrawal.Completed)
                         hubContext.Clients.Client(ConnectionId).withdrawalCompleted(Json(withdrawal).Value);
                     else
                         hubContext.Clients.Client(ConnectionId).withdrawalUncompleted(Json(withdrawal).Value);
@@ -97,6 +106,15 @@ namespace Web.Controllers
                         hubContext.Clients.Client(ConnectionId).readWithdrawalError();
                 }
             });
+        }
+
+        [HttpGet]
+        [Route("/PensionFund/Withdrawal")]
+        public IActionResult GetWithdrawal(string contractAddress)
+        {
+            Withdrawal withdrawal = PensionFundsServices.ReadWithdrawal(contractAddress);
+            return Json(withdrawal,
+                new JsonSerializerSettings { ContractResolver = new DefaultContractResolver() });
         }
     }
 }

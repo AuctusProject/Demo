@@ -383,8 +383,8 @@ namespace Auctus.Business.Funds
             if (fund.LatePaymentFee < 0)
                 throw new ArgumentException("Late Payment Fee cannot be negative.");
             ValidateNonNegative(fund.Fee, "Fee");
-            if (fund.Fee > 99)
-                throw new ArgumentException("Fee cannot be greater than 99.");
+            if (fund.Fee > 100)
+                throw new ArgumentException("Fee cannot be greater than 100.");
             ValidateNonNegative(fund.BitcoinPercentage, "BitcoinPercentage");
             ValidateNonNegative(fund.VWEHXPercentage, "VWEHXPercentage");
             ValidateNonNegative(fund.GoldPercentage, "GoldPercentage");

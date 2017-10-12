@@ -56,7 +56,7 @@ Dashboard.charts = {
                     },
                     y: {
                         axisLabelFormatter: function (y) {
-                            return '$' + y.toFixed(2);
+                            return '$' + Dashboard.getFormattedNumber(y);
                         },
                         axisLineColor: 'white'
                     },
