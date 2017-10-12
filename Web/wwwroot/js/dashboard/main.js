@@ -123,7 +123,7 @@ var Dashboard = {
             step: 1,
             connect: true,
             tooltips: false,
-            range: { 'min': 1, 'max': Dashboard.remainingPayments }
+            range: { 'min': (Dashboard.remainingPayments == 1 ? 0 : 1), 'max': Dashboard.remainingPayments }
         });
         $($('.noUi-connect')[0]).css('background-color', '#07dce0');
         $($('.noUi-origin')[0]).attr('disabled', 'disabled');
