@@ -18,12 +18,24 @@ var Dashboard = {
         signalrDone = Dashboard.readTransactions;
         Dashboard.configTimeline();
         Dashboard.configPaymentWindow();
+        Dashboard.configShare();
         $('div.timeline-grid').click();
     },
     readTransactions: function () {
         Dashboard.showLoading();
         Dashboard.readPayments();
         Dashboard.readWithdraw();
+    },
+    configShare: function () {
+        $('div.header-share').on('click', function () {
+            $('div.popup-share-copy').on('click', function () {
+                var $temp = $("<input>");
+                $("body").append($temp);
+                $temp.val('https://demo.auctus.org/PensionFund/' + pensionFundData.contractAddress).select();
+                document.execCommand("copy");
+                $temp.remove();
+            });
+        });
     },
     configTimeline: function () {
         Dashboard.disableActionButtons();
