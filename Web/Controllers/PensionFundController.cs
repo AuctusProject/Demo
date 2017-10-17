@@ -45,26 +45,31 @@ namespace Web.Controllers
 
         [HttpPost]
         [Route("/PensionFund/ReadPayments")]
-        public void ReadPayments(string contractAddress)
+        public IActionResult ReadPayments(string contractAddress)
         {
-            Task.Factory.StartNew(() =>
+            if (!string.IsNullOrEmpty(ConnectionId))
             {
-                var hubContext = HubConnectionManager.GetHubContext<AuctusDemoHub>();
-                try
+                Task.Factory.StartNew(() =>
                 {
-                    Progress progress = PensionFundsServices.ReadPayments(contractAddress);
-                    if (progress.Completed)
-                        hubContext.Clients.Client(ConnectionId).paymentsCompleted(Json(progress).Value);
-                    else
-                        hubContext.Clients.Client(ConnectionId).paymentsUncompleted(Json(progress).Value);
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogError(new EventId(2), ex, string.Format("Erro on ReadPayments {0}.", contractAddress));
-                    if (!string.IsNullOrEmpty(ConnectionId))
+                    var hubContext = HubConnectionManager.GetHubContext<AuctusDemoHub>();
+                    try
+                    {
+                        Progress progress = PensionFundsServices.ReadPayments(contractAddress);
+                        if (progress.Completed)
+                            hubContext.Clients.Client(ConnectionId).paymentsCompleted(Json(progress).Value);
+                        else
+                            hubContext.Clients.Client(ConnectionId).paymentsUncompleted(Json(progress).Value);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.LogError(new EventId(2), ex, string.Format("Erro on ReadPayments {0}.", contractAddress));
                         hubContext.Clients.Client(ConnectionId).readPaymentsError();
-                }
-            });
+                    }
+                });
+                return Json(new { success = true });
+            }
+            else
+                return Json(new { success = false });
         }
 
         [HttpGet]
@@ -86,26 +91,31 @@ namespace Web.Controllers
 
         [HttpPost]
         [Route("/PensionFund/ReadWithdrawal")]
-        public void ReadWithdrawal(string contractAddress)
+        public IActionResult ReadWithdrawal(string contractAddress)
         {
-            Task.Factory.StartNew(() =>
+            if (!string.IsNullOrEmpty(ConnectionId))
             {
-                var hubContext = HubConnectionManager.GetHubContext<AuctusDemoHub>();
-                try
+                Task.Factory.StartNew(() =>
                 {
-                    Withdrawal withdrawal = PensionFundsServices.ReadWithdrawal(contractAddress);
-                    if (withdrawal == null || withdrawal.Completed)
-                        hubContext.Clients.Client(ConnectionId).withdrawalCompleted(Json(withdrawal).Value);
-                    else
-                        hubContext.Clients.Client(ConnectionId).withdrawalUncompleted(Json(withdrawal).Value);
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogError(new EventId(3), ex, string.Format("Erro on ReadWithdrawal {0}.", contractAddress));
-                    if (!string.IsNullOrEmpty(ConnectionId))
+                    var hubContext = HubConnectionManager.GetHubContext<AuctusDemoHub>();
+                    try
+                    {
+                        Withdrawal withdrawal = PensionFundsServices.ReadWithdrawal(contractAddress);
+                        if (withdrawal == null || withdrawal.Completed)
+                            hubContext.Clients.Client(ConnectionId).withdrawalCompleted(Json(withdrawal).Value);
+                        else
+                            hubContext.Clients.Client(ConnectionId).withdrawalUncompleted(Json(withdrawal).Value);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.LogError(new EventId(3), ex, string.Format("Erro on ReadWithdrawal {0}.", contractAddress));
                         hubContext.Clients.Client(ConnectionId).readWithdrawalError();
-                }
-            });
+                    }
+                });
+                return Json(new { success = true });
+            }
+            else
+                return Json(new { success = false });
         }
 
         [HttpGet]

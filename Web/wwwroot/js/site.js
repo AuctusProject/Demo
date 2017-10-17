@@ -24,23 +24,32 @@
     $('form').validate();
 
     hljs.configure({ useBR: true });
+    
+    startSignalRConnection();
 
-    $.connection.hub.disconnected(function () {
-        if ($.connection.hub.lastError)
-        { alert("Disconnected. Reason: " + $.connection.hub.lastError.message); }
-    });
-
-    connection.start().done(function ()
-    {
-        if (signalrDone) {
-            signalrDone();
-        } else {
-            signalrDone = function () { };
+    connection.disconnected(function () {
+        if (signalrDisconnected) {
+            signalrDisconnected();
         }
+        setTimeout(function () {
+            startSignalRConnection();
+        }, 5000);
     });
 
     $('.onlyInteger').keypress(isNumber);
 });
+
+function startSignalRConnection() {
+    connection.start()
+        .done(function () {
+            if (signalrDone) {
+                signalrDone();
+            } else {
+                signalrDone = function () { };
+            }
+        })
+        .fail(function () { alert('SignalR could not be connected.'); });
+}
 
 function isNumber(evt) {
     evt = (evt) ? evt : window.event;
@@ -58,6 +67,7 @@ jQuery.fn.outerHTML = function () {
 var connection = $.hubConnection();
 var hub = connection.createHubProxy("AuctusDemo");
 var signalrDone = null;
+var signalrDisconnected = null;
 
 $('.form-control').focus(function () { $(this).parent().addClass('is-focused'); });
 $('.form-control').blur(function () { $(this).parent().removeClass('is-focused'); });

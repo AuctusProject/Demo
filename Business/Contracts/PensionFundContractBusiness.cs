@@ -56,7 +56,7 @@ namespace Auctus.Business.Contracts
             Transaction demoContractTransaction = EthereumManager.GetTransaction(transactionHash);
             if (demoContractTransaction == null)
             {
-                if (pensionFundContract.CreationDate < DateTime.UtcNow.AddMinutes(PensionFundTransactionBusiness.TRANSACTION_TOLERANCE))
+                if (pensionFundContract.CreationDate < DateTime.UtcNow.AddMinutes(PensionFundTransactionBusiness.BLOCKCHAIN_TRANSACTION_TOLERANCE))
                 {
                     PoolInfo poolInfo = GetPoolInfo();
                     if (!poolInfo.Pending.Contains(pensionFundContract.TransactionHash))

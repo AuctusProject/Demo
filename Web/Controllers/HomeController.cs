@@ -42,9 +42,6 @@ namespace Web.Controllers
                     throw new InvalidOperationException("Invalid captcha.");
 
                 var pensionFundContract = PensionFundsServices.CreateCompleteEntry(model.Fund, model.Company, model.Employee);
-
-                CheckContractCreationTransaction(pensionFundContract.TransactionHash);
-
                 return Json(pensionFundContract);
             }
             catch(Exception e)
@@ -57,31 +54,37 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public void CheckContractCreationTransaction(String transactionHash)
+        public IActionResult CheckContractCreationTransaction(String transactionHash)
         {
-            Task.Factory.StartNew(() =>
+            if (!string.IsNullOrEmpty(ConnectionId))
             {
-                var hubContext = HubConnectionManager.GetHubContext<AuctusDemoHub>();
-                try
+                Task.Factory.StartNew(() =>
                 {
-                    var pensionFundContract = PensionFundsServices.CheckContractCreationTransaction(transactionHash);
-                    if (pensionFundContract.BlockNumber.HasValue)
-                        hubContext.Clients.Client(ConnectionId).deployCompleted(Json(
-                            new
-                            {
-                                Address = pensionFundContract.Address,
-                                BlockNumber = pensionFundContract.BlockNumber,
-                                TransactionHash = pensionFundContract.TransactionHash
-                            }));
-                    else
-                        hubContext.Clients.Client(ConnectionId).deployUncompleted(pensionFundContract.TransactionHash);
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogError(new EventId(1), ex, string.Format("Erro on CheckContractCreationTransaction {0}.", transactionHash));
-                    hubContext.Clients.Client(ConnectionId).deployError();
-                }
-            });
+                    var hubContext = HubConnectionManager.GetHubContext<AuctusDemoHub>();
+                    try
+                    {
+                        var pensionFundContract = PensionFundsServices.CheckContractCreationTransaction(transactionHash);
+                        if (pensionFundContract.BlockNumber.HasValue)
+                            hubContext.Clients.Client(ConnectionId).deployCompleted(Json(
+                                new
+                                {
+                                    Address = pensionFundContract.Address,
+                                    BlockNumber = pensionFundContract.BlockNumber,
+                                    TransactionHash = pensionFundContract.TransactionHash
+                                }));
+                        else
+                            hubContext.Clients.Client(ConnectionId).deployUncompleted(pensionFundContract.TransactionHash);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.LogError(new EventId(1), ex, string.Format("Erro on CheckContractCreationTransaction {0}.", transactionHash));
+                        hubContext.Clients.Client(ConnectionId).deployError();
+                    }
+                });
+                return Json(new { success = true });
+            }
+            else
+                return Json(new { success = false });
         }
     }
 }

@@ -9,61 +9,21 @@
 });
 
 var Dashboard = {
-    checkTransactionInterval: 5000,
-    remainingPayments: 60,    
+    remainingPayments: 60,
     finished: false,
-    checkPaymentTransactionsTimer: null,
-    checkWithdrawTransactionTimer: null,
     init: function () {
-        Dashboard.readTransactions();
+        if (signalrDone) {
+            Dashboard.readTransactions();
+        }
+        signalrDone = Dashboard.readTransactions;
         Dashboard.configTimeline();
         Dashboard.configPaymentWindow();
         $('div.timeline-grid').click();
     },
-    startCheckPaymentTransactions: function () {
-        Dashboard.checkPaymentTransactionsTimer = setInterval(Dashboard.checkPayments, Dashboard.checkTransactionInterval);
-    },
-    startCheckWithdrawTransaction: function () {
-        Dashboard.checkWithdrawTransactionTimer = setInterval(Dashboard.checkWithdrawal, Dashboard.checkTransactionInterval);
-    },
-    stopCheckPaymentTransactions: function () {
-        clearInterval(Dashboard.checkPaymentTransactionsTimer);
-    },
-    stopCheckWithdrawTransaction: function () {
-        clearInterval(Dashboard.checkWithdrawTransactionTimer);
-    },
-    checkPayments: function () {
-        var data = Dashboard.getBaseData();
-        Dashboard.ajaxCall(urlGetPayments, data, "GET", Dashboard.checkPaymentsResponse);
-    },
-    checkPaymentsResponse: function (response) {
-        if (response) {
-            if (response.Completed) {
-                Dashboard.paymentsCompleted(response);
-            }
-            else {
-                Dashboard.paymentsUncompleted(response);
-            }
-        }
-    },
-    checkWithdrawal: function (response) {
-        var data = Dashboard.getBaseData();
-        Dashboard.ajaxCall(urlGetWithdraw, data, "GET", Dashboard.checkWithdrawalResponse);
-    },
-    checkWithdrawalResponse: function (response) {
-        if (response) {
-            if (response.Completed) {
-                Dashboard.withdrawalCompleted(response);
-            }
-            else {
-                Dashboard.withdrawalUncompleted(response);
-            }
-        }
-    },
     readTransactions: function () {
         Dashboard.showLoading();
-        Dashboard.checkPayments();
-        Dashboard.checkWithdrawal();
+        Dashboard.readPayments();
+        Dashboard.readWithdraw();
     },
     configTimeline: function () {
         Dashboard.disableActionButtons();
@@ -83,7 +43,6 @@ var Dashboard = {
         Dashboard.showLoading();
         Dashboard.disableActionButtons();
         Dashboard.ajaxHubCall(urlGenerateWithdraw, Dashboard.getBaseData(), Dashboard.withdrawalUncompleted);
-        Dashboard.startCheckWithdrawTransaction();
     },
     payment: function () {
         $('#paymentModal').modal('toggle');
@@ -92,7 +51,6 @@ var Dashboard = {
         var data = Dashboard.getBaseData();
         data["monthsAmount"] = $('#month').val();
         Dashboard.ajaxHubCall(urlGeneratePayment, data, Dashboard.paymentsUncompleted);
-        Dashboard.startCheckPaymentTransactions();
     },
     paymentsCompleted: function (response) {
         Dashboard.setPayment(response);
@@ -100,14 +58,15 @@ var Dashboard = {
         if (!Dashboard.finished) {
             Dashboard.enableActionButtons();
         }
-        Dashboard.stopCheckPaymentTransactions();
     },
     paymentsUncompleted: function (response) {
         Dashboard.showLoading();
         Dashboard.setPayment(response);
         Dashboard.disableActionButtons();
+        Dashboard.readPayments();
     },
     readPaymentsError: function (response) {
+        Dashboard.tryReadAgain(Dashboard.readPayments);
     },
     withdrawalCompleted: function (response) {
         if (response) {
@@ -129,13 +88,39 @@ var Dashboard = {
             $('.share-symbol').click();
             $('#withdrawCompletedModal').modal('toggle');
         }
-        Dashboard.stopCheckWithdrawTransaction();
     },
     withdrawalUncompleted: function (response) {
         Dashboard.showLoading();
         Dashboard.disableActionButtons();
+        Dashboard.readWithdraw();
     },
     readWithdrawalError: function (response) {
+        Dashboard.tryReadAgain(Dashboard.readWithdraw);
+    },
+    readPayments: function () {
+        Dashboard.ajaxHubCall(urlReadPayment, Dashboard.getBaseData(), Dashboard.manageReadPaymentResponse, Dashboard.readPaymentConnectionError);
+    },
+    readWithdraw: function () {
+        Dashboard.ajaxHubCall(urlReadWithdraw, Dashboard.getBaseData(), Dashboard.manageReadWithdrawResponse, Dashboard.readWithdrawConnectionError);
+    },
+    manageReadPaymentResponse: function (response) {
+        if (!response || !response.success) {
+            Dashboard.readPaymentConnectionError();
+        }
+    },
+    readPaymentConnectionError: function () {
+        Dashboard.tryReadAgain(Dashboard.readPayments);
+    },
+    manageReadWithdrawResponse: function (response) {
+        if (!response || !response.success) {
+            Dashboard.readWithdrawConnectionError();
+        }
+    },
+    readWithdrawConnectionError: function () {
+        Dashboard.tryReadAgain(Dashboard.readWithdraw);
+    },
+    tryReadAgain: function (functionToCall) {
+        setTimeout(function () { functionToCall(); }, 5000);
     },
     setPayment: function (response) {
         Dashboard.setTimeline(response);
@@ -189,7 +174,7 @@ var Dashboard = {
                     current.removeClass('timeline-grid-horizontal-line-complete');
                     current.addClass('timeline-grid-horizontal-line-pending');
                 }
-            });  
+            });
         }
     },
     disableActionButtons: function () {
@@ -216,7 +201,6 @@ var Dashboard = {
                 }
             });
         });
-      
         $("#paymentBtn").removeClass("disabled");
         $("#withdrawBtn").removeClass("disabled");
     },
@@ -235,7 +219,7 @@ var Dashboard = {
                 row = row.replace('{TRANSACTION_DATE}', transaction.PaymentDate == undefined ? " - " : transaction.PaymentDate);
                 row = row.replace('{TRANSACTION_STATUS}', transaction.Status);
                 row = row.replace('{TRANSACTION_STATUS_CLASS}', transaction.Status.toLowerCase());
-                row = row.replace('{EMPLOYEE_TOKEN}', (transaction.EmployeeToken == undefined || transaction.EmployeeToken == null)? " - " : transaction.EmployeeToken.toFixed(2));
+                row = row.replace('{EMPLOYEE_TOKEN}', (transaction.EmployeeToken == undefined || transaction.EmployeeToken == null) ? " - " : transaction.EmployeeToken.toFixed(2));
                 row = row.replace('{EMPLOYER_TOKEN}', (transaction.CompanyToken == undefined || transaction.CompanyToken == null) ? " - " : transaction.CompanyToken.toFixed(2));
                 if (transaction.EmployeeTransactionHash != null && transaction.EmployeeTransactionHash != '') {
                     row = row.replace('{EMPLOYEE_TRANSACTION_LINK}', Parameter.BlockExplorerUrl + "/tx/" + transaction.EmployeeTransactionHash);
@@ -255,13 +239,13 @@ var Dashboard = {
 
                 $('.table-content').append(row);
             }
-        }        
+        }
     },
     showLoading: function () {
         $('.loading-container').removeAttr('hidden');
     },
     hideLoading: function () {
-        $('.loading-container').attr('hidden','hidden');
+        $('.loading-container').attr('hidden', 'hidden');
     },
     getBaseData: function () {
         return {
@@ -269,15 +253,12 @@ var Dashboard = {
         };
     },
     ajaxHubCall: function (url, data, successFunction, errorFunction) {
-        Dashboard.ajaxCall(url, data, "POST", successFunction, errorFunction);
-    },
-    ajaxCall: function (url, data, method, successFunction, errorFunction) {
         $.ajax({
             url: url,
             data: data,
-            method: method,
+            method: "POST",
             beforeSend: function (request) {
-                request.setRequestHeader("HubConnectionId", hub.connection.id);
+                request.setRequestHeader("HubConnectionId", connection.id);
             },
             success: function (response) {
                 if (successFunction) {
@@ -291,4 +272,4 @@ var Dashboard = {
             }
         });
     }
- };
+};

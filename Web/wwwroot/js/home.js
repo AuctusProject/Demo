@@ -269,6 +269,7 @@ Wizard.Components = {
     },
     AssetsCarousel: $("#carouselExampleIndicators"),
     ContractDeploy: {
+        Transaction: null,
         NextButton: $('.next-button'),
         ButtonsControl: $('.buttons-control-div'),
         GeneratingContract: $('.generating-contract'),
@@ -312,9 +313,12 @@ Wizard.Operations = {
         Wizard.Components.ErrorMessage.hide();
     },
     OnSave: function (data) {
+        Wizard.Components.ContractDeploy.Transaction = data.transactionHash;
+        signalrDone = Wizard.Operations.OnDeployUncompleted;
+        Wizard.Operations.OnDeployUncompleted();
         Wizard.Components.ErrorMessage.hide();
         Wizard.Components.ContractDeploy.ContractDeployedDiv.hide();
-        Wizard.Components.ContractDeploy.TransactionIdLink.attr("href", Parameter.BlockExplorerUrl + "/tx/" + data.transactionHash);
+        Wizard.Components.ContractDeploy.TransactionIdLink.attr("href", Parameter.BlockExplorerUrl + "/tx/" + Wizard.Components.ContractDeploy.Transaction);
         Wizard.Components.ContractDeploy.CodeMirror.setValue(js_beautify(data.smartContractCode, { indent_size: 4 }));
         setTimeout(function () { Wizard.Components.ContractDeploy.CodeMirror.refresh(); }, 1);
         Wizard.Components.ContractDeploy.ContractCodeWrapper.show();
@@ -332,16 +336,22 @@ Wizard.Operations = {
         Wizard.Components.ContractDeploy.NextButton.unbind('click').click(function () { Wizard.Operations.GoToDashBoard(data.Value.Address); });
         Wizard.Components.ContractDeploy.NextButton.show();
     },
-    OnDeployUncompleted: function (response) {
+    OnDeployUncompleted: function (deployTransaction) {
+        var hash = Wizard.Components.ContractDeploy.Transaction ? Wizard.Components.ContractDeploy.Transaction : deployTransaction;
         $.ajax({
             url: urlCheckDeploy,
             method: "POST",
-            data: { transactionHash: response },
+            data: { transactionHash: hash },
             beforeSend: function (request) {
-                request.setRequestHeader("HubConnectionId", hub.connection.id);
+                request.setRequestHeader("HubConnectionId", connection.id);
+            },
+            success: function (response) {
+                if (!response || !response.success) {
+                    setTimeout(function () { Wizard.Operations.OnDeployUncompleted(); }, 5000);
+                }
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                Wizard.Operations.OnDeployError();
+                Wizard.Operations.OnDeployUncompleted();
             }
         });
     },
