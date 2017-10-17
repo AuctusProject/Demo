@@ -194,9 +194,9 @@ var Dashboard = {
     },
     disableActionButtons: function () {
         $("#paymentBtn").off("click");
-        $("#paymentBtn").removeClass("timeline-btn");
+        $("#paymentBtn").addClass("disabled");
         $("#withdrawBtn").off("click");
-        $("#withdrawBtn").removeClass("timeline-btn");
+        $("#withdrawBtn").addClass("disabled");
     },
     enableActionButtons: function () {
         $("#paymentBtn").on('click', function () {
@@ -216,8 +216,9 @@ var Dashboard = {
                 }
             });
         });
-        $("#paymentBtn").addClass("timeline-btn");
-        $("#withdrawBtn").addClass("timeline-btn");
+      
+        $("#paymentBtn").removeClass("disabled");
+        $("#withdrawBtn").removeClass("disabled");
     },
     getFormattedNumber: function (number) {
         return numeral((Math.round(number * 100) / 100)).format('0.000 a');

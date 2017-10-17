@@ -51,20 +51,23 @@
     width: 60px;
     height: 40px;
     border-radius: 50px;
-    border: solid 2px;
+    border: solid 2px #0be6d0;
     text-align: center;
+    cursor:pointer;
 }
+
+    .transaction-btn.disabled {
+        border-color: #bcbec0;
+        cursor: unset;
+    }
+
+        .transaction-btn.disabled > img {
+            -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+            filter: grayscale(100%);
+        }
 
 .transaction-btn-img {
     margin-top: 5px;
-}
-
-.btn-payment {
-    border-color: #0be6d0;
-}
-
-.btn-withdrawal {
-    border-color: #bcbec0;
 }
 
 .timeline-btn {
