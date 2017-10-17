@@ -313,7 +313,7 @@ namespace Auctus.Business.Contracts
                         functionType = FunctionType.CompanyBuy;
                         address = pensionFund.Option.Company.Address;
                     }
-                    PensionFundTransaction newTransaction = CreateTransaction(DateTime.UtcNow, functionType, address, pensionFund.Option.PensionFundContract.TransactionHash, inconsistentInfos.ElementAt(i).BlockNumber);
+                    PensionFundTransaction newTransaction = CreateTransaction(DateTime.UtcNow, functionType, address, pensionFund.Option.PensionFundContract.TransactionHash, inconsistentInfos.ElementAt(i).TransactionHash, inconsistentInfos.ElementAt(i).BlockNumber);
                     toBeAdded.Add(newTransaction);
                 }
             }
@@ -369,7 +369,7 @@ namespace Auctus.Business.Contracts
         }
 
         private PensionFundTransaction CreateTransaction(DateTime date, FunctionType functionType, string responsableAddress, 
-            string pensionFundContractHash, int? blockNumber = null)
+            string pensionFundContractHash, string transactionHash = null, int? blockNumber = null)
         {
             PensionFundTransaction pensionFundTransaction = new PensionFundTransaction()
             {
@@ -377,7 +377,8 @@ namespace Auctus.Business.Contracts
                 ContractFunctionId = functionType.Type,
                 PensionFundContractHash = pensionFundContractHash,
                 WalletAddress = responsableAddress,
-                BlockNumber = blockNumber
+                BlockNumber = blockNumber,
+                TransactionHash = transactionHash
             };
             Insert(pensionFundTransaction);
             return pensionFundTransaction;

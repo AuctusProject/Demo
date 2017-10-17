@@ -132,6 +132,24 @@
     color: #231f20;
 }
 
+.popup-share-footer-copy {
+    justify-content: center;
+}
+
+.popup-share-copy {
+    width: 90px;
+    height: 40px;
+    border-radius: 50px;
+    border: solid 2px #0be6d0;
+    text-align: center;
+    cursor: pointer;
+    padding-top: 10px;
+}
+
+.popup-share-copy-text {
+    color: #0be6d0;
+}
+
 .popup-share-btn {
     width: 33.333333%;
     cursor: pointer;
