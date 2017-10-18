@@ -15,11 +15,14 @@ using Auctus.Web.Hubs;
 using Auctus.DomainObjects.Contracts;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
+using System.Collections.Concurrent;
 
 namespace Web.Controllers
 {
     public class PensionFundController : HubBaseController
     {
+        private readonly ConcurrentDictionary<string, string> CONTRACT_TRANSACTING = new ConcurrentDictionary<string, string>();
+
         public PensionFundController(ILoggerFactory loggerFactory, Cache cache, IServiceProvider serviceProvider, IConnectionManager connectionManager) : base(loggerFactory, cache, serviceProvider, connectionManager) { }
 
         [Route("/PensionFund/{contractAddress}")]
@@ -39,8 +42,20 @@ namespace Web.Controllers
         [Route("/PensionFund/GeneratePayment")]
         public IActionResult GeneratePayment(string contractAddress, int monthsAmount)
         {
-            return Json(PensionFundsServices.GeneratePayment(contractAddress, monthsAmount),
-                new JsonSerializerSettings { ContractResolver = new DefaultContractResolver() });
+            if (CanTransactWith(contractAddress))
+            {
+                try
+                {
+                    return Json(PensionFundsServices.GeneratePayment(contractAddress, monthsAmount),
+                        new JsonSerializerSettings { ContractResolver = new DefaultContractResolver() });
+                }
+                finally
+                {
+                    ReleaseTransactionWith(contractAddress);
+                }
+            }
+            else
+                return new EmptyResult();
         }
 
         [HttpPost]
@@ -54,11 +69,23 @@ namespace Web.Controllers
                     var hubContext = HubConnectionManager.GetHubContext<AuctusDemoHub>();
                     try
                     {
-                        Progress progress = PensionFundsServices.ReadPayments(contractAddress);
-                        if (progress.Completed)
-                            hubContext.Clients.Client(ConnectionId).paymentsCompleted(Json(progress).Value);
+                        if (CanTransactWith(contractAddress))
+                        {
+                            try
+                            {
+                                Progress progress = PensionFundsServices.ReadPayments(contractAddress);
+                                if (progress.Completed)
+                                    hubContext.Clients.Client(ConnectionId).paymentsCompleted(Json(progress).Value);
+                                else
+                                    hubContext.Clients.Client(ConnectionId).paymentsUncompleted(Json(progress).Value);
+                            }
+                            finally
+                            {
+                                ReleaseTransactionWith(contractAddress);
+                            }
+                        }
                         else
-                            hubContext.Clients.Client(ConnectionId).paymentsUncompleted(Json(progress).Value);
+                            hubContext.Clients.Client(ConnectionId).readPaymentsError();
                     }
                     catch (Exception ex)
                     {
@@ -71,22 +98,25 @@ namespace Web.Controllers
             else
                 return Json(new { success = false });
         }
-
-        [HttpGet]
-        [Route("/PensionFund/Payments")]
-        public IActionResult GetPayments(string contractAddress)
-        {
-            Progress progress = PensionFundsServices.ReadPayments(contractAddress);
-            return Json(progress,
-                new JsonSerializerSettings { ContractResolver = new DefaultContractResolver() });
-        }
-
+        
         [HttpPost]
         [Route("/PensionFund/GenerateWithdrawal")]
         public IActionResult GenerateWithdrawal(string contractAddress)
         {
-            return Json(PensionFundsServices.GenerateWithdrawal(contractAddress),
-                new JsonSerializerSettings { ContractResolver = new DefaultContractResolver() });
+            if (CanTransactWith(contractAddress))
+            {
+                try
+                {
+                    return Json(PensionFundsServices.GenerateWithdrawal(contractAddress),
+                        new JsonSerializerSettings { ContractResolver = new DefaultContractResolver() });
+                }
+                finally
+                {
+                    ReleaseTransactionWith(contractAddress);
+                }
+            }
+            else
+                return new EmptyResult();
         }
 
         [HttpPost]
@@ -117,14 +147,16 @@ namespace Web.Controllers
             else
                 return Json(new { success = false });
         }
-
-        [HttpGet]
-        [Route("/PensionFund/Withdrawal")]
-        public IActionResult GetWithdrawal(string contractAddress)
+        
+        private bool CanTransactWith(string contractAddress)
         {
-            Withdrawal withdrawal = PensionFundsServices.ReadWithdrawal(contractAddress);
-            return Json(withdrawal,
-                new JsonSerializerSettings { ContractResolver = new DefaultContractResolver() });
+            return CONTRACT_TRANSACTING.TryAdd(contractAddress, null);
+        }
+
+        private bool ReleaseTransactionWith(string contractAddress)
+        {
+            string nullValue;
+            return CONTRACT_TRANSACTING.TryRemove(contractAddress, out nullValue);
         }
     }
 }

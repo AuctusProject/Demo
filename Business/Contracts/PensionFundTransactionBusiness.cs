@@ -332,22 +332,23 @@ namespace Auctus.Business.Contracts
 
         private void GeneratePaymentContractTransaction(IEnumerable<PensionFundTransaction> transactions, PensionFund pensionFund, SmartContract smartContract)
         {
-            
             Task.Factory.StartNew(() =>
             {
-                try
+                for (int i = 0; i < transactions.Count(); ++i)
                 {
-                    Parallel.For(0, transactions.Count(), new ParallelOptions() { MaxDegreeOfParallelism = 5 },
-                    i =>
+                    try
                     {
                         PensionFundTransaction transaction = transactions.ElementAt(i);
                         GenerateContractTransaction(transaction, pensionFund.Option.Company.Employee.Address, pensionFund.Option.PensionFundContract.Address,
                             smartContract.ABI, smartContract.ContractFunctions.Single(c => c.FunctionType == transaction.FunctionType).GasLimit + i, 0);
-                    });
-                }
-                catch(Exception ex)
-                {
-                    Logger.LogError(new EventId(5), ex, string.Format("Error on GeneratePaymentContractTransaction for contract {0}.", pensionFund.Option.Company.Employee.Address));
+                    }
+                    catch (Exception ex)
+                    {
+                        try
+                        {
+                            Logger.LogError(new EventId(5), ex, string.Format("Error on GeneratePaymentContractTransaction for contract {0}.", pensionFund.Option.PensionFundContract.Address));
+                        } catch { }
+                    }
                 }
             });
         }

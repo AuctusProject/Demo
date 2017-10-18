@@ -65,17 +65,21 @@ var Dashboard = {
         Dashboard.ajaxHubCall(urlGeneratePayment, data, Dashboard.paymentsUncompleted);
     },
     paymentsCompleted: function (response) {
-        Dashboard.setPayment(response);
-        Dashboard.hideLoading();
-        if (!Dashboard.finished) {
-            Dashboard.enableActionButtons();
+        if (response) {
+            Dashboard.setPayment(response);
+            Dashboard.hideLoading();
+            if (!Dashboard.finished) {
+                Dashboard.enableActionButtons();
+            }
         }
     },
     paymentsUncompleted: function (response) {
-        Dashboard.showLoading();
-        Dashboard.setPayment(response);
-        Dashboard.disableActionButtons();
-        Dashboard.readPayments();
+        if (response) {
+            Dashboard.showLoading();
+            Dashboard.setPayment(response);
+            Dashboard.disableActionButtons();
+            Dashboard.readPayments();
+        }
     },
     readPaymentsError: function (response) {
         Dashboard.tryReadAgain(Dashboard.readPayments);
@@ -102,9 +106,11 @@ var Dashboard = {
         }
     },
     withdrawalUncompleted: function (response) {
-        Dashboard.showLoading();
-        Dashboard.disableActionButtons();
-        Dashboard.readWithdraw();
+        if (response) {
+            Dashboard.showLoading();
+            Dashboard.disableActionButtons();
+            Dashboard.readWithdraw();
+        }
     },
     readWithdrawalError: function (response) {
         Dashboard.tryReadAgain(Dashboard.readWithdraw);
