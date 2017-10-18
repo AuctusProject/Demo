@@ -21,7 +21,7 @@ namespace Web.Controllers
 {
     public class PensionFundController : HubBaseController
     {
-        private readonly ConcurrentDictionary<string, string> CONTRACT_TRANSACTING = new ConcurrentDictionary<string, string>();
+        private static readonly ConcurrentDictionary<string, string> CONTRACT_TRANSACTING = new ConcurrentDictionary<string, string>();
 
         public PensionFundController(ILoggerFactory loggerFactory, Cache cache, IServiceProvider serviceProvider, IConnectionManager connectionManager) : base(loggerFactory, cache, serviceProvider, connectionManager) { }
 
