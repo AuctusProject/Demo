@@ -98,7 +98,7 @@ Dashboard.charts = {
                 labels: ["Year", "Value"],
                 color: "#00bdff",
                 width: 400,
-                height: 200,
+                height: 300,
                 axisLabelFontSize: 10,
                 strokeWidth: 2,
                 axes: {
