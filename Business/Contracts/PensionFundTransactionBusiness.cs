@@ -9,8 +9,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Auctus.EthereumProxy;
 using Microsoft.Extensions.Logging;
-using Auctus.Model;
 using System.Threading;
+using Auctus.Model;
 
 namespace Auctus.Business.Contracts
 {
@@ -274,6 +274,7 @@ namespace Auctus.Business.Contracts
                     trans =>
                     {
                         trans.BlockNumber = events.Single(c => c.TransactionHash == trans.TransactionHash).BlockNumber;
+                        trans.TransactionStatus = TransactionStatus.Completed;
                         Update(trans);
                     });
             }
@@ -365,6 +366,8 @@ namespace Auctus.Business.Contracts
             else
                 throw new ArgumentException("Invalid function type for payment transaction.");
 
+            pensionFundTransaction.TransactionStatus = TransactionStatus.Pending;
+
             Update(pensionFundTransaction);
             return pensionFundTransaction;
         }
@@ -372,6 +375,9 @@ namespace Auctus.Business.Contracts
         private PensionFundTransaction CreateTransaction(DateTime date, FunctionType functionType, string responsableAddress, 
             string pensionFundContractHash, string transactionHash = null, int? blockNumber = null)
         {
+            var transactionStatus = blockNumber.HasValue ? 
+                TransactionStatus.Completed : (!String.IsNullOrWhiteSpace(transactionHash) ? TransactionStatus.Pending : TransactionStatus.NotSent);
+
             PensionFundTransaction pensionFundTransaction = new PensionFundTransaction()
             {
                 CreationDate = date,
@@ -379,7 +385,8 @@ namespace Auctus.Business.Contracts
                 PensionFundContractHash = pensionFundContractHash,
                 WalletAddress = responsableAddress,
                 BlockNumber = blockNumber,
-                TransactionHash = transactionHash
+                TransactionHash = transactionHash,
+                TransactionStatus = transactionStatus
             };
             Insert(pensionFundTransaction);
             return pensionFundTransaction;

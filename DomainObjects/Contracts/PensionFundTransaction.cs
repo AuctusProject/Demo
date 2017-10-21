@@ -25,7 +25,9 @@ namespace Auctus.DomainObjects.Contracts
         public int? GasUsed { get; set; }
         [DapperType(System.Data.DbType.UInt32)]
         public int? BlockNumber { get; set; }
-        
+        [DapperType(System.Data.DbType.Byte)]
+        public TransactionStatus TransactionStatus { get; set; }
+
         public FunctionType FunctionType { get { return FunctionType.Get(ContractFunctionId); } }
     }
 }

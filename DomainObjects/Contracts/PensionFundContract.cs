@@ -23,7 +23,11 @@ namespace Auctus.DomainObjects.Contracts
         public Int32 SmartContractId { get; set; }
         [DapperType(System.Data.DbType.AnsiStringFixedLength)]
         public String PensionFundOptionAddress { get; set; }
-        
+        [DapperType(System.Data.DbType.Double)]
+        public Double EmployeeCashback { get; set; }
+        [DapperType(System.Data.DbType.Double)]
+        public Double EmployerCashback { get; set; }
+
         public List<PensionFundReferenceContract> PensionFundReferenceContract { get; set; }
         public string SmartContractCode { get; set; }
     }

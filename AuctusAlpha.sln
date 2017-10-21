@@ -34,7 +34,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "7-Util", "Util\7-Util.cspro
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi", "WebApi\WebApi.csproj", "{8F33F31C-9A02-4E43-BA72-840E3241173A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "8-Model", "Model\8-Model.csproj", "{F809A797-2814-480C-815E-CB8385555EED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "8-Model", "Model\8-Model.csproj", "{F809A797-2814-480C-815E-CB8385555EED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
