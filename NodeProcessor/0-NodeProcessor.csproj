@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <RootNamespace>Auctus.NodeProcessor</RootNamespace>
+    <AssemblyName>Auctus.NodeProcessor</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Controller\1-Service.csproj" />
+    <ProjectReference Include="..\Model\8-Model.csproj" />
+    <ProjectReference Include="..\Util\7-Util.csproj" />
+  </ItemGroup>
+
+</Project>

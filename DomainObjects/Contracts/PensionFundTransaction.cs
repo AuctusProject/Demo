@@ -27,6 +27,8 @@ namespace Auctus.DomainObjects.Contracts
         public int? BlockNumber { get; set; }
         [DapperType(System.Data.DbType.Byte)]
         public TransactionStatus TransactionStatus { get; set; }
+        [DapperType(System.Data.DbType.UInt32)]
+        public int? NodeProcessorId { get; set; }
 
         public FunctionType FunctionType { get { return FunctionType.Get(ContractFunctionId); } }
     }
