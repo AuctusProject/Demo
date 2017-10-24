@@ -8,6 +8,7 @@ namespace Auctus.DomainObjects.Contracts
     {
         NotSent = 0,
         Pending = 1,
-        Completed = 2
+        Completed = 2,
+        AutoRecovery = 3
     }
 }

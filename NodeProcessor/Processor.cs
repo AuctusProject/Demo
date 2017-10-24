@@ -8,7 +8,7 @@ namespace Auctus.NodeProcessor
 {
     public class Processor
     {
-        private int NodeId;
+        private readonly int NodeId;
 
         public Processor(int nodeId)
         {

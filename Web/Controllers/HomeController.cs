@@ -20,6 +20,47 @@ namespace Web.Controllers
     {
         public HomeController(ILoggerFactory loggerFactory, Cache cache, IServiceProvider serviceProvider, IConnectionManager connectionManager) : base(loggerFactory, cache, serviceProvider, connectionManager) { }
 
+        public IActionResult Test()
+        {
+            try
+            {
+                var pensionFundContract = PensionFundsServices.CreateCompleteEntry(
+                    new Fund() { Name = "Test", BitcoinPercentage = 100, Fee = 1 }, 
+                    new Company() {
+                        Name ="Company", BonusFee = 100, MaxBonusFee = 10, VestingRules = 
+                        new List<VestingRules>()
+                        {
+                            new VestingRules(){ Period=0, Percentage=0},
+                            new VestingRules(){ Period=1, Percentage=20},
+                            new VestingRules(){ Period=2, Percentage=40},
+                            new VestingRules(){ Period=3, Percentage=60},
+                            new VestingRules(){ Period=4, Percentage=80},
+                            new VestingRules(){ Period=5, Percentage=100},
+                        }
+                    }, 
+                    new Employee() {
+                        Name = "Employee",
+                        ContributionPercentage = 5,
+                        Salary = 5000
+                    });
+
+                return Json(pensionFundContract);
+            }
+            catch (Exception e)
+            {
+                Response.StatusCode = 400;
+                if (e is ArgumentException)
+                    return Json(e.Message);
+                return Json("We’re sorry, we had an unexpected error! Please try again in a minute.");
+            }
+        }
+
+        public IActionResult GetAddress(String transactionHash)
+        {
+            var pensionFundContract = PensionFundsServices.CheckContractCreationTransaction(transactionHash);
+            return Json(pensionFundContract);
+        }
+
         public IActionResult Index()
         {
             return View();
