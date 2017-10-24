@@ -17,15 +17,43 @@ namespace Auctus.NodeProcessor
 
         internal void Start()
         {
+            var taskList = new List<Task>();
+            taskList.Add(Task.Run(() => PostNotSentTransactions()));
+            taskList.Add(Task.Run(() => ReadPendingTransactions()));
+            taskList.Add(Task.Run(() => ProcessAutoRecoveryTransactions()));
+            Task.WaitAny(taskList.ToArray());
+            //Log: some task ended and should be restarted
+        }
+
+        private void Process(Action<int> action)
+        {
             while (true)
             {
-                new ProcessorServices().PostNotSentTransactions(NodeId);
-                //TODO:update pendings
-                
-
-                //TODO: improve database polling
-                Task.Delay(2000);
+                try
+                {
+                    action(NodeId);
+                    Task.Delay(2000);
+                }
+                catch
+                {
+                    //Ignore exceptions
+                }
             }
+        }
+
+        public void PostNotSentTransactions()
+        {
+            Process(new ProcessorServices().PostNotSentTransactions);
+        }
+
+        public void ReadPendingTransactions()
+        {
+            Process(new ProcessorServices().ReadPendingTransactions);
+        }
+
+        public void ProcessAutoRecoveryTransactions()
+        {
+            Process(new ProcessorServices().ProcessAutoRecoveryTransactions);
         }
     }
 }

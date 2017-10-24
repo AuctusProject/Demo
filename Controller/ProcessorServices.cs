@@ -14,5 +14,15 @@ namespace Auctus.Service
         {
             new PensionFundTransactionBusiness(null, null).PostNotSentTransactions(nodeId);
         }
+
+        public void ReadPendingTransactions(int nodeId)
+        {
+            new PensionFundTransactionBusiness(null, null).ReadPendingTransactions(nodeId);
+        }
+
+        public void ProcessAutoRecoveryTransactions(int nodeId)
+        {
+            new PensionFundTransactionBusiness(null, null).ProcessAutoRecoveryTransactions(nodeId);
+        }
     }
 }
