@@ -64,11 +64,11 @@ namespace Auctus.Business.Contracts
                         Logger.LogError(string.Format("Transaction for creation contract {0} is lost.", pensionFundContract.TransactionHash));
                         List<PensionFundReferenceContract> referenceDistribution = PensionFundReferenceContractBusiness.List(pensionFundContract.TransactionHash);
                         if (!referenceDistribution.Any())
-                            throw new Exception("Reference contract cannot be found.");
+                            throw new InvalidOperationException("Reference contract cannot be found.");
 
                         PensionFund pensionFund = PensionFundBusiness.GetByTransaction(pensionFundContract.TransactionHash);
                         if (pensionFund == null)
-                            throw new Exception("Pension fund cannot be found.");
+                            throw new ArgumentException("Pension fund cannot be found.");
 
                         pensionFund.Option.Company.BonusDistribution = BonusDistributionBusiness.List(pensionFund.Option.Company.Address);
                         if (!pensionFund.Option.Company.BonusDistribution.Any())
@@ -103,9 +103,9 @@ namespace Auctus.Business.Contracts
             return pensionFundContract;
         }
 
-        internal void UpdateWithdrawalCashbackWithSmartContractValues(string pensionFundContractHash)
+        internal void UpdateWithdrawalCashbackWithSmartContractValues(string pensionFundContractAddress)
         {
-            PensionFund pensionFund = PensionFundBusiness.GetByContract(pensionFundContractHash);
+            PensionFund pensionFund = PensionFundBusiness.GetByContract(pensionFundContractAddress);
             SmartContract smartContract = SmartContractBusiness.GetDefaultDemonstrationPensionFund();
             WithdrawalInfo withdrawalInfo = EthereumManager.GetWithdrawalInfo(pensionFund.Option.Company.Employee.Address, pensionFund.Option.PensionFundContract.Address, smartContract.ABI);
             pensionFund.Option.PensionFundContract.EmployeeCashback = withdrawalInfo.EmployeeSzaboCashback;

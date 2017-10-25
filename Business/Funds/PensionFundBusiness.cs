@@ -85,7 +85,7 @@ namespace Auctus.Business.Funds
             progress.TransactionHistory = new List<TransactionHistory>();
             List<Payment> alreadyIdentified = new List<Payment>();
             Payment last = null;
-            if (completed.Count() > 0)
+            if (completed.Any())
             {
                 last = completed.Last();
                 string employeeTransaction = null, companyTransaction = null;
@@ -119,13 +119,13 @@ namespace Auctus.Business.Funds
                     {
                         investedToken += payment.TokenAmount.Value;
                         invested += payment.SzaboInvested.Value;
-                        employeeBlockNumber = payment.BlockNumber.Value;
+                        employeeBlockNumber = payment.BlockNumber;
                         employeeTransaction = payment.TransactionHash;
                         employeeToken = payment.TokenAmount.Value;
                     }
                     else
                     {
-                        companyBlockNumber = payment.BlockNumber.Value;
+                        companyBlockNumber = payment.BlockNumber;
                         companyTransaction = payment.TransactionHash;
                         companyToken = payment.TokenAmount.Value;
                     }
@@ -136,13 +136,13 @@ namespace Auctus.Business.Funds
                     pensionFund.Option.Company.Employee.Address, pensionFund.Option.Company.Address, employeeTransaction, companyTransaction,
                     employeeBlockNumber, companyBlockNumber, employeeToken, companyToken);
                 IEnumerable<DomainObjects.Accounts.BonusDistribution> bonusDistribution = pensionFund.Option.Company.BonusDistribution.Where(c => c.Period * 12 <= last.Period.Value);
-                progress.CurrentVestingBonus = bonusDistribution.Count() > 0 ? bonusDistribution.Max(c => c.ReleasedBonus) : 0;
+                progress.CurrentVestingBonus = bonusDistribution.Any() ? bonusDistribution.Max(c => c.ReleasedBonus) : 0;
             }
             progress.LastPeriod = last != null ? last.Period.Value : 0;
             DateTime lastDate = last != null ? last.ReferenceDate.Value : pensionFund.Option.PensionFundContract.CreationDate;
             if (progress.LastPeriod > 0)
             {
-                ProgressValue progressValue = progress.Values.Where(c => c.Period == progress.LastPeriod).Single();
+                ProgressValue progressValue = progress.Values.Single(c => c.Period == progress.LastPeriod);
                 progress.TotalToken = progressValue.Token;
                 progress.TotalVested = progressValue.Vested;
                 progress.TotalPensinonFundFee = progressValue.PensinonFundFee;
@@ -151,7 +151,7 @@ namespace Auctus.Business.Funds
             }
 
             IEnumerable<DomainObjects.Accounts.BonusDistribution> bonusAfterPeriod = pensionFund.Option.Company.BonusDistribution.Where(c => c.Period * 12 > progress.LastPeriod);
-            if (bonusAfterPeriod.Count() > 0)
+            if (bonusAfterPeriod.Any())
             {
                 progress.NextVestingBonus = bonusAfterPeriod.Min(c => c.ReleasedBonus);
                 progress.NextVestingDate = GetFormattedDate(lastDate.AddMonths(bonusAfterPeriod.Min(c => c.Period) * 12 - progress.LastPeriod).Date);
@@ -175,7 +175,7 @@ namespace Auctus.Business.Funds
             }
 
             progress.TransactionHistory = progress.TransactionHistory.OrderByDescending(transactionHistory => transactionHistory.Status)
-                .ThenByDescending(transactionHistory => transactionHistory.PaymentDate)
+                .ThenByDescending(transactionHistory => String.IsNullOrEmpty(transactionHistory.PaymentDate) ? "Z" : transactionHistory.PaymentDate)
                 .ThenByDescending(transactionHistory => transactionHistory.CreationDate).ToList();
             return progress;
         }
@@ -230,7 +230,7 @@ namespace Auctus.Business.Funds
             double price = payment.TokenAmount.Value / (payment.SzaboInvested.Value + payment.LatePenalty.Value);
             IEnumerable<DomainObjects.Accounts.BonusDistribution> bonusDistribution = pensionFund.Option.Company.BonusDistribution.Where(c => c.Period * 12 <= payment.Period.Value);
             progressValue.Invested = invested;
-            progressValue.Vested = (employeeToken + (bonusDistribution.Count() > 0 ? (bonusDistribution.Max(c => c.ReleasedBonus) / 100 * (totalToken - employeeToken)) : 0)) / price;
+            progressValue.Vested = (employeeToken + (bonusDistribution.Any() ? (bonusDistribution.Max(c => c.ReleasedBonus) / 100 * (totalToken - employeeToken)) : 0)) / price;
             progressValue.Total = totalToken / price;
             progressValue.Token = employeeToken;
             progressValue.PensinonFundFee = pensionFundFee;
@@ -270,7 +270,7 @@ namespace Auctus.Business.Funds
         private Payment FindPaymentThatMatchWith(IEnumerable<Payment> payments, List<Payment> alreadyIdentified, DateTime createdDate, string baseAddress, string searchAddress)
         {
             IEnumerable<Payment> possibilities = payments.Where(c => c.Responsable == searchAddress && !c.BlockNumber.HasValue && !alreadyIdentified.Contains(c));
-            Payment possiblePayment = possibilities.Where(c => c.CreatedDate == createdDate).FirstOrDefault();
+            Payment possiblePayment = possibilities.FirstOrDefault(c => c.CreatedDate == createdDate);
             if (possiblePayment == null)
                 possiblePayment = possibilities.Where(c => !payments.Any(l => l.Responsable == baseAddress && c.CreatedDate == l.CreatedDate)).OrderBy(c => c.CreatedDate).FirstOrDefault();
 
@@ -281,7 +281,7 @@ namespace Auctus.Business.Funds
 
         internal PensionFund GetByTransaction(string pensionFundContractHash)
         {
-            return GetByTransaction(pensionFundContractHash);
+            return Data.GetByTransaction(pensionFundContractHash);
         }
 
         internal PensionFund GetByContract(string pensionFundContractAddress)

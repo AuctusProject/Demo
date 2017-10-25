@@ -153,10 +153,9 @@ namespace Web.Controllers
             return CONTRACT_TRANSACTING.TryAdd(contractAddress, null);
         }
 
-        private bool ReleaseTransactionWith(string contractAddress)
+        private void ReleaseTransactionWith(string contractAddress)
         {
-            string nullValue;
-            return CONTRACT_TRANSACTING.TryRemove(contractAddress, out nullValue);
+            CONTRACT_TRANSACTING.TryRemove(contractAddress, out string nullValue);
         }
     }
 }

@@ -36,14 +36,14 @@ namespace Auctus.Business.Contracts
             Data.Insert(withdrawalEvent);
         }
 
-        private List<WithdrawalEvent> List(string contractAddress)
+        private List<WithdrawalEvent> List(string contractHash)
         {
-            return Data.List(contractAddress);
+            return Data.List(contractHash);
         }
 
-        internal WithdrawalEvent Get(string contractAddress)
+        internal WithdrawalEvent Get(string contractHash)
         {
-            return List(contractAddress).FirstOrDefault();
+            return List(contractHash).FirstOrDefault();
         }
     }
 }

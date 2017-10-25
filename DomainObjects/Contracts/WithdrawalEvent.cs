@@ -8,7 +8,7 @@ namespace Auctus.DomainObjects.Contracts
 {
     public class WithdrawalEvent
     {
-        [DapperKey(true)]
+        [DapperKey(false)]
         [DapperType(System.Data.DbType.UInt32)]
         public int PensionFundTransactionId { get; set; }
         [DapperType(System.Data.DbType.UInt32)]

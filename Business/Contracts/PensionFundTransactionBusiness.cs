@@ -11,6 +11,7 @@ using Auctus.EthereumProxy;
 using Microsoft.Extensions.Logging;
 using System.Threading;
 using Auctus.Model;
+using Microsoft.Extensions.Configuration;
 
 namespace Auctus.Business.Contracts
 {
@@ -19,8 +20,32 @@ namespace Auctus.Business.Contracts
         public const double BLOCKCHAIN_TRANSACTION_TOLERANCE = 3;
         public const double CREATION_TRANSACTION_TOLERANCE = 2.5;
         public const double CREATION_TOLERANCE = 0.5;
+        private readonly IConfigurationRoot configuration;
+        private int MaxParallelism
+        {
+            get
+            {
+                if (configuration != null && configuration["MaxParallelism"] != null)
+                    return Convert.ToInt32(configuration["MaxParallelism"]);
+                return 1;
+            }
+        }
 
+        private int NodeId
+        {
+            get
+            {
+                if (configuration != null && configuration["NodeId"] != null)
+                    return Convert.ToInt32(configuration["NodeId"]);
+                return 0;
+            }
+        }
         public PensionFundTransactionBusiness(ILoggerFactory loggerFactory, Cache cache) : base(loggerFactory, cache) { }
+
+        public PensionFundTransactionBusiness(ILoggerFactory loggerFactory, Cache cache, IConfigurationRoot configuration) : this(loggerFactory, cache)
+        {
+            this.configuration = configuration;
+        }
 
         public Withdrawal ReadWithdrawal(string contractAddress)
         {
@@ -34,7 +59,7 @@ namespace Auctus.Business.Contracts
             if (transaction == null)
                 return null;
 
-            var withdrawalEvent = WithdrawalEventBusiness.Get(contractAddress);
+            var withdrawalEvent = WithdrawalEventBusiness.Get(pensionFund.Option.PensionFundContract.TransactionHash);
             Withdrawal withdrawal;
             if (withdrawalEvent != null)
             {
@@ -164,7 +189,8 @@ namespace Auctus.Business.Contracts
                 WalletAddress = responsableAddress,
                 BlockNumber = blockNumber,
                 TransactionHash = transactionHash,
-                TransactionStatus = transactionStatus
+                TransactionStatus = transactionStatus,
+                NodeProcessorId = 0
             };
             Insert(pensionFundTransaction);
             return pensionFundTransaction;
@@ -187,7 +213,7 @@ namespace Auctus.Business.Contracts
             else if (cachedPayment != null && cachedPayment.Count == transactions.Count())
                 return PensionFundBusiness.GetProgress(pensionFund, cachedPayment);
 
-            List<BuyEvent> buyEvents = BuyEventBusiness.List(contractAddress);
+            List<BuyEvent> buyEvents = BuyEventBusiness.List(pensionFund.Option.PensionFundContract.TransactionHash);
 
             List<Payment> completedPayments = new List<Payment>();
             List<Payment> payments = new List<Payment>();
@@ -222,45 +248,49 @@ namespace Auctus.Business.Contracts
             return PensionFundBusiness.GetProgress(pensionFund, payments);
         }
 
-        public void PostNotSentTransactions(int nodeId)
+        private Dictionary<string, List<PensionFundTransaction>> ListTransactionsGroupByContractAddress(TransactionStatus transactionStatus)
         {
-            var pendingTransactions = Data.ListForProcessing(TransactionStatus.NotSent, nodeId);
-            var transactionsByContract = pendingTransactions.GroupBy(p => p.PensionFundContractHash).
+            var pendingTransactions = Data.ListForProcessing(transactionStatus, NodeId);
+            var transactionsByContract = pendingTransactions.GroupBy(p => p.PensionFundContractAddress).
                 ToDictionary(p => p.Key, p => p.ToList());
+            return transactionsByContract;
+        }
+
+        public void PostNotSentTransactions()
+        {
+            Dictionary<string, List<PensionFundTransaction>> transactionsByContract = ListTransactionsGroupByContractAddress(TransactionStatus.NotSent);
 
             foreach (var pensionFundContractHash in transactionsByContract.Keys)
             {
                 PensionFund pensionFund = PensionFundBusiness.GetByContract(pensionFundContractHash);
                 SmartContract smartContract = SmartContractBusiness.GetDefaultDemonstrationPensionFund();
 
-                var contractPendingTransactions = transactionsByContract[pensionFundContractHash];
+                var contractNotSentTransactions = transactionsByContract[pensionFundContractHash];
 
-                foreach (var contractPendingTransaction in contractPendingTransactions)
+                Parallel.ForEach(contractNotSentTransactions, new ParallelOptions() { MaxDegreeOfParallelism = MaxParallelism}, (contractNotSentTransaction) =>
                 {
-                    PensionFundTransaction newTransaction = CreateTransaction(DateTime.UtcNow, contractPendingTransaction.FunctionType, contractPendingTransaction.WalletAddress, pensionFund.Option.PensionFundContract.TransactionHash);
-                    GenerateContractTransaction(newTransaction, pensionFund.Option.Company.Employee.Address, pensionFund.Option.PensionFundContract.Address,
-                        smartContract.ABI, smartContract.ContractFunctions.Single(c => c.FunctionType == newTransaction.FunctionType).GasLimit, 0);
-                }
+                    GenerateContractTransaction(contractNotSentTransaction, pensionFund.Option.Company.Employee.Address, pensionFund.Option.PensionFundContract.Address,
+                        smartContract.ABI, smartContract.ContractFunctions.Single(c => c.FunctionType == contractNotSentTransaction.FunctionType).GasLimit, 0);
+                });
             }
         }
 
-        public void ReadPendingTransactions(int nodeId)
+        public void ReadPendingTransactions()
         {
-            var pendingTransactions = Data.ListForProcessing(TransactionStatus.Pending, nodeId);
-            var transactionsByContract = pendingTransactions.GroupBy(p => p.PensionFundContractHash).
-                ToDictionary(p => p.Key, p => p.ToList());
+            Dictionary<string, List<PensionFundTransaction>> transactionsByContract = ListTransactionsGroupByContractAddress(TransactionStatus.Pending);
             PoolInfo poolInfo = null;
-            foreach (var pensionFundContractHash in transactionsByContract.Keys)
+            foreach (var pensionFundContractAddress in transactionsByContract.Keys)
             {
-                List<BuyInfo> buyEvents = EthereumManager.ReadBuyFromDefaultPensionFund(pensionFundContractHash);
-                var contractPendingTransactions = transactionsByContract[pensionFundContractHash];
-                foreach (var contractPendingTransaction in contractPendingTransactions)
+                List<BuyInfo> buyEvents = EthereumManager.ReadBuyFromDefaultPensionFund(pensionFundContractAddress);
+                var contractPendingTransactions = transactionsByContract[pensionFundContractAddress];
+                Parallel.ForEach(contractPendingTransactions, new ParallelOptions() { MaxDegreeOfParallelism = MaxParallelism }, (contractPendingTransaction) =>
                 {
-                    BaseEventInfo baseInfo = GetEventInfo(pensionFundContractHash, buyEvents, contractPendingTransaction);
+                    BaseEventInfo baseInfo = GetEventInfo(pensionFundContractAddress, buyEvents, contractPendingTransaction);
 
                     if (baseInfo != null)
                     {
                         SaveEventInfo(contractPendingTransaction, baseInfo);
+                        contractPendingTransaction.BlockNumber = baseInfo.BlockNumber;
                         contractPendingTransaction.TransactionStatus = TransactionStatus.Completed;
                         Update(contractPendingTransaction);
                     }
@@ -268,7 +298,7 @@ namespace Auctus.Business.Contracts
                     {
                         poolInfo = SendToAutoRecoveryIfTransactionIsLost(poolInfo, contractPendingTransaction);
                     }
-                }
+                });
 
                 SaveWithdrawalValuesIfAllTransactionsCompleted(contractPendingTransactions);
             }
@@ -278,7 +308,7 @@ namespace Auctus.Business.Contracts
         {
             if(contractPendingTransactions.All(contract => contract.TransactionStatus == TransactionStatus.Completed))
             {
-                PensionFundContractBusiness.UpdateWithdrawalCashbackWithSmartContractValues(contractPendingTransactions.First().PensionFundContractHash);
+                PensionFundContractBusiness.UpdateWithdrawalCashbackWithSmartContractValues(contractPendingTransactions.First().PensionFundContractAddress);
             }
         }
 
@@ -311,7 +341,7 @@ namespace Auctus.Business.Contracts
             }
         }
 
-        private static BaseEventInfo GetEventInfo(string pensionFundContractHash, List<BuyInfo> buyEvents, PensionFundTransaction contractPendingTransaction)
+        private static BaseEventInfo GetEventInfo(string pensionFundContractHash, IEnumerable<BuyInfo> buyEvents, PensionFundTransaction contractPendingTransaction)
         {
             BaseEventInfo baseInfo;
             if (contractPendingTransaction.FunctionType == FunctionType.CompleteWithdrawal)
@@ -326,24 +356,21 @@ namespace Auctus.Business.Contracts
             return baseInfo;
         }
 
-        public void ProcessAutoRecoveryTransactions(int nodeId)
+        public void ProcessAutoRecoveryTransactions()
         {
-            var pendingTransactions = Data.ListForProcessing(TransactionStatus.AutoRecovery, nodeId);
-            
-            var transactionsByContract = pendingTransactions.GroupBy(p => p.PensionFundContractHash).
-                ToDictionary(p => p.Key, p => p.ToList());
+            Dictionary<string, List<PensionFundTransaction>> transactionsByContract = ListTransactionsGroupByContractAddress(TransactionStatus.AutoRecovery);
 
-            foreach (var pensionFundContractHash in transactionsByContract.Keys)
+            foreach (var pensionFundContractAddress in transactionsByContract.Keys)
             {
-                PensionFund pensionFund = PensionFundBusiness.GetByContract(pensionFundContractHash);
-                var contractPendingTransactions = transactionsByContract[pensionFundContractHash];
+                PensionFund pensionFund = PensionFundBusiness.GetByContract(pensionFundContractAddress);
+                var contractPendingTransactions = transactionsByContract[pensionFundContractAddress];
 
-                foreach (PensionFundTransaction lost in contractPendingTransactions)
+                Parallel.ForEach(contractPendingTransactions, new ParallelOptions() { MaxDegreeOfParallelism = MaxParallelism }, (lostTransaction) =>
                 {
-                    Logger.LogError(string.Format("Transaction {0} for contract {1} is lost.", lost.TransactionHash, pensionFund.Option.PensionFundContract.Address));
-                    Delete(lost);
-                    CreateTransaction(DateTime.UtcNow, lost.FunctionType, lost.WalletAddress, pensionFund.Option.PensionFundContract.TransactionHash);
-                }
+                    Logger.LogError(string.Format("Transaction {0} for contract {1} is lost.", lostTransaction.TransactionHash, pensionFund.Option.PensionFundContract.Address));
+                    Delete(lostTransaction);
+                    CreateTransaction(DateTime.UtcNow, lostTransaction.FunctionType, lostTransaction.WalletAddress, pensionFund.Option.PensionFundContract.TransactionHash);
+                });
             }
         }
     }

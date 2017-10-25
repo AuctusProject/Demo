@@ -11,40 +11,71 @@ namespace Auctus.NodeProcessor
 {
     public class Processor
     {
-        private readonly int NodeId;
         private readonly Cache cache;
         private readonly ILoggerFactory loggerFactory;
+        private readonly IConfigurationRoot configuration;
+        protected readonly ILogger logger;
+        private int ExecutionMilisecondsInterval {
+            get {
+                if(configuration!=null && configuration["ExecutionMilisecondsInterval"] !=null)
+                    return Convert.ToInt32(configuration["ExecutionMilisecondsInterval"]);
+                return 2000;
+            }
+        }
 
         public Processor(ILoggerFactory loggerFactory, IConfigurationRoot configuration, Cache cache)
         {
-            NodeId = Convert.ToInt32(configuration["NodeId"]);
             this.cache = cache;
             this.loggerFactory = loggerFactory;
+            this.configuration = configuration;
+            this.logger = loggerFactory.CreateLogger(GetType().Namespace);
         }
 
         internal void Start()
         {
-            var taskList = new List<Task>();
-            taskList.Add(Task.Run(() => PostNotSentTransactions()));
-            taskList.Add(Task.Run(() => ReadPendingTransactions()));
-            taskList.Add(Task.Run(() => ProcessAutoRecoveryTransactions()));
+            var taskList = new List<Task>
+            {
+                Task.Run(() => PostNotSentTransactions()),
+                Task.Run(() => ReadPendingTransactions()),
+                Task.Run(() => ProcessAutoRecoveryTransactions())
+            };
             Task.WaitAny(taskList.ToArray());
             //Log: some task ended and should be restarted
         }
 
-        private void Process(Action<int, Cache, ILoggerFactory> action)
+        private void Process(Action<Cache, ILoggerFactory, IConfigurationRoot> action)
         {
+            int consecutiveExceptions = 0;
             while (true)
             {
                 try
                 {
-                    action(NodeId, cache, loggerFactory);
-                    Task.Delay(2000);
+                    action(cache, loggerFactory, configuration);
+                    Task.Delay(ExecutionMilisecondsInterval);
+                    consecutiveExceptions = 0;
                 }
-                catch
+                catch (Exception e)
                 {
-                    //Ignore exceptions
+                    consecutiveExceptions++;
+                    SafeLog(e);
+                    if(consecutiveExceptions > 5)
+                    {
+                        //Force application exception for restart
+                        throw;
+                    }
                 }
+            }
+        }
+
+        private void SafeLog(Exception e)
+        {
+            try
+            {
+                logger.LogError(e.ToString());
+            }
+            catch
+            {
+                //ignore
             }
         }
 

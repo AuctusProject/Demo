@@ -17,10 +17,10 @@ namespace Auctus.DataAccess.Contracts
                                                 PensionFundTransaction pft on pft.Id = be.PensionFundTransactionId
                                                 where pft.PensionFundContractHash = @PensionFundContractHash";
 
-        public List<BuyEvent> List(string contractAddress)
+        public List<BuyEvent> List(string contractHash)
         {
             DynamicParameters param = new DynamicParameters();
-            param.Add("PensionFundContractHash", contractAddress, System.Data.DbType.AnsiStringFixedLength);
+            param.Add("PensionFundContractHash", contractHash, System.Data.DbType.AnsiStringFixedLength);
             return Query<BuyEvent>(SQL_LIST_BY_CONTRACT, param).ToList();
         }
     }

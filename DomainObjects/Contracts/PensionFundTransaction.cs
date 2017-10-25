@@ -29,6 +29,11 @@ namespace Auctus.DomainObjects.Contracts
         public TransactionStatus TransactionStatus { get; set; }
         [DapperType(System.Data.DbType.UInt32)]
         public int? NodeProcessorId { get; set; }
+        
+        public String PensionFundContractAddress { get; set; }
+
+        public BuyEvent BuyEvent { get; set; }
+        public WithdrawalEvent WithdrawalEvent { get; set; }
 
         public FunctionType FunctionType { get { return FunctionType.Get(ContractFunctionId); } }
     }

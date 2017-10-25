@@ -5,24 +5,25 @@ using System.Collections.Generic;
 using System.Text;
 using Auctus.Util;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 
 namespace Auctus.Service
 {
     public class ProcessorServices 
     {
-        public void PostNotSentTransactions(int nodeId, Cache cache, ILoggerFactory logger)
+        public void PostNotSentTransactions(Cache cache, ILoggerFactory logger, IConfigurationRoot configuration)
         {
-            new PensionFundTransactionBusiness(logger, cache).PostNotSentTransactions(nodeId);
+            new PensionFundTransactionBusiness(logger, cache, configuration).PostNotSentTransactions();
         }
 
-        public void ReadPendingTransactions(int nodeId, Cache cache, ILoggerFactory logger)
+        public void ReadPendingTransactions(Cache cache, ILoggerFactory logger, IConfigurationRoot configuration)
         {
-            new PensionFundTransactionBusiness(logger, cache).ReadPendingTransactions(nodeId);
+            new PensionFundTransactionBusiness(logger, cache, configuration).ReadPendingTransactions();
         }
 
-        public void ProcessAutoRecoveryTransactions(int nodeId, Cache cache, ILoggerFactory logger)
+        public void ProcessAutoRecoveryTransactions(Cache cache, ILoggerFactory logger, IConfigurationRoot configuration)
         {
-            new PensionFundTransactionBusiness(logger, cache).ProcessAutoRecoveryTransactions(nodeId);
+            new PensionFundTransactionBusiness(logger, cache, configuration).ProcessAutoRecoveryTransactions();
         }
     }
 }

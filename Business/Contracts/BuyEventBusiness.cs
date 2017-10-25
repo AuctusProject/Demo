@@ -36,9 +36,9 @@ namespace Auctus.Business.Contracts
             Insert(buyEvent);
         }
 
-        internal List<BuyEvent> List(string contractAddress)
+        internal List<BuyEvent> List(string contractHash)
         {
-            return Data.List(contractAddress);
+            return Data.List(contractHash);
         }
     }
 }
