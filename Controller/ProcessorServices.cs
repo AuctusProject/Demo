@@ -10,9 +10,9 @@ namespace Auctus.Service
 {
     public class ProcessorServices 
     {
-        public void PostNotSentTransactions(int nodeId)
+        public void PostNotSentTransactions(int nodeId, Cache cache, ILoggerFactory logger)
         {
-            new PensionFundTransactionBusiness(null, null).PostNotSentTransactions(nodeId);
+            new PensionFundTransactionBusiness(logger, cache).PostNotSentTransactions(nodeId);
         }
     }
 }
