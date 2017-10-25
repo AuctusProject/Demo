@@ -1,5 +1,5 @@
 Util/NotShared/
-Web/nlog.config
+**/nlog.config
 
 *.suo
 *.user

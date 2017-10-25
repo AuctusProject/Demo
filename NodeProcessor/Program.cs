@@ -1,40 +1,37 @@
 ﻿using System;
 using System.Threading.Tasks;
-
 using System.IO;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Auctus.Util;
+using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Auctus.NodeProcessor
 {
     class Program
     {
-        private static IConfigurationRoot Configuration { get; set; }
-
         static void Main(string[] args)
         {
-            LoadConfigurations();
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddMemoryCache();
+            serviceCollection.AddSingleton<Cache>();
+            serviceCollection.AddSingleton<ILoggerFactory, LoggerFactory>();
+            serviceCollection.AddSingleton(provider => new ConfigurationBuilder()
+                                                        .SetBasePath(Directory.GetCurrentDirectory())
+                                                        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                                                        .Build());
 
-            var processor = new Processor(Convert.ToInt32(Configuration["NodeId"]));
-            try
-            {
-                processor.Start();
-            }
+            serviceCollection.AddTransient<Processor>();
 
-            catch(Exception ex)
-            {
-                //LOG Exception
-            }
+            var serviceProvider = serviceCollection.BuildServiceProvider();
             
-        }
+            var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
+            loggerFactory.AddNLog(new NLogProviderOptions { CaptureMessageTemplates = true, CaptureMessageProperties = true });
+            loggerFactory.ConfigureNLog(Directory.GetCurrentDirectory() + "\\nlog.config");
 
-        private static void LoadConfigurations()
-        {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json");
-
-            Configuration = builder.Build();
-
+            serviceProvider.GetRequiredService<Processor>().Start();
         }
     }
 }

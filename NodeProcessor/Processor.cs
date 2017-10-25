@@ -1,4 +1,7 @@
 ﻿using Auctus.Service;
+using Auctus.Util;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,10 +12,14 @@ namespace Auctus.NodeProcessor
     public class Processor
     {
         private readonly int NodeId;
+        private readonly Cache cache;
+        private readonly ILoggerFactory loggerFactory;
 
-        public Processor(int nodeId)
+        public Processor(ILoggerFactory loggerFactory, IConfigurationRoot configuration, Cache cache)
         {
-            NodeId = nodeId;
+            NodeId = Convert.ToInt32(configuration["NodeId"]);
+            this.cache = cache;
+            this.loggerFactory = loggerFactory;
         }
 
         internal void Start()
@@ -25,13 +32,13 @@ namespace Auctus.NodeProcessor
             //Log: some task ended and should be restarted
         }
 
-        private void Process(Action<int> action)
+        private void Process(Action<int, Cache, ILoggerFactory> action)
         {
             while (true)
             {
                 try
                 {
-                    action(NodeId);
+                    action(NodeId, cache, loggerFactory);
                     Task.Delay(2000);
                 }
                 catch
