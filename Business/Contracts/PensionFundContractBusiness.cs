@@ -102,5 +102,15 @@ namespace Auctus.Business.Contracts
             Update(pensionFundContract);
             return pensionFundContract;
         }
+
+        internal void UpdateWithdrawalCashbackWithSmartContractValues(string pensionFundContractHash)
+        {
+            PensionFund pensionFund = PensionFundBusiness.GetByContract(pensionFundContractHash);
+            SmartContract smartContract = SmartContractBusiness.GetDefaultDemonstrationPensionFund();
+            WithdrawalInfo withdrawalInfo = EthereumManager.GetWithdrawalInfo(pensionFund.Option.Company.Employee.Address, pensionFund.Option.PensionFundContract.Address, smartContract.ABI);
+            pensionFund.Option.PensionFundContract.EmployeeCashback = withdrawalInfo.EmployeeSzaboCashback;
+            pensionFund.Option.PensionFundContract.EmployerCashback = withdrawalInfo.EmployerSzaboCashback;
+            Update(pensionFund.Option.PensionFundContract);
+        }
     }
 }

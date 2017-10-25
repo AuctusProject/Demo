@@ -30,6 +30,8 @@ namespace Auctus.Business
         private CompanyBusiness _companyBusiness;
         private BonusDistributionBusiness _bonusDistributionBusiness;
         private ReferenceContractBusiness _referenceContractBusiness;
+        private WithdrawalEventBusiness _withdrawalEventBusiness;
+        private BuyEventBusiness _buyEventBusiness;
 
         protected BaseBusiness(ILoggerFactory loggerFactory, Cache cache)
         {
@@ -175,6 +177,26 @@ namespace Auctus.Business
                 if (_referenceContractBusiness == null)
                     _referenceContractBusiness = new ReferenceContractBusiness(LoggerFactory, MemoryCache);
                 return _referenceContractBusiness;
+            }
+        }
+
+        protected WithdrawalEventBusiness WithdrawalEventBusiness
+        {
+            get
+            {
+                if (_withdrawalEventBusiness == null)
+                    _withdrawalEventBusiness = new WithdrawalEventBusiness(LoggerFactory, MemoryCache);
+                return _withdrawalEventBusiness;
+            }
+        }
+
+        protected BuyEventBusiness BuyEventBusiness
+        {
+            get
+            {
+                if (_buyEventBusiness == null)
+                    _buyEventBusiness = new BuyEventBusiness(LoggerFactory, MemoryCache);
+                return _buyEventBusiness;
             }
         }
     }

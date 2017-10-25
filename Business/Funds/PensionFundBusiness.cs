@@ -23,16 +23,10 @@ namespace Auctus.Business.Funds
         public Withdrawal GetWithdrawalInfo(string pensionFundContractAddress)
         {
             PensionFund pensionFund = GetByContract(pensionFundContractAddress);
-            SmartContract smartContract = SmartContractBusiness.GetDefaultDemonstrationPensionFund();
-            WithdrawalInfo withdrawalInfo = EthereumManager.GetWithdrawalInfo(pensionFund.Option.Company.Employee.Address, pensionFundContractAddress, smartContract.ABI);
             return new Withdrawal()
             {
-                EmployeeAbsoluteBonus = withdrawalInfo.EmployeeAbsoluteBonus,
-                EmployeeBonus = withdrawalInfo.EmployeeBonus,
-                EmployeeSzaboCashback = withdrawalInfo.EmployeeSzaboCashback,
-                EmployeeTokenCashback = withdrawalInfo.EmployeeTokenCashback,
-                EmployerSzaboCashback = withdrawalInfo.EmployerSzaboCashback,
-                EmployerTokenCashback = withdrawalInfo.EmployerTokenCashback
+                EmployeeSzaboCashback = pensionFund.Option.PensionFundContract.EmployeeCashback,
+                EmployerSzaboCashback = pensionFund.Option.PensionFundContract.EmployerCashback
             };
         }
 

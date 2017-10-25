@@ -34,14 +34,37 @@ namespace Auctus.Business.Contracts
             if (transaction == null)
                 return null;
 
-            WithdrawalInfo withdrawalInfo = new WithdrawalInfo();// Get withdrawl info
-            
-            return new Withdrawal()
+            var withdrawalEvent = WithdrawalEventBusiness.Get(contractAddress);
+            Withdrawal withdrawal;
+            if (withdrawalEvent != null)
             {
-                TransactionHash = transaction.TransactionHash,
-                CreatedDate = transaction.CreationDate,
-                Responsable = transaction.WalletAddress
-            };
+                withdrawal = new Withdrawal()
+                {
+                    TransactionHash = transaction.TransactionHash,
+                    CreatedDate = transaction.CreationDate,
+                    Responsable = transaction.WalletAddress,
+                    BlockNumber = transaction.BlockNumber,
+                    Period = withdrawalEvent.Period,
+                    EmployeeAbsoluteBonus = withdrawalEvent.EmployeeAbsoluteBonus,
+                    EmployeeBonus = withdrawalEvent.EmployeeBonus,
+                    EmployeeSzaboCashback = withdrawalEvent.EmployeeSzaboCashback,
+                    EmployeeTokenCashback = withdrawalEvent.EmployeeTokenCashback,
+                    EmployerSzaboCashback = withdrawalEvent.EmployerSzaboCashback,
+                    EmployerTokenCashback = withdrawalEvent.EmployerTokenCashback,
+                    ReferenceDate = pensionFund.Option.PensionFundContract.CreationDate.AddMonths(withdrawalEvent.Period).Date
+                };
+                MemoryCache.Set<Withdrawal>(cacheKey, withdrawal);
+            }
+            else
+            {
+                withdrawal = new Withdrawal()
+                {
+                    TransactionHash = transaction.TransactionHash,
+                    CreatedDate = transaction.CreationDate,
+                    Responsable = transaction.WalletAddress,
+                };
+            }
+            return withdrawal;
         }
 
         public Progress GeneratePayment(string contractAddress, int monthsAmount)
@@ -164,30 +187,30 @@ namespace Auctus.Business.Contracts
             else if (cachedPayment != null && cachedPayment.Count == transactions.Count())
                 return PensionFundBusiness.GetProgress(pensionFund, cachedPayment);
 
-            List<BuyInfo> buyEvents = new List<BuyInfo>();// EthereumManager.ReadBuyFromDefaultPensionFund(contractAddress);
+            List<BuyEvent> buyEvents = BuyEventBusiness.List(contractAddress);
 
             List<Payment> completedPayments = new List<Payment>();
             List<Payment> payments = new List<Payment>();
             foreach (PensionFundTransaction trans in transactions)
             {
-                BuyInfo buyInfo = buyEvents.SingleOrDefault(c => c.TransactionHash == trans.TransactionHash);
+                var buyEvent = buyEvents.SingleOrDefault(c => c.PensionFundTransactionId == trans.Id);
                 var payment = new Payment()
                 {
                     TransactionHash = trans.TransactionHash,
                     CreatedDate = trans.CreationDate,
                     Responsable = trans.WalletAddress
                 };
-                if (buyInfo != null)
+                if (buyEvent != null)
                 {
-                    payment.BlockNumber = buyInfo.BlockNumber;
-                    payment.Period = buyInfo.Period;
-                    payment.AuctusFee = buyInfo.AuctusFee;
-                    payment.LatePenalty = buyInfo.LatePenalty;
-                    payment.PensionFundFee = buyInfo.PensionFundFee;
-                    payment.SzaboInvested = buyInfo.SzaboInvested;
-                    payment.TokenAmount = buyInfo.TokenAmount;
-                    payment.DaysOverdue = buyInfo.DaysOverdue;
-                    payment.ReferenceDate = pensionFund.Option.PensionFundContract.CreationDate.AddMonths(buyInfo.Period).Date;
+                    payment.BlockNumber = trans.BlockNumber;
+                    payment.Period = buyEvent.Period;
+                    payment.AuctusFee = buyEvent.AuctusFee;
+                    payment.LatePenalty = buyEvent.LatePenalty;
+                    payment.PensionFundFee = buyEvent.PensionFundFee;
+                    payment.SzaboInvested = buyEvent.SzaboInvested;
+                    payment.TokenAmount = buyEvent.TokenAmount;
+                    payment.DaysOverdue = buyEvent.DaysOverdue;
+                    payment.ReferenceDate = pensionFund.Option.PensionFundContract.CreationDate.AddMonths(buyEvent.Period).Date;
                     completedPayments.Add(payment);
                 }
 
@@ -231,39 +254,76 @@ namespace Auctus.Business.Contracts
             {
                 List<BuyInfo> buyEvents = EthereumManager.ReadBuyFromDefaultPensionFund(pensionFundContractHash);
                 var contractPendingTransactions = transactionsByContract[pensionFundContractHash];
-
                 foreach (var contractPendingTransaction in contractPendingTransactions)
                 {
-                    BaseEventInfo baseInfo;
-                    if (contractPendingTransaction.FunctionType == FunctionType.CompleteWithdrawal)
-                    {
-                        baseInfo = EthereumManager.ReadWithdrawalFromDefaultPensionFund(pensionFundContractHash);
-                    }
-                    else
-                    {
-                        baseInfo = buyEvents.SingleOrDefault(c => c.TransactionHash == contractPendingTransaction.TransactionHash);
-                    }
-                    
+                    BaseEventInfo baseInfo = GetEventInfo(pensionFundContractHash, buyEvents, contractPendingTransaction);
+
                     if (baseInfo != null)
                     {
-                        //Save buyInfo
+                        SaveEventInfo(contractPendingTransaction, baseInfo);
+                        contractPendingTransaction.TransactionStatus = TransactionStatus.Completed;
+                        Update(contractPendingTransaction);
                     }
                     else
                     {
-                        DateTime chainTolerance = DateTime.UtcNow.AddMinutes(-BLOCKCHAIN_TRANSACTION_TOLERANCE);
-                        if(contractPendingTransaction.CreationDate < chainTolerance)
-                        {
-                            if (poolInfo == null)
-                                poolInfo = GetPoolInfo();
-                            if (!poolInfo.Pending.Contains(contractPendingTransaction.TransactionHash))
-                            {
-                                contractPendingTransaction.TransactionStatus = TransactionStatus.AutoRecovery;
-                                Update(contractPendingTransaction);
-                            }
-                        }
+                        poolInfo = SendToAutoRecoveryIfTransactionIsLost(poolInfo, contractPendingTransaction);
                     }
                 }
+
+                SaveWithdrawalValuesIfAllTransactionsCompleted(contractPendingTransactions);
             }
+        }
+
+        private void SaveWithdrawalValuesIfAllTransactionsCompleted(IEnumerable<PensionFundTransaction> contractPendingTransactions)
+        {
+            if(contractPendingTransactions.All(contract => contract.TransactionStatus == TransactionStatus.Completed))
+            {
+                PensionFundContractBusiness.UpdateWithdrawalCashbackWithSmartContractValues(contractPendingTransactions.First().PensionFundContractHash);
+            }
+        }
+
+        private PoolInfo SendToAutoRecoveryIfTransactionIsLost(PoolInfo poolInfo, PensionFundTransaction contractPendingTransaction)
+        {
+            DateTime chainTolerance = DateTime.UtcNow.AddMinutes(-BLOCKCHAIN_TRANSACTION_TOLERANCE);
+            if (contractPendingTransaction.CreationDate < chainTolerance)
+            {
+                if (poolInfo == null)
+                    poolInfo = GetPoolInfo();
+                if (!poolInfo.Pending.Contains(contractPendingTransaction.TransactionHash))
+                {
+                    contractPendingTransaction.TransactionStatus = TransactionStatus.AutoRecovery;
+                    Update(contractPendingTransaction);
+                }
+            }
+
+            return poolInfo;
+        }
+
+        private void SaveEventInfo(PensionFundTransaction contractPendingTransaction, BaseEventInfo baseInfo)
+        {
+            if (baseInfo is WithdrawalInfo)
+            {
+                WithdrawalEventBusiness.Save(contractPendingTransaction.Id, baseInfo as WithdrawalInfo);
+            }
+            else
+            {
+                BuyEventBusiness.Save(contractPendingTransaction.Id, baseInfo as BuyInfo);
+            }
+        }
+
+        private static BaseEventInfo GetEventInfo(string pensionFundContractHash, List<BuyInfo> buyEvents, PensionFundTransaction contractPendingTransaction)
+        {
+            BaseEventInfo baseInfo;
+            if (contractPendingTransaction.FunctionType == FunctionType.CompleteWithdrawal)
+            {
+                baseInfo = EthereumManager.ReadWithdrawalFromDefaultPensionFund(pensionFundContractHash);
+            }
+            else
+            {
+                baseInfo = buyEvents.SingleOrDefault(c => c.TransactionHash == contractPendingTransaction.TransactionHash);
+            }
+
+            return baseInfo;
         }
 
         public void ProcessAutoRecoveryTransactions(int nodeId)
