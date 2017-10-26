@@ -326,7 +326,7 @@ namespace Auctus.Business.Funds
             UEmployee uEmployee = UEmployeeBusiness.Create(employee, uCompany.Id);
         }
 
-        public PensionFundContract ProcessCompleteEntry(Fund fund, Company company, Employee employee)
+        private PensionFundContract ProcessCompleteEntry(Fund fund, Company company, Employee employee)
         {
              var assetDictionary = GetAssetAllocationDictionary(fund);
              var pensionFund = PensionFundBusiness.Create(fund.Name);
@@ -345,6 +345,13 @@ namespace Auctus.Business.Funds
                  PensionFundReferenceContractBusiness.Create(pensionFundContract.TransactionHash, asset.Key, asset.Value);
                 
             return pensionFundContract;
+        }
+
+        public void ProcessPensionFundsEntries()
+        {
+            var unprocessedEntries = UPensionFundBusiness.ListUnprocessed();
+            this.ToString();
+
         }
 
         public Dictionary<String, Double> GetAssetAllocationDictionary(Fund fund)

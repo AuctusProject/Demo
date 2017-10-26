@@ -28,5 +28,7 @@ namespace Auctus.DomainObjects.Unprocessed
         public Double BitcoinPercentage { get; set; }
         [DapperType(System.Data.DbType.Byte)]
         public Boolean Processed { get; set; }
+
+        public List<UCompany> Companies { get; set; }
     }
 }

@@ -20,5 +20,8 @@ namespace Auctus.DomainObjects.Unprocessed
         public Double MaxBonusFee { get; set; }
         [DapperType(System.Data.DbType.UInt32)]
         public Int32 UPensionFundId { get; set; }
+
+        public List<UEmployee> Employees { get; set; }
+        public List<UVestingRule> VestingRules { get; set; }
     }
 }

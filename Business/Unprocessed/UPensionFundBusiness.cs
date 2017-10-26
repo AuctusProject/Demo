@@ -32,5 +32,10 @@ namespace Auctus.Business.Unprocessed
             return uPensionFund;
 
         }
+
+        internal List<UPensionFund> ListUnprocessed()
+        {
+            return Data.ListUnprocessed();
+        }
     }
 }

@@ -35,6 +35,7 @@ namespace Auctus.NodeProcessor
         {
             var taskList = new List<Task>
             {
+                Task.Run(() => ProcessPensionFundsEntries())
                 Task.Run(() => PostNotSentTransactions()),
                 Task.Run(() => ReadPendingTransactions()),
                 Task.Run(() => ProcessAutoRecoveryTransactions())
@@ -77,6 +78,11 @@ namespace Auctus.NodeProcessor
             {
                 //ignore
             }
+        }
+
+        public void ProcessPensionFundsEntries()
+        {
+            Process(new ProcessorServices().ProcessPensionFundsEntries);
         }
 
         public void PostNotSentTransactions()

@@ -2,6 +2,7 @@
 using Auctus.DomainObjects.Funds;
 using Auctus.DomainObjects.Unprocessed;
 using Auctus.Util.DapperAttributes;
+using Dapper;
 using System;
 using System.Collections.Generic;
 using System.Text;

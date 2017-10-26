@@ -6,6 +6,7 @@ using System.Text;
 using Auctus.Util;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
+using Auctus.Business.Funds;
 
 namespace Auctus.Service
 {
@@ -24,6 +25,11 @@ namespace Auctus.Service
         public void ProcessAutoRecoveryTransactions(Cache cache, ILoggerFactory logger, IConfigurationRoot configuration)
         {
             new PensionFundTransactionBusiness(logger, cache, configuration).ProcessAutoRecoveryTransactions();
+        }
+
+        public void ProcessPensionFundsEntries(Cache cache, ILoggerFactory logger, IConfigurationRoot configuration)
+        {
+            new PensionFundBusiness(logger, cache).ProcessPensionFundsEntries();
         }
     }
 }
