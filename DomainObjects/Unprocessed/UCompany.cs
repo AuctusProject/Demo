@@ -15,9 +15,9 @@ namespace Auctus.DomainObjects.Unprocessed
         [DapperType(System.Data.DbType.AnsiString)]
         public String Name { get; set; }
         [DapperType(System.Data.DbType.Double)]
-        public Double BonusRate { get; set; }
+        public Double BonusFee { get; set; }
         [DapperType(System.Data.DbType.Double)]
-        public Double MaxSalaryBonusRate { get; set; }
+        public Double MaxBonusFee { get; set; }
         [DapperType(System.Data.DbType.UInt32)]
         public Int32 UPensionFundId { get; set; }
     }

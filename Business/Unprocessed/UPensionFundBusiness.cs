@@ -6,6 +6,7 @@ using System.Text;
 using Auctus.DataAccess.Unprocessed;
 using Auctus.Util;
 using Microsoft.Extensions.Logging;
+using Auctus.Model;
 
 namespace Auctus.Business.Unprocessed
 {
@@ -13,6 +14,23 @@ namespace Auctus.Business.Unprocessed
     {
         public UPensionFundBusiness(ILoggerFactory loggerFactory, Cache cache) : base(loggerFactory, cache)
         {
+        }
+
+        internal UPensionFund Create(Fund fund)
+        {
+            var uPensionFund = new UPensionFund();
+            uPensionFund.Name = fund.Name;
+            uPensionFund.Fee = fund.Fee;
+            uPensionFund.LatePaymentFee = fund.LatePaymentFee;
+            uPensionFund.GoldPercentage = fund.GoldPercentage;
+            uPensionFund.SPPercentage = fund.SPPercentage;
+            uPensionFund.VWEHXPercentage = fund.VWEHXPercentage;
+            uPensionFund.MSCIPercentage = fund.MSCIPercentage;
+            uPensionFund.BitcoinPercentage = fund.BitcoinPercentage;
+            uPensionFund.Processed = false;
+            Insert(uPensionFund);
+            return uPensionFund;
+
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Auctus.Business.Accounts;
 using Auctus.Business.Contracts;
 using Auctus.Business.Funds;
+using Auctus.Business.Unprocessed;
 using Auctus.DataAccess;
 using Auctus.EthereumProxy;
 using Auctus.Util;
@@ -32,6 +33,10 @@ namespace Auctus.Business
         private ReferenceContractBusiness _referenceContractBusiness;
         private WithdrawalEventBusiness _withdrawalEventBusiness;
         private BuyEventBusiness _buyEventBusiness;
+        private UPensionFundBusiness _uPensionFundBusiness;
+        private UCompanyBusiness _uCompanyBusiness;
+        private UEmployeeBusiness _uEmployeeBusiness;
+        private UVestingRuleBusiness _uVestingRuleBusiness;
 
         protected BaseBusiness(ILoggerFactory loggerFactory, Cache cache)
         {
@@ -197,6 +202,46 @@ namespace Auctus.Business
                 if (_buyEventBusiness == null)
                     _buyEventBusiness = new BuyEventBusiness(LoggerFactory, MemoryCache);
                 return _buyEventBusiness;
+            }
+        }
+
+        protected UPensionFundBusiness UPensionFundBusiness
+        {
+            get
+            {
+                if (_uPensionFundBusiness == null)
+                    _uPensionFundBusiness = new UPensionFundBusiness(LoggerFactory, MemoryCache);
+                return _uPensionFundBusiness;
+            }
+        }
+
+        protected UCompanyBusiness UCompanyBusiness
+        {
+            get
+            {
+                if (_uCompanyBusiness == null)
+                    _uCompanyBusiness = new UCompanyBusiness(LoggerFactory, MemoryCache);
+                return _uCompanyBusiness;
+            }
+        }
+
+        protected UEmployeeBusiness UEmployeeBusiness
+        {
+            get
+            {
+                if (_uEmployeeBusiness == null)
+                    _uEmployeeBusiness = new UEmployeeBusiness(LoggerFactory, MemoryCache);
+                return _uEmployeeBusiness;
+            }
+        }
+
+        protected UVestingRuleBusiness UVestingRuleBusiness
+        {
+            get
+            {
+                if (_uVestingRuleBusiness == null)
+                    _uVestingRuleBusiness = new UVestingRuleBusiness(LoggerFactory, MemoryCache);
+                return _uVestingRuleBusiness;
             }
         }
     }

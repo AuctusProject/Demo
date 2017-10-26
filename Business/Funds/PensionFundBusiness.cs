@@ -13,6 +13,7 @@ using System.Linq;
 using Auctus.Util;
 using Microsoft.Extensions.Logging;
 using Auctus.EthereumProxy;
+using Auctus.DomainObjects.Unprocessed;
 
 namespace Auctus.Business.Funds
 {
@@ -320,7 +321,11 @@ namespace Auctus.Business.Funds
         public PensionFundContract CreateCompleteEntry(Fund fund, Company company, Employee employee)
         {
             Validate(fund, company, employee);
-            var assetDictionary = GetAssetAllocationDictionary(fund);
+            UPensionFund uFund = UPensionFundBusiness.Create(fund);
+            UCompany uCompany = UCompanyBusiness.Create(company, uFund.Id);
+            UEmployee uEmployee = UEmployeeBusiness.Create(employee, uCompany.Id);
+
+           /* var assetDictionary = GetAssetAllocationDictionary(fund);
             var pensionFund = PensionFundBusiness.Create(fund.Name);
             var pensionFundWallet = WalletBusiness.Create();
             var pensionFundOption = PensionFundOptionBusiness.Create(pensionFundWallet.Address, fund.Fee, fund.LatePaymentFee, pensionFund.Id);
@@ -335,7 +340,7 @@ namespace Auctus.Business.Funds
                 company.VestingRules.ToDictionary(bonus => bonus.Period, bonus => bonus.Percentage));
             foreach (var asset in assetDictionary)
                 PensionFundReferenceContractBusiness.Create(pensionFundContract.TransactionHash, asset.Key, asset.Value);
-
+                */
             return pensionFundContract;
         }
 

@@ -8,6 +8,7 @@ using System.Text;
 using Auctus.Util;
 using Microsoft.Extensions.Logging;
 using Auctus.DataAccess.Unprocessed;
+using Auctus.Model;
 
 namespace Auctus.Business.Unprocessed
 {
@@ -15,6 +16,23 @@ namespace Auctus.Business.Unprocessed
     {
         public UCompanyBusiness(ILoggerFactory loggerFactory, Cache cache) : base(loggerFactory, cache)
         {
+        }
+
+        internal UCompany Create(Model.Company company, int uPensionFundId)
+        {
+            var uCompany = new UCompany();
+            uCompany.Name = company.Name;
+            uCompany.BonusFee = company.BonusFee;
+            uCompany.MaxBonusFee = company.MaxBonusFee;
+            uCompany.UPensionFundId = uPensionFundId;
+            Insert(uCompany);
+
+            foreach (VestingRules rule in company.VestingRules)
+            {
+                UVestingRuleBusiness.Create(rule, uCompany.Id);
+            }
+
+            return uCompany;
         }
     }
 }
