@@ -312,14 +312,14 @@ Wizard.Operations = {
         Wizard.Components.ContractDeploy.GeneratingContract.show();
         Wizard.Components.ErrorMessage.hide();
     },
-    OnSave: function (data) {
-        Wizard.Components.ContractDeploy.Transaction = data.transactionHash;
+    OnSave: function (data) {//TODO:get TransactionHash and sCCode
+        Wizard.Components.ContractDeploy.Transaction = "0x000000000000000000000000000";//data.transactionHash;
         signalrDone = Wizard.Operations.OnDeployUncompleted;
         Wizard.Operations.OnDeployUncompleted();
         Wizard.Components.ErrorMessage.hide();
         Wizard.Components.ContractDeploy.ContractDeployedDiv.hide();
         Wizard.Components.ContractDeploy.TransactionIdLink.attr("href", Parameter.BlockExplorerUrl + "/tx/" + Wizard.Components.ContractDeploy.Transaction);
-        Wizard.Components.ContractDeploy.CodeMirror.setValue(js_beautify(data.smartContractCode, { indent_size: 4 }));
+        Wizard.Components.ContractDeploy.CodeMirror.setValue(js_beautify("pragma lorem ipsum", { indent_size: 4 })); //data.smartContractCode
         setTimeout(function () { Wizard.Components.ContractDeploy.CodeMirror.refresh(); }, 1);
         Wizard.Components.ContractDeploy.ContractCodeWrapper.show();
         Wizard.Components.ContractDeploy.ContractBeingDeployedDiv.show();

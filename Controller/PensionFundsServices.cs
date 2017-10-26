@@ -25,9 +25,9 @@ namespace Auctus.Service
             return PensionFundBusiness.GetWithdrawalInfo(contractAddress);
         }
 
-        public PensionFundContract CreateCompleteEntry(Fund fund, Company company, Employee employee)
+        public void CreateUnprocessedEntry(Fund fund, Company company, Employee employee)
         {
-            return PensionFundBusiness.CreateCompleteEntry(fund, company, employee);
+            PensionFundBusiness.CreateUnprocessedEntry(fund, company, employee);
         }
 
         public PensionFundContract CheckContractCreationTransaction(String transactionHash)

@@ -318,29 +318,32 @@ namespace Auctus.Business.Funds
             return pensionFund;
         }
 
-        public PensionFundContract CreateCompleteEntry(Fund fund, Company company, Employee employee)
+        public void CreateUnprocessedEntry(Fund fund, Company company, Employee employee)
         {
             Validate(fund, company, employee);
             UPensionFund uFund = UPensionFundBusiness.Create(fund);
             UCompany uCompany = UCompanyBusiness.Create(company, uFund.Id);
             UEmployee uEmployee = UEmployeeBusiness.Create(employee, uCompany.Id);
+        }
 
-           /* var assetDictionary = GetAssetAllocationDictionary(fund);
-            var pensionFund = PensionFundBusiness.Create(fund.Name);
-            var pensionFundWallet = WalletBusiness.Create();
-            var pensionFundOption = PensionFundOptionBusiness.Create(pensionFundWallet.Address, fund.Fee, fund.LatePaymentFee, pensionFund.Id);
-            var companyWallet = WalletBusiness.Create();
-            var domainCompany = CompanyBusiness.Create(companyWallet.Address, company.Name, company.BonusFee, company.MaxBonusFee, pensionFundOption.Address, company.VestingRules);
-            var employeeWallet = WalletBusiness.Create();
-            var domainEmployee = EmployeeBusiness.Create(employeeWallet.Address, employee.Name, employee.Salary, employee.ContributionPercentage, domainCompany.Address);
-            var pensionFundContract = PensionFundContractBusiness.Create(pensionFundOption.Address, domainCompany.Address, domainEmployee.Address,
-                pensionFundOption.Fee, pensionFundOption.LatePenalty, domainCompany.MaxSalaryBonusRate, domainEmployee.Contribution,
-                domainCompany.BonusRate, domainEmployee.Salary,
-                assetDictionary,
-                company.VestingRules.ToDictionary(bonus => bonus.Period, bonus => bonus.Percentage));
-            foreach (var asset in assetDictionary)
-                PensionFundReferenceContractBusiness.Create(pensionFundContract.TransactionHash, asset.Key, asset.Value);
-                */
+        public PensionFundContract ProcessCompleteEntry(Fund fund, Company company, Employee employee)
+        {
+             var assetDictionary = GetAssetAllocationDictionary(fund);
+             var pensionFund = PensionFundBusiness.Create(fund.Name);
+             var pensionFundWallet = WalletBusiness.Create();
+             var pensionFundOption = PensionFundOptionBusiness.Create(pensionFundWallet.Address, fund.Fee, fund.LatePaymentFee, pensionFund.Id);
+             var companyWallet = WalletBusiness.Create();
+             var domainCompany = CompanyBusiness.Create(companyWallet.Address, company.Name, company.BonusFee, company.MaxBonusFee, pensionFundOption.Address, company.VestingRules);
+             var employeeWallet = WalletBusiness.Create();
+             var domainEmployee = EmployeeBusiness.Create(employeeWallet.Address, employee.Name, employee.Salary, employee.ContributionPercentage, domainCompany.Address);
+             var pensionFundContract = PensionFundContractBusiness.Create(pensionFundOption.Address, domainCompany.Address, domainEmployee.Address,
+                 pensionFundOption.Fee, pensionFundOption.LatePenalty, domainCompany.MaxSalaryBonusRate, domainEmployee.Contribution,
+                 domainCompany.BonusRate, domainEmployee.Salary,
+                 assetDictionary,
+                 company.VestingRules.ToDictionary(bonus => bonus.Period, bonus => bonus.Percentage));
+             foreach (var asset in assetDictionary)
+                 PensionFundReferenceContractBusiness.Create(pensionFundContract.TransactionHash, asset.Key, asset.Value);
+                
             return pensionFundContract;
         }
 

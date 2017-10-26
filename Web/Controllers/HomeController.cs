@@ -24,7 +24,7 @@ namespace Web.Controllers
         {
             try
             {
-                var pensionFundContract = PensionFundsServices.CreateCompleteEntry(
+                PensionFundsServices.CreateUnprocessedEntry(
                     new Fund() { Name = "Test", BitcoinPercentage = 100, Fee = 1 }, 
                     new Company() {
                         Name ="Company", BonusFee = 100, MaxBonusFee = 10, VestingRules = 
@@ -44,7 +44,7 @@ namespace Web.Controllers
                         Salary = 5000
                     });
 
-                return Json(pensionFundContract);
+                return Json("Register Saved");
             }
             catch (Exception e)
             {
@@ -82,8 +82,8 @@ namespace Web.Controllers
                 if (!IsValidRecaptcha(model.Captcha))
                     throw new InvalidOperationException("Invalid captcha.");
 
-                var pensionFundContract = PensionFundsServices.CreateCompleteEntry(model.Fund, model.Company, model.Employee);
-                return Json(pensionFundContract);
+                PensionFundsServices.CreateUnprocessedEntry(model.Fund, model.Company, model.Employee);
+                return Json(string.Empty);
             }
             catch(Exception e)
             {
