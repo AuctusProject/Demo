@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Caching.Memory;
 using Auctus.Util;
-using Microsoft.AspNetCore.SignalR.Infrastructure;
 using Auctus.DomainObjects.Contracts;
 
 namespace Web.Controllers

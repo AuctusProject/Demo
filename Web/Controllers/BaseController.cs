@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Caching.Memory;
 using Auctus.Util;
-using Microsoft.AspNetCore.SignalR.Infrastructure;
 using Auctus.Service;
 using System.Net.Http;
 using Auctus.Util.NotShared;

@@ -10,7 +10,6 @@ using System.Net;
 using Microsoft.Extensions.Caching.Memory;
 using Auctus.Model;
 using Auctus.Util;
-using Microsoft.AspNetCore.SignalR.Infrastructure;
 using Auctus.Web.Hubs;
 using Auctus.DomainObjects.Contracts;
 
