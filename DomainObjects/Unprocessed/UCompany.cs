@@ -21,7 +21,7 @@ namespace Auctus.DomainObjects.Unprocessed
         [DapperType(System.Data.DbType.UInt32)]
         public Int32 UPensionFundId { get; set; }
 
-        public List<UEmployee> Employees { get; set; }
+        public UEmployee Employee { get; set; }
         public List<UVestingRule> VestingRules { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Auctus.DataAccess.Accounts;
 using Auctus.DomainObjects.Accounts;
+using Auctus.DomainObjects.Unprocessed;
 using Auctus.Util;
 using Microsoft.Extensions.Logging;
 using System;
@@ -55,7 +56,7 @@ namespace Auctus.Business.Accounts
             }
         }
 
-        public Company Create(String address, String name, double bonusRate, double maxSalaryBonusRate, String pensionFundOptionAddress, IEnumerable<Model.VestingRules> vestingRules)
+        public Company Create(String address, String name, double bonusRate, double maxSalaryBonusRate, String pensionFundOptionAddress, IEnumerable<UVestingRule> vestingRules)
         {
             var company = new Company()
             {

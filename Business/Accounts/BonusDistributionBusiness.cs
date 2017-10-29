@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Auctus.Model;
 using Auctus.Util;
 using Microsoft.Extensions.Logging;
+using Auctus.DomainObjects.Unprocessed;
 
 namespace Auctus.Business.Accounts
 {
@@ -39,7 +40,7 @@ namespace Auctus.Business.Accounts
             return bonusDistribution;
         }
 
-        internal void Create(string address, IEnumerable<VestingRules> vestingRules)
+        internal void Create(string address, IEnumerable<UVestingRule> vestingRules)
         {
             foreach(var vestingRule in vestingRules)
             {

@@ -9,6 +9,8 @@ using Auctus.DataAccess.Unprocessed;
 using Auctus.Util;
 using Microsoft.Extensions.Logging;
 using Auctus.Model;
+using Dapper;
+using System.Linq;
 
 namespace Auctus.Business.Unprocessed
 {
@@ -26,6 +28,11 @@ namespace Auctus.Business.Unprocessed
             uVestingRule.UCompanyId = uCompanyId;
             Insert(uVestingRule);
             return uVestingRule;
+        }
+
+        internal List<UVestingRule> ListByCompany(int uCompanyId)
+        {
+            return Data.ListByCompany(uCompanyId);
         }
     }
 }

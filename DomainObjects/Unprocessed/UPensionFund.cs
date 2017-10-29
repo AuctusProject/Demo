@@ -29,6 +29,6 @@ namespace Auctus.DomainObjects.Unprocessed
         [DapperType(System.Data.DbType.Byte)]
         public Boolean Processed { get; set; }
 
-        public List<UCompany> Companies { get; set; }
+        public UCompany Company { get; set; }
     }
 }

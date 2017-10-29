@@ -38,6 +38,36 @@ namespace Auctus.EthereumProxy
             return Web3.GetPoolInfo();
         }
 
+        public static string GetPensionFundSmartContractCode(string pensionFundAddress,
+            string employerAddress,
+            string employeeAddress,
+            double pensionFundFee,
+            double pensionFundLatePenalty,
+            double auctusFee,
+            double maxSalaryBonus,
+            double employeeContribution,
+            double employeeContributionBonus,
+            double employeeSalary,
+            Dictionary<string, double> referenceValues,
+            Dictionary<int, double> bonusVestingDistribuition)
+        {
+            int rateDecimals = 4;
+            return DemoSmartContracts.DEFAULT_PENSION_FUND_SC
+                .Replace("{PENSION_FUND_ADDRESS}", pensionFundAddress)
+                .Replace("{EMPLOYER_ADDRESS}", employerAddress)
+                .Replace("{EMPLOYEE_ADDRESS}", employeeAddress)
+                .Replace("{PENSION_FUND_FEE}", Web3.GetNumberFormatted(pensionFundFee, rateDecimals))
+                .Replace("{PENSION_FUND_LATE_PENALTY}", Web3.GetNumberFormatted(pensionFundLatePenalty, rateDecimals))
+                .Replace("{AUCTUS_FEE}", Web3.GetNumberFormatted(auctusFee, rateDecimals))
+                .Replace("{MAX_SALARY_BONUS}", Web3.GetNumberFormatted(maxSalaryBonus, rateDecimals))
+                .Replace("{EMPLOYEE_CONTRIBUTION}", Web3.GetNumberFormatted(employeeContribution, rateDecimals))
+                .Replace("{EMPLOYEE_CONTRIBUTION_BONUS}", Web3.GetNumberFormatted(employeeContributionBonus, rateDecimals))
+                .Replace("{EMPLOYEE_SALARY}", Web3.GetNumberFormatted(employeeSalary, 12))
+                .Replace("{REFERENCE_VALUE_ADDRESS}", string.Join("\n\t\t", referenceValues.Select(c => string.Format("reference.push(Reference({0}, {1}));", c.Key, Web3.GetNumberFormatted(c.Value, rateDecimals)))))
+                .Replace("{BONUS_DISTRIBUTION}", string.Join("\n\t\t", bonusVestingDistribuition.Select(c => string.Format("bonusDistribution.push(BonusVesting({0}, {1}));", c.Key.ToString(), Web3.GetNumberFormatted(c.Value, rateDecimals)))));
+
+        }
+
         public static KeyValuePair<string, string> DeployDefaultPensionFund(
             int gasLimit,
             string pensionFundAddress, 
@@ -53,21 +83,7 @@ namespace Auctus.EthereumProxy
             Dictionary<string, double> referenceValues,
             Dictionary<int, double> bonusVestingDistribuition)
         {
-            int rateDecimals = 4;
-            string smartContractStringified = DemoSmartContracts.DEFAULT_PENSION_FUND_SC
-                .Replace("{PENSION_FUND_ADDRESS}", pensionFundAddress)
-                .Replace("{EMPLOYER_ADDRESS}", employerAddress)
-                .Replace("{EMPLOYEE_ADDRESS}", employeeAddress)
-                .Replace("{PENSION_FUND_FEE}", Web3.GetNumberFormatted(pensionFundFee, rateDecimals))
-                .Replace("{PENSION_FUND_LATE_PENALTY}", Web3.GetNumberFormatted(pensionFundLatePenalty, rateDecimals))
-                .Replace("{AUCTUS_FEE}", Web3.GetNumberFormatted(auctusFee, rateDecimals))
-                .Replace("{MAX_SALARY_BONUS}", Web3.GetNumberFormatted(maxSalaryBonus, rateDecimals))
-                .Replace("{EMPLOYEE_CONTRIBUTION}", Web3.GetNumberFormatted(employeeContribution, rateDecimals))
-                .Replace("{EMPLOYEE_CONTRIBUTION_BONUS}", Web3.GetNumberFormatted(employeeContributionBonus, rateDecimals))
-                .Replace("{EMPLOYEE_SALARY}", Web3.GetNumberFormatted(employeeSalary, 12))
-                .Replace("{REFERENCE_VALUE_ADDRESS}", string.Join("\n\t\t", referenceValues.Select(c => string.Format("reference.push(Reference({0}, {1}));", c.Key, Web3.GetNumberFormatted(c.Value, rateDecimals)))))
-                .Replace("{BONUS_DISTRIBUTION}", string.Join("\n\t\t", bonusVestingDistribuition.Select(c => string.Format("bonusDistribution.push(BonusVesting({0}, {1}));", c.Key.ToString(), Web3.GetNumberFormatted(c.Value, rateDecimals)))));
-
+            string smartContractStringified = GetPensionFundSmartContractCode(pensionFundAddress, employerAddress, employeeAddress, pensionFundFee, pensionFundLatePenalty, auctusFee, maxSalaryBonus, employeeContribution, employeeContributionBonus, employeeSalary, referenceValues, bonusVestingDistribuition);
             SCCompiled scCompiled = Solc.Compile("CompanyContract", smartContractStringified).Single(c => c.Name == "CompanyContract");
             string transactionHash = Web3.DeployContract(scCompiled, gasLimit, GWEI_FAST);
             return new KeyValuePair<string, string>(transactionHash, smartContractStringified);

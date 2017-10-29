@@ -326,21 +326,21 @@ namespace Auctus.Business.Funds
             UEmployee uEmployee = UEmployeeBusiness.Create(employee, uCompany.Id);
         }
 
-        private PensionFundContract ProcessCompleteEntry(Fund fund, Company company, Employee employee)
+        private PensionFundContract ProcessCompleteEntry(UPensionFund unprocessedPensionFund)
         {
-             var assetDictionary = GetAssetAllocationDictionary(fund);
-             var pensionFund = PensionFundBusiness.Create(fund.Name);
+             var assetDictionary = GetAssetAllocationDictionary(unprocessedPensionFund);
+             var pensionFund = PensionFundBusiness.Create(unprocessedPensionFund.Name);
              var pensionFundWallet = WalletBusiness.Create();
-             var pensionFundOption = PensionFundOptionBusiness.Create(pensionFundWallet.Address, fund.Fee, fund.LatePaymentFee, pensionFund.Id);
+             var pensionFundOption = PensionFundOptionBusiness.Create(pensionFundWallet.Address, unprocessedPensionFund.Fee, unprocessedPensionFund.LatePaymentFee, pensionFund.Id);
              var companyWallet = WalletBusiness.Create();
-             var domainCompany = CompanyBusiness.Create(companyWallet.Address, company.Name, company.BonusFee, company.MaxBonusFee, pensionFundOption.Address, company.VestingRules);
+             var domainCompany = CompanyBusiness.Create(companyWallet.Address, unprocessedPensionFund.Company.Name, unprocessedPensionFund.Company.BonusFee, unprocessedPensionFund.Company.MaxBonusFee, pensionFundOption.Address, unprocessedPensionFund.Company.VestingRules);
              var employeeWallet = WalletBusiness.Create();
-             var domainEmployee = EmployeeBusiness.Create(employeeWallet.Address, employee.Name, employee.Salary, employee.ContributionPercentage, domainCompany.Address);
+             var domainEmployee = EmployeeBusiness.Create(employeeWallet.Address, unprocessedPensionFund.Company.Employee.Name, unprocessedPensionFund.Company.Employee.Salary, unprocessedPensionFund.Company.Employee.Contribution, domainCompany.Address);
              var pensionFundContract = PensionFundContractBusiness.Create(pensionFundOption.Address, domainCompany.Address, domainEmployee.Address,
                  pensionFundOption.Fee, pensionFundOption.LatePenalty, domainCompany.MaxSalaryBonusRate, domainEmployee.Contribution,
                  domainCompany.BonusRate, domainEmployee.Salary,
                  assetDictionary,
-                 company.VestingRules.ToDictionary(bonus => bonus.Period, bonus => bonus.Percentage));
+                 unprocessedPensionFund.Company.VestingRules.ToDictionary(bonus => bonus.Period, bonus => bonus.Percentage));
              foreach (var asset in assetDictionary)
                  PensionFundReferenceContractBusiness.Create(pensionFundContract.TransactionHash, asset.Key, asset.Value);
                 
@@ -350,11 +350,21 @@ namespace Auctus.Business.Funds
         public void ProcessPensionFundsEntries()
         {
             var unprocessedEntries = UPensionFundBusiness.ListUnprocessed();
-            this.ToString();
-
+            foreach(UPensionFund pensionFund in unprocessedEntries)
+            {
+                try
+                {
+                    pensionFund.Company.VestingRules = UVestingRuleBusiness.ListByCompany(pensionFund.Company.Id);
+                    ProcessCompleteEntry(pensionFund);
+                }
+                catch (Exception e)
+                {
+                    Logger.LogError(e.ToString());
+                }
+            }
         }
 
-        public Dictionary<String, Double> GetAssetAllocationDictionary(Fund fund)
+        public Dictionary<String, Double> GetAssetAllocationDictionary(UPensionFund fund)
         {
             var dictionary = new Dictionary<String, Double>();
             if (fund.GoldPercentage > 0)

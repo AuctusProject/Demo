@@ -31,5 +31,10 @@ namespace Auctus.Service
         {
             new PensionFundBusiness(logger, cache).ProcessPensionFundsEntries();
         }
+
+        public void ReadContractMined(Cache cache, ILoggerFactory logger, IConfigurationRoot configuration)
+        {
+            new PensionFundContractBusiness(logger, cache).ReadContractMined();
+        }
     }
 }

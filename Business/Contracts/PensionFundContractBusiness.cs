@@ -47,9 +47,26 @@ namespace Auctus.Business.Contracts
             return pensionFundContract;
         }
 
-        public PensionFundContract CheckContractCreationTransaction(String transactionHash)
+        public void ReadContractMined()
         {
-            var pensionFundContract = Data.GetPensionFundContract(transactionHash);
+            var unminedContarcts = Data.ListPendingMiningContracts();
+            Parallel.ForEach(unminedContarcts, new ParallelOptions() { MaxDegreeOfParallelism = 5 },
+                contract =>
+                {
+                    try
+                    {
+                        CheckContractCreationTransaction(contract.TransactionHash, contract);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.LogError(e.ToString());
+                    }
+                });
+        }
+
+        public PensionFundContract CheckContractCreationTransaction(String transactionHash, PensionFundContract contract = null)
+        {
+            var pensionFundContract = contract ?? Data.GetPensionFundContract(transactionHash);
             if (pensionFundContract == null)
                 throw new ArgumentException("Invalid transaction hash.");
 

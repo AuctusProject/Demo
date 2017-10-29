@@ -11,11 +11,10 @@ namespace Auctus.DataAccess.Unprocessed
     {
         public override string TableName => "UPensionFund";
 
-        private const string SQL_U_PENSION_FUND_DATA = @"select upf.*, uc.*, ue.*, uvr.* from 
+        private const string SQL_U_PENSION_FUND_DATA = @"select upf.*, uc.*, ue.* from 
 	                                                    UPensionFund upf
 	                                                    inner join UCompany uc on uc.UPensionFundId = upf.Id
 	                                                    inner join UEmployee ue on ue.UCompanyId = uc.Id
-	                                                    inner join UVestingRule uvr on uvr.UCompanyId = uc.id
                                                         where {0}";
 
 
@@ -28,14 +27,13 @@ namespace Auctus.DataAccess.Unprocessed
 
         private List<UPensionFund> List(string sql, DynamicParameters param)
         {
-            return Query<UPensionFund, UCompany, UEmployee, UVestingRule, UPensionFund>(sql,
-                   (upf, uc, ue, uvr) =>
+            return Query<UPensionFund, UCompany, UEmployee, UPensionFund>(sql,
+                   (upf, uc, ue) =>
                    {
-                       uc.Employees = new List<UEmployee>() { ue };
-                       uc.VestingRules = new List<UVestingRule>() { uvr };
-                       upf.Companies = new List<UCompany>() { uc };
+                       upf.Company = uc;
+                       upf.Company.Employee = ue;
                        return upf;
-                   }, "Id,Id,Id,Id", param).AsList();
+                   }, "Id,Id", param).AsList();
         }
     }
 }
