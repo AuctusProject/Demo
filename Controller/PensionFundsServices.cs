@@ -25,14 +25,19 @@ namespace Auctus.Service
             return PensionFundBusiness.GetWithdrawalInfo(contractAddress);
         }
 
-        public void CreateUnprocessedEntry(Fund fund, Company company, Employee employee)
+        public int CreateUnprocessedEntry(Fund fund, Company company, Employee employee)
         {
-            PensionFundBusiness.CreateUnprocessedEntry(fund, company, employee);
+            return PensionFundBusiness.CreateUnprocessedEntry(fund, company, employee);
+        }
+        
+        public PensionFundContract GetPensionFundContract(String transactionHash)
+        {
+            return PensionFundContractBusiness.Get(transactionHash);
         }
 
-        public PensionFundContract CheckContractCreationTransaction(String transactionHash)
+        public Tuple<string, string> CheckPensionFundCreation(int pensionFundId)
         {
-            return PensionFundContractBusiness.CheckContractCreationTransaction(transactionHash);
+            return UPensionFundBusiness.CheckPensionFundCreation(pensionFundId);
         }
 
         public Progress GeneratePayment(string contractAddress, int monthsAmount)

@@ -19,48 +19,7 @@ namespace Web.Controllers
     public class HomeController : HubBaseController
     {
         public HomeController(ILoggerFactory loggerFactory, Cache cache, IServiceProvider serviceProvider, IConnectionManager connectionManager) : base(loggerFactory, cache, serviceProvider, connectionManager) { }
-
-        public IActionResult Test()
-        {
-            try
-            {
-                PensionFundsServices.CreateUnprocessedEntry(
-                    new Fund() { Name = "Test", BitcoinPercentage = 100, Fee = 1 }, 
-                    new Company() {
-                        Name ="Company", BonusFee = 100, MaxBonusFee = 10, VestingRules = 
-                        new List<VestingRules>()
-                        {
-                            new VestingRules(){ Period=0, Percentage=0},
-                            new VestingRules(){ Period=1, Percentage=20},
-                            new VestingRules(){ Period=2, Percentage=40},
-                            new VestingRules(){ Period=3, Percentage=60},
-                            new VestingRules(){ Period=4, Percentage=80},
-                            new VestingRules(){ Period=5, Percentage=100},
-                        }
-                    }, 
-                    new Employee() {
-                        Name = "Employee",
-                        ContributionPercentage = 5,
-                        Salary = 5000
-                    });
-
-                return Json("Register Saved");
-            }
-            catch (Exception e)
-            {
-                Response.StatusCode = 400;
-                if (e is ArgumentException)
-                    return Json(e.Message);
-                return Json("We’re sorry, we had an unexpected error! Please try again in a minute.");
-            }
-        }
-
-        public IActionResult GetAddress(String transactionHash)
-        {
-            var pensionFundContract = PensionFundsServices.CheckContractCreationTransaction(transactionHash);
-            return Json(pensionFundContract);
-        }
-
+        
         public IActionResult Index()
         {
             return View();
@@ -82,8 +41,8 @@ namespace Web.Controllers
                 if (!IsValidRecaptcha(model.Captcha))
                     throw new InvalidOperationException("Invalid captcha.");
 
-                PensionFundsServices.CreateUnprocessedEntry(model.Fund, model.Company, model.Employee);
-                return Json(string.Empty);
+                int pensionFundId = PensionFundsServices.CreateUnprocessedEntry(model.Fund, model.Company, model.Employee);
+                return Json(new { PensionFundId = pensionFundId }); 
             }
             catch(Exception e)
             {
@@ -95,7 +54,7 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult CheckContractCreationTransaction(String transactionHash)
+        public IActionResult CheckPensionFundCreation(int pensionFundId)
         {
             if (!string.IsNullOrEmpty(ConnectionId))
             {
@@ -104,7 +63,43 @@ namespace Web.Controllers
                     var hubContext = HubConnectionManager.GetHubContext<AuctusDemoHub>();
                     try
                     {
-                        var pensionFundContract = PensionFundsServices.CheckContractCreationTransaction(transactionHash);
+                        var pensionFundCreated = PensionFundsServices.CheckPensionFundCreation(pensionFundId);
+                        if (pensionFundCreated != null)
+                            hubContext.Clients.Client(ConnectionId).creationCompleted(Json(
+                                new
+                                {
+                                    SmartContractCode = pensionFundCreated.Item2,
+                                    TransactionHash = pensionFundCreated.Item1
+                                }));
+                        else
+                            hubContext.Clients.Client(ConnectionId).creationUncompleted(pensionFundId);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.LogError(new EventId(1), ex, string.Format("Erro on CheckPensionFundCreation {0}.", pensionFundId));
+                        hubContext.Clients.Client(ConnectionId).creationUncompleted(pensionFundId);
+                    }
+                });
+                return Json(new { success = true });
+            }
+            else
+                return Json(new { success = false });
+        }
+
+        [HttpPost]
+        public IActionResult CheckContractMined(String transactionHash)
+        {
+            if (!string.IsNullOrEmpty(ConnectionId))
+            {
+                Task.Factory.StartNew(() =>
+                {
+                    var hubContext = HubConnectionManager.GetHubContext<AuctusDemoHub>();
+                    try
+                    {
+                        var pensionFundContract = PensionFundsServices.GetPensionFundContract(transactionHash);
+                        if (pensionFundContract == null)
+                            throw new InvalidOperationException("Invalid transaction hash");
+
                         if (pensionFundContract.BlockNumber.HasValue)
                             hubContext.Clients.Client(ConnectionId).deployCompleted(Json(
                                 new
@@ -118,7 +113,7 @@ namespace Web.Controllers
                     }
                     catch (Exception ex)
                     {
-                        Logger.LogError(new EventId(1), ex, string.Format("Erro on CheckContractCreationTransaction {0}.", transactionHash));
+                        Logger.LogError(new EventId(1), ex, string.Format("Erro on CheckContractMined {0}.", transactionHash));
                         hubContext.Clients.Client(ConnectionId).deployError();
                     }
                 });

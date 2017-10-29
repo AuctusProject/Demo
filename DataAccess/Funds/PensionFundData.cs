@@ -36,6 +36,13 @@ namespace Auctus.DataAccess.Funds
             return Get(string.Format(SQL_PENSION_FUND_DATA, "pfc.TransactionHash = @hash"), param);
         }
 
+        public PensionFund GetById(int pensionFundId)
+        {
+            DynamicParameters param = new DynamicParameters();
+            param.Add("id", pensionFundId, System.Data.DbType.UInt32);
+            return Get(string.Format(SQL_PENSION_FUND_DATA, "p.Id = @id"), param);
+        }
+
         private PensionFund Get(string sql, DynamicParameters param)
         {
             return Query<PensionFund, PensionFundOption, PensionFundContract, Company, Employee, PensionFund>(sql,

@@ -16,7 +16,7 @@ namespace Auctus.DataAccess.Contracts
         public PensionFundContract GetPensionFundContract(string transactionHash)
         {
             DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("@TransactionHash", transactionHash, DbType.AnsiStringFixedLength);
+            parameters.Add("TransactionHash", transactionHash, DbType.AnsiStringFixedLength);
             return SelectByParameters<PensionFundContract>(parameters).SingleOrDefault();
         }
 

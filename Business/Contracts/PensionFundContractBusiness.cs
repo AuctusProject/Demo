@@ -14,8 +14,6 @@ namespace Auctus.Business.Contracts
 {
     public class PensionFundContractBusiness : BaseBusiness<PensionFundContract, PensionFundContractData>
     {
-        internal const double AUCTUS_FEE = 20;
-
         public PensionFundContractBusiness(ILoggerFactory loggerFactory, Cache cache) : base(loggerFactory, cache) { }
 
         public PensionFundContract Create(String pensionFundAddress, String employerAddress, String employeeAddress, double pensionFundFee,
@@ -49,13 +47,13 @@ namespace Auctus.Business.Contracts
 
         public void ReadContractMined()
         {
-            var unminedContarcts = Data.ListPendingMiningContracts();
-            Parallel.ForEach(unminedContarcts, new ParallelOptions() { MaxDegreeOfParallelism = 5 },
+            var unminedContracts = Data.ListPendingMiningContracts();
+            Parallel.ForEach(unminedContracts, new ParallelOptions() { MaxDegreeOfParallelism = 5 },
                 contract =>
                 {
                     try
                     {
-                        CheckContractCreationTransaction(contract.TransactionHash, contract);
+                        CheckContractCreationTransaction(contract);
                     }
                     catch (Exception e)
                     {
@@ -64,13 +62,14 @@ namespace Auctus.Business.Contracts
                 });
         }
 
-        public PensionFundContract CheckContractCreationTransaction(String transactionHash, PensionFundContract contract = null)
+        public PensionFundContract Get(String transactionHash)
         {
-            var pensionFundContract = contract ?? Data.GetPensionFundContract(transactionHash);
-            if (pensionFundContract == null)
-                throw new ArgumentException("Invalid transaction hash.");
+            return Data.GetPensionFundContract(transactionHash);
+        }
 
-            Transaction demoContractTransaction = EthereumManager.GetTransaction(transactionHash);
+        public PensionFundContract CheckContractCreationTransaction(PensionFundContract pensionFundContract)
+        {
+            Transaction demoContractTransaction = EthereumManager.GetTransaction(pensionFundContract.TransactionHash);
             if (demoContractTransaction == null)
             {
                 if (pensionFundContract.CreationDate < DateTime.UtcNow.AddMinutes(PensionFundTransactionBusiness.BLOCKCHAIN_TRANSACTION_TOLERANCE))

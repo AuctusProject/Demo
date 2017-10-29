@@ -285,6 +285,11 @@ namespace Auctus.Business.Funds
             return Data.GetByTransaction(pensionFundContractHash);
         }
 
+        internal PensionFund GetById(int pensionFundId)
+        {
+            return Data.GetById(pensionFundId);
+        }
+
         internal PensionFund GetByContract(string pensionFundContractAddress)
         {
             if (!EthereumProxy.EthereumManager.IsValidAddress(pensionFundContractAddress))
@@ -318,12 +323,13 @@ namespace Auctus.Business.Funds
             return pensionFund;
         }
 
-        public void CreateUnprocessedEntry(Fund fund, Company company, Employee employee)
+        public int CreateUnprocessedEntry(Fund fund, Company company, Employee employee)
         {
             Validate(fund, company, employee);
             UPensionFund uFund = UPensionFundBusiness.Create(fund);
             UCompany uCompany = UCompanyBusiness.Create(company, uFund.Id);
             UEmployee uEmployee = UEmployeeBusiness.Create(employee, uCompany.Id);
+            return uFund.Id;
         }
 
         private PensionFundContract ProcessCompleteEntry(UPensionFund unprocessedPensionFund)
@@ -343,7 +349,10 @@ namespace Auctus.Business.Funds
                  unprocessedPensionFund.Company.VestingRules.ToDictionary(bonus => bonus.Period, bonus => bonus.Percentage));
              foreach (var asset in assetDictionary)
                  PensionFundReferenceContractBusiness.Create(pensionFundContract.TransactionHash, asset.Key, asset.Value);
-                
+
+            unprocessedPensionFund.Processed = pensionFund.Id;
+            UPensionFundBusiness.Update(unprocessedPensionFund);
+
             return pensionFundContract;
         }
 

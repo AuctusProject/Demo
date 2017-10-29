@@ -26,8 +26,8 @@ namespace Auctus.DomainObjects.Unprocessed
         public Double MSCIPercentage { get; set; }
         [DapperType(System.Data.DbType.Double)]
         public Double BitcoinPercentage { get; set; }
-        [DapperType(System.Data.DbType.Byte)]
-        public Boolean Processed { get; set; }
+        [DapperType(System.Data.DbType.UInt32)]
+        public Int32 Processed { get; set; }
 
         public UCompany Company { get; set; }
     }

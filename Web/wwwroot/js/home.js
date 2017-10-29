@@ -37,6 +37,8 @@
     hub.on('deployCompleted', Wizard.Operations.OnDeployCompleted);
     hub.on('deployUncompleted', Wizard.Operations.OnDeployUncompleted);
     hub.on('deployError', Wizard.Operations.OnDeployError);
+    hub.on('creationCompleted', Wizard.Operations.OnCreationCompleted);
+    hub.on('creationUncompleted', Wizard.Operations.OnCreationUncompleted);
 });
 
 function validateFormToEnableNextButton() {
@@ -269,6 +271,7 @@ Wizard.Components = {
     },
     AssetsCarousel: $("#carouselExampleIndicators"),
     ContractDeploy: {
+        PensionFundId: null,
         Transaction: null,
         NextButton: $('.next-button'),
         ButtonsControl: $('.buttons-control-div'),
@@ -312,18 +315,43 @@ Wizard.Operations = {
         Wizard.Components.ContractDeploy.GeneratingContract.show();
         Wizard.Components.ErrorMessage.hide();
     },
-    OnSave: function (data) {//TODO:get TransactionHash and sCCode
-        Wizard.Components.ContractDeploy.Transaction = "0x000000000000000000000000000";//data.transactionHash;
+    OnSave: function (data) {
+        Wizard.Components.ContractDeploy.PensionFundId = data.pensionFundId;
+        signalrDone = Wizard.Operations.OnCreationUncompleted;
+        Wizard.Operations.OnCreationUncompleted();
+        Wizard.Components.ErrorMessage.hide();
+    },
+    OnCreationCompleted: function (data) {
+        Wizard.Components.ContractDeploy.Transaction = data.transactionHash;
         signalrDone = Wizard.Operations.OnDeployUncompleted;
         Wizard.Operations.OnDeployUncompleted();
         Wizard.Components.ErrorMessage.hide();
         Wizard.Components.ContractDeploy.ContractDeployedDiv.hide();
         Wizard.Components.ContractDeploy.TransactionIdLink.attr("href", Parameter.BlockExplorerUrl + "/tx/" + Wizard.Components.ContractDeploy.Transaction);
-        Wizard.Components.ContractDeploy.CodeMirror.setValue(js_beautify("pragma lorem ipsum", { indent_size: 4 })); //data.smartContractCode
+        Wizard.Components.ContractDeploy.CodeMirror.setValue(js_beautify(data.smartContractCode, { indent_size: 4 })); 
         setTimeout(function () { Wizard.Components.ContractDeploy.CodeMirror.refresh(); }, 1);
         Wizard.Components.ContractDeploy.ContractCodeWrapper.show();
         Wizard.Components.ContractDeploy.ContractBeingDeployedDiv.show();
         nextTab(3);
+    },
+    OnCreationUncompleted: function (pensionFundId) {
+        var id = Wizard.Components.ContractDeploy.PensionFundId ? Wizard.Components.ContractDeploy.PensionFundId : pensionFundId;
+        $.ajax({
+            url: urlCheckCreation,
+            method: "POST",
+            data: { pensionFundId: id },
+            beforeSend: function (request) {
+                request.setRequestHeader("HubConnectionId", connection.id);
+            },
+            success: function (response) {
+                if (!response || !response.success) {
+                    setTimeout(function () { Wizard.Operations.OnCreationUncompleted(); }, 5000);
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                Wizard.Operations.OnCreationUncompleted();
+            }
+        });
     },
     OnDeployCompleted: function (data) {
         Wizard.Components.ErrorMessage.hide();

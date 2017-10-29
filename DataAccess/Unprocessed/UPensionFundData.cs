@@ -3,6 +3,7 @@ using Auctus.DomainObjects.Unprocessed;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 using Dapper;
 
 namespace Auctus.DataAccess.Unprocessed
@@ -21,8 +22,15 @@ namespace Auctus.DataAccess.Unprocessed
         public List<UPensionFund> ListUnprocessed()
         {
             DynamicParameters param = new DynamicParameters();
-            param.Add("processed", 0, System.Data.DbType.Byte);
+            param.Add("processed", 0, System.Data.DbType.UInt32);
             return List(string.Format(SQL_U_PENSION_FUND_DATA, "upf.Processed = @processed"), param);
+        }
+
+        public UPensionFund Get(int uPensionFundId)
+        {
+            DynamicParameters param = new DynamicParameters();
+            param.Add("UPensionFundId", uPensionFundId, System.Data.DbType.UInt32);
+            return SelectByParameters<UPensionFund>(param).SingleOrDefault();
         }
 
         private List<UPensionFund> List(string sql, DynamicParameters param)

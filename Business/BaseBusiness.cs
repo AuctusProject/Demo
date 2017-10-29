@@ -14,6 +14,8 @@ namespace Auctus.Business
 {
     public abstract class BaseBusiness<T, D> where D : BaseData<T>, new()
     {
+        protected const double AUCTUS_FEE = 20;
+
         protected readonly ILoggerFactory LoggerFactory;
         protected readonly ILogger Logger;
         protected readonly Cache MemoryCache;

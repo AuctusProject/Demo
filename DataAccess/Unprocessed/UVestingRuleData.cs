@@ -17,7 +17,7 @@ namespace Auctus.DataAccess.Unprocessed
         public List<UVestingRule> ListByCompany(int uCompanyId)
         {
             DynamicParameters param = new DynamicParameters();
-            param.Add("@UCompanyId", uCompanyId, System.Data.DbType.Int32);
+            param.Add("UCompanyId", uCompanyId, System.Data.DbType.Int32);
             return SelectByParameters<UVestingRule>(param).ToList();
         }
     }
