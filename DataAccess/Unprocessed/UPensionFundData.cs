@@ -29,7 +29,7 @@ namespace Auctus.DataAccess.Unprocessed
         public UPensionFund Get(int uPensionFundId)
         {
             DynamicParameters param = new DynamicParameters();
-            param.Add("UPensionFundId", uPensionFundId, System.Data.DbType.UInt32);
+            param.Add("Id", uPensionFundId, System.Data.DbType.UInt32);
             return SelectByParameters<UPensionFund>(param).SingleOrDefault();
         }
 
