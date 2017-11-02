@@ -18,7 +18,7 @@ namespace Web.Controllers
 {
     public class HomeController : BaseController
     {
-        public HomeController(ILoggerFactory loggerFactory, Cache cache, IServiceProvider serviceProvider, IConnectionManager connectionManager) : base(loggerFactory, cache, serviceProvider) { }
+        public HomeController(ILoggerFactory loggerFactory, Cache cache, IServiceProvider serviceProvider) : base(loggerFactory, cache, serviceProvider) { }
         
         public IActionResult Index()
         {

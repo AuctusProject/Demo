@@ -23,7 +23,7 @@ namespace Web.Controllers
     {
         private static readonly ConcurrentDictionary<string, string> CONTRACT_TRANSACTING = new ConcurrentDictionary<string, string>();
 
-        public PensionFundController(ILoggerFactory loggerFactory, Cache cache, IServiceProvider serviceProvider, IConnectionManager connectionManager) : base(loggerFactory, cache, serviceProvider) { }
+        public PensionFundController(ILoggerFactory loggerFactory, Cache cache, IServiceProvider serviceProvider) : base(loggerFactory, cache, serviceProvider) { }
 
         [Route("/PensionFund/{contractAddress}")]
         public IActionResult Index(string contractAddress)
