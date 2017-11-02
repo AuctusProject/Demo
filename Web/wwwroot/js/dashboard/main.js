@@ -1,21 +1,18 @@
 ﻿﻿$(document).ready(function () {
     Dashboard.init();
-    hub.on('paymentsCompleted', Dashboard.paymentsCompleted);
-    hub.on('paymentsUncompleted', Dashboard.paymentsUncompleted);
-    hub.on('readPaymentsError', Dashboard.readPaymentsError);
-    hub.on('withdrawalCompleted', Dashboard.withdrawalCompleted);
-    hub.on('withdrawalUncompleted', Dashboard.withdrawalUncompleted);
-    hub.on('readWithdrawalError', Dashboard.readWithdrawalError);
+    //hub.on('paymentsCompleted', Dashboard.paymentsCompleted);
+    //hub.on('paymentsUncompleted', Dashboard.paymentsUncompleted);
+    //hub.on('readPaymentsError', Dashboard.readPaymentsError);
+    //hub.on('withdrawalCompleted', Dashboard.withdrawalCompleted);
+    //hub.on('withdrawalUncompleted', Dashboard.withdrawalUncompleted);
+    //hub.on('readWithdrawalError', Dashboard.readWithdrawalError);
 });
 
 var Dashboard = {
     remainingPayments: 60,
     finished: false,
     init: function () {
-        if (signalrDone) {
-            Dashboard.readTransactions();
-        }
-        signalrDone = Dashboard.readTransactions;
+        Dashboard.readTransactions();
         Dashboard.configTimeline();
         Dashboard.configPaymentWindow();
         Dashboard.configShare();
@@ -54,7 +51,7 @@ var Dashboard = {
         $('#withdrawModal').modal('toggle');
         Dashboard.showLoading();
         Dashboard.disableActionButtons();
-        Dashboard.ajaxHubCall(urlGenerateWithdraw, Dashboard.getBaseData(), Dashboard.withdrawalUncompleted);
+        Dashboard.ajaxCall(urlGenerateWithdraw, Dashboard.getBaseData(), Dashboard.withdrawalUncompleted);
     },
     payment: function () {
         $('#paymentModal').modal('toggle');
@@ -62,7 +59,7 @@ var Dashboard = {
         Dashboard.disableActionButtons();
         var data = Dashboard.getBaseData();
         data["monthsAmount"] = $('#month').val();
-        Dashboard.ajaxHubCall(urlGeneratePayment, data, Dashboard.paymentsUncompleted);
+        Dashboard.ajaxCall(urlGeneratePayment, data, Dashboard.paymentsUncompleted);
     },
     paymentsCompleted: function (response) {
         if (response) {
@@ -78,7 +75,7 @@ var Dashboard = {
             Dashboard.showLoading();
             Dashboard.setPayment(response);
             Dashboard.disableActionButtons();
-            Dashboard.readPayments();
+            Dashboard.tryReadAgain(Dashboard.readPayments);
         }
     },
     readPaymentsError: function (response) {
@@ -109,29 +106,33 @@ var Dashboard = {
         if (response) {
             Dashboard.showLoading();
             Dashboard.disableActionButtons();
-            Dashboard.readWithdraw();
+            Dashboard.tryReadAgain(Dashboard.readWithdraw);
         }
     },
     readWithdrawalError: function (response) {
         Dashboard.tryReadAgain(Dashboard.readWithdraw);
     },
     readPayments: function () {
-        Dashboard.ajaxHubCall(urlReadPayment, Dashboard.getBaseData(), Dashboard.manageReadPaymentResponse, Dashboard.readPaymentConnectionError);
+        Dashboard.ajaxCall(urlReadPayment, Dashboard.getBaseData(), Dashboard.manageReadPaymentResponse, Dashboard.readPaymentConnectionError);
     },
     readWithdraw: function () {
-        Dashboard.ajaxHubCall(urlReadWithdraw, Dashboard.getBaseData(), Dashboard.manageReadWithdrawResponse, Dashboard.readWithdrawConnectionError);
+        Dashboard.ajaxCall(urlReadWithdraw, Dashboard.getBaseData(), Dashboard.manageReadWithdrawResponse, Dashboard.readWithdrawConnectionError);
     },
     manageReadPaymentResponse: function (response) {
-        if (!response || !response.success) {
-            Dashboard.readPaymentConnectionError();
+        if (!response.success) {
+            Dashboard.paymentsUncompleted(response.currentProgress);
+        } else {
+            Dashboard.paymentsCompleted(response.currentProgress);
         }
     },
     readPaymentConnectionError: function () {
         Dashboard.tryReadAgain(Dashboard.readPayments);
     },
     manageReadWithdrawResponse: function (response) {
-        if (!response || !response.success) {
-            Dashboard.readWithdrawConnectionError();
+        if (!response.success) {
+            Dashboard.withdrawalUncompleted(response.data);
+        } else {
+            Dashboard.withdrawalCompleted(response.data);
         }
     },
     readWithdrawConnectionError: function () {
@@ -270,14 +271,11 @@ var Dashboard = {
             contractAddress: pensionFundData.contractAddress
         };
     },
-    ajaxHubCall: function (url, data, successFunction, errorFunction) {
+    ajaxCall: function (url, data, successFunction, errorFunction) {
         $.ajax({
             url: url,
             data: data,
             method: "POST",
-            beforeSend: function (request) {
-                request.setRequestHeader("HubConnectionId", connection.id);
-            },
             success: function (response) {
                 if (successFunction) {
                     successFunction(response);

@@ -67,6 +67,11 @@ namespace Auctus.Business.Contracts
             return Data.GetPensionFundContract(transactionHash);
         }
 
+        public PensionFundContract GetByAddress(String contractAddress)
+        {
+            return Data.GetPensionFundContractByAddress(contractAddress);
+        }
+
         public PensionFundContract CheckContractCreationTransaction(PensionFundContract pensionFundContract)
         {
             Transaction demoContractTransaction = EthereumManager.GetTransaction(pensionFundContract.TransactionHash);

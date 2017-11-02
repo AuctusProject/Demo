@@ -23,11 +23,11 @@ namespace Auctus.Business.Funds
 
         public Withdrawal GetWithdrawalInfo(string pensionFundContractAddress)
         {
-            PensionFund pensionFund = GetByContract(pensionFundContractAddress);
+            PensionFundContract pensionFundContract = PensionFundContractBusiness.GetByAddress(pensionFundContractAddress);
             return new Withdrawal()
             {
-                EmployeeSzaboCashback = pensionFund.Option.PensionFundContract.EmployeeCashback,
-                EmployerSzaboCashback = pensionFund.Option.PensionFundContract.EmployerCashback
+                EmployeeSzaboCashback = pensionFundContract.EmployeeCashback,
+                EmployerSzaboCashback = pensionFundContract.EmployerCashback
             };
         }
 

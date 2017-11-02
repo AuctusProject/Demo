@@ -19,11 +19,11 @@ using System.Collections.Concurrent;
 
 namespace Web.Controllers
 {
-    public class PensionFundController : HubBaseController
+    public class PensionFundController : BaseController
     {
         private static readonly ConcurrentDictionary<string, string> CONTRACT_TRANSACTING = new ConcurrentDictionary<string, string>();
 
-        public PensionFundController(ILoggerFactory loggerFactory, Cache cache, IServiceProvider serviceProvider, IConnectionManager connectionManager) : base(loggerFactory, cache, serviceProvider, connectionManager) { }
+        public PensionFundController(ILoggerFactory loggerFactory, Cache cache, IServiceProvider serviceProvider, IConnectionManager connectionManager) : base(loggerFactory, cache, serviceProvider) { }
 
         [Route("/PensionFund/{contractAddress}")]
         public IActionResult Index(string contractAddress)
@@ -58,47 +58,73 @@ namespace Web.Controllers
                 return new EmptyResult();
         }
 
+        //[HttpPost]
+        //[Route("/PensionFund/ReadPayments")]
+        //public IActionResult ReadPayments(string contractAddress)
+        //{
+        //    if (!string.IsNullOrEmpty(ConnectionId))
+        //    {
+        //        Task.Factory.StartNew(() =>
+        //        {
+        //            var hubContext = HubConnectionManager.GetHubContext<AuctusDemoHub>();
+        //            try
+        //            {
+        //                if (CanTransactWith(contractAddress))
+        //                {
+        //                    try
+        //                    {
+        //                        Progress progress = PensionFundsServices.ReadPayments(contractAddress);
+        //                        if (progress.Completed)
+        //                            hubContext.Clients.Client(ConnectionId).paymentsCompleted(Json(progress).Value);
+        //                        else
+        //                            hubContext.Clients.Client(ConnectionId).paymentsUncompleted(Json(progress).Value);
+        //                    }
+        //                    finally
+        //                    {
+        //                        ReleaseTransactionWith(contractAddress);
+        //                    }
+        //                }
+        //                else
+        //                    hubContext.Clients.Client(ConnectionId).readPaymentsError();
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                Logger.LogError(new EventId(2), ex, string.Format("Erro on ReadPayments {0}.", contractAddress));
+        //                hubContext.Clients.Client(ConnectionId).readPaymentsError();
+        //            }
+        //        });
+        //        return Json(new { success = true });
+        //    }
+        //    else
+        //        return Json(new { success = false });
+        //}
+
         [HttpPost]
         [Route("/PensionFund/ReadPayments")]
         public IActionResult ReadPayments(string contractAddress)
         {
-            if (!string.IsNullOrEmpty(ConnectionId))
+            try
             {
-                Task.Factory.StartNew(() =>
+                if (CanTransactWith(contractAddress))
                 {
-                    var hubContext = HubConnectionManager.GetHubContext<AuctusDemoHub>();
                     try
                     {
-                        if (CanTransactWith(contractAddress))
-                        {
-                            try
-                            {
-                                Progress progress = PensionFundsServices.ReadPayments(contractAddress);
-                                if (progress.Completed)
-                                    hubContext.Clients.Client(ConnectionId).paymentsCompleted(Json(progress).Value);
-                                else
-                                    hubContext.Clients.Client(ConnectionId).paymentsUncompleted(Json(progress).Value);
-                            }
-                            finally
-                            {
-                                ReleaseTransactionWith(contractAddress);
-                            }
-                        }
-                        else
-                            hubContext.Clients.Client(ConnectionId).readPaymentsError();
+                        Progress progress = PensionFundsServices.ReadPayments(contractAddress);
+                        return Json(new { success = progress.Completed, currentProgress = Json(progress).Value });
                     }
-                    catch (Exception ex)
+                    finally
                     {
-                        Logger.LogError(new EventId(2), ex, string.Format("Erro on ReadPayments {0}.", contractAddress));
-                        hubContext.Clients.Client(ConnectionId).readPaymentsError();
+                        ReleaseTransactionWith(contractAddress);
                     }
-                });
-                return Json(new { success = true });
+                }
             }
-            else
-                return Json(new { success = false });
+            catch (Exception ex)
+            {
+                Logger.LogError(new EventId(2), ex, string.Format("Erro on ReadPayments {0}.", contractAddress));
+            }
+            return Json(new { success = false });
         }
-        
+
         [HttpPost]
         [Route("/PensionFund/GenerateWithdrawal")]
         public IActionResult GenerateWithdrawal(string contractAddress)
@@ -119,35 +145,51 @@ namespace Web.Controllers
                 return new EmptyResult();
         }
 
+        //[HttpPost]
+        //[Route("/PensionFund/ReadWithdrawal")]
+        //public IActionResult ReadWithdrawal(string contractAddress)
+        //{
+        //    if (!string.IsNullOrEmpty(ConnectionId))
+        //    {
+        //        Task.Factory.StartNew(() =>
+        //        {
+        //            var hubContext = HubConnectionManager.GetHubContext<AuctusDemoHub>();
+        //            try
+        //            {
+        //                Withdrawal withdrawal = PensionFundsServices.ReadWithdrawal(contractAddress);
+        //                if (withdrawal == null || withdrawal.Completed)
+        //                    hubContext.Clients.Client(ConnectionId).withdrawalCompleted(Json(withdrawal).Value);
+        //                else
+        //                    hubContext.Clients.Client(ConnectionId).withdrawalUncompleted(Json(withdrawal).Value);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                Logger.LogError(new EventId(3), ex, string.Format("Erro on ReadWithdrawal {0}.", contractAddress));
+        //                hubContext.Clients.Client(ConnectionId).readWithdrawalError();
+        //            }
+        //        });
+        //        return Json(new { success = true });
+        //    }
+        //    else
+        //        return Json(new { success = false });
+        //}
+
         [HttpPost]
         [Route("/PensionFund/ReadWithdrawal")]
         public IActionResult ReadWithdrawal(string contractAddress)
         {
-            if (!string.IsNullOrEmpty(ConnectionId))
+            try
             {
-                Task.Factory.StartNew(() =>
-                {
-                    var hubContext = HubConnectionManager.GetHubContext<AuctusDemoHub>();
-                    try
-                    {
-                        Withdrawal withdrawal = PensionFundsServices.ReadWithdrawal(contractAddress);
-                        if (withdrawal == null || withdrawal.Completed)
-                            hubContext.Clients.Client(ConnectionId).withdrawalCompleted(Json(withdrawal).Value);
-                        else
-                            hubContext.Clients.Client(ConnectionId).withdrawalUncompleted(Json(withdrawal).Value);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.LogError(new EventId(3), ex, string.Format("Erro on ReadWithdrawal {0}.", contractAddress));
-                        hubContext.Clients.Client(ConnectionId).readWithdrawalError();
-                    }
-                });
-                return Json(new { success = true });
+                Withdrawal withdrawal = PensionFundsServices.ReadWithdrawal(contractAddress);
+                Json(new { success = (withdrawal == null || withdrawal.Completed), data = Json(withdrawal).Value });
             }
-            else
-                return Json(new { success = false });
+            catch (Exception ex)
+            {
+                Logger.LogError(new EventId(3), ex, string.Format("Erro on ReadWithdrawal {0}.", contractAddress));
+            }
+            return Json(new { success = false });
         }
-        
+
         private bool CanTransactWith(string contractAddress)
         {
             return CONTRACT_TRANSACTING.TryAdd(contractAddress, null);

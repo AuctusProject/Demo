@@ -16,9 +16,9 @@ using Auctus.DomainObjects.Contracts;
 
 namespace Web.Controllers
 {
-    public class HomeController : HubBaseController
+    public class HomeController : BaseController
     {
-        public HomeController(ILoggerFactory loggerFactory, Cache cache, IServiceProvider serviceProvider, IConnectionManager connectionManager) : base(loggerFactory, cache, serviceProvider, connectionManager) { }
+        public HomeController(ILoggerFactory loggerFactory, Cache cache, IServiceProvider serviceProvider, IConnectionManager connectionManager) : base(loggerFactory, cache, serviceProvider) { }
         
         public IActionResult Index()
         {
@@ -52,75 +52,110 @@ namespace Web.Controllers
                 return Json("We’re sorry, we had an unexpected error! Please try again in a minute.");
             }
         }
+        
+        //[HttpPost]
+        //public IActionResult CheckPensionFundCreation(int pensionFundId)
+        //{
+        //    if (!string.IsNullOrEmpty(ConnectionId))
+        //    {
+        //        Task.Factory.StartNew(() =>
+        //        {
+        //            var hubContext = HubConnectionManager.GetHubContext<AuctusDemoHub>();
+        //            try
+        //            {
+        //                var pensionFundCreated = PensionFundsServices.CheckPensionFundCreation(pensionFundId);
+        //                if (pensionFundCreated != null)
+        //                    hubContext.Clients.Client(ConnectionId).creationCompleted(Json(
+        //                        new
+        //                        {
+        //                            SmartContractCode = pensionFundCreated.Item2,
+        //                            TransactionHash = pensionFundCreated.Item1
+        //                        }));
+        //                else
+        //                    hubContext.Clients.Client(ConnectionId).creationUncompleted(pensionFundId);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                Logger.LogError(new EventId(1), ex, string.Format("Erro on CheckPensionFundCreation {0}.", pensionFundId));
+        //                hubContext.Clients.Client(ConnectionId).creationUncompleted(pensionFundId);
+        //            }
+        //        });
+        //        return Json(new { success = true });
+        //    }
+        //    else
+        //        return Json(new { success = false });
+        //}
 
         [HttpPost]
         public IActionResult CheckPensionFundCreation(int pensionFundId)
         {
-            if (!string.IsNullOrEmpty(ConnectionId))
+            try
             {
-                Task.Factory.StartNew(() =>
-                {
-                    var hubContext = HubConnectionManager.GetHubContext<AuctusDemoHub>();
-                    try
-                    {
-                        var pensionFundCreated = PensionFundsServices.CheckPensionFundCreation(pensionFundId);
-                        if (pensionFundCreated != null)
-                            hubContext.Clients.Client(ConnectionId).creationCompleted(Json(
-                                new
-                                {
-                                    SmartContractCode = pensionFundCreated.Item2,
-                                    TransactionHash = pensionFundCreated.Item1
-                                }));
-                        else
-                            hubContext.Clients.Client(ConnectionId).creationUncompleted(pensionFundId);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.LogError(new EventId(1), ex, string.Format("Erro on CheckPensionFundCreation {0}.", pensionFundId));
-                        hubContext.Clients.Client(ConnectionId).creationUncompleted(pensionFundId);
-                    }
-                });
-                return Json(new { success = true });
+                var pensionFundCreated = PensionFundsServices.CheckPensionFundCreation(pensionFundId);
+                if (pensionFundCreated != null)
+                    return Json(new { success = true, smartContractCode = pensionFundCreated.Item2, transactionHash = pensionFundCreated.Item1 });
             }
-            else
-                return Json(new { success = false });
+            catch (Exception ex)
+            {
+                Logger.LogError(new EventId(1), ex, string.Format("Erro on CheckPensionFundCreation {0}.", pensionFundId));
+            }
+            return Json(new { success = false });
         }
 
         [HttpPost]
         public IActionResult CheckContractMined(String transactionHash)
         {
-            if (!string.IsNullOrEmpty(ConnectionId))
+            try
             {
-                Task.Factory.StartNew(() =>
-                {
-                    var hubContext = HubConnectionManager.GetHubContext<AuctusDemoHub>();
-                    try
-                    {
-                        var pensionFundContract = PensionFundsServices.GetPensionFundContract(transactionHash);
-                        if (pensionFundContract == null)
-                            throw new InvalidOperationException("Invalid transaction hash");
+                var pensionFundContract = PensionFundsServices.GetPensionFundContract(transactionHash);
+                if (pensionFundContract == null)
+                    throw new InvalidOperationException("Invalid transaction hash");
 
-                        if (pensionFundContract.BlockNumber.HasValue)
-                            hubContext.Clients.Client(ConnectionId).deployCompleted(Json(
-                                new
-                                {
-                                    Address = pensionFundContract.Address,
-                                    BlockNumber = pensionFundContract.BlockNumber,
-                                    TransactionHash = pensionFundContract.TransactionHash
-                                }));
-                        else
-                            hubContext.Clients.Client(ConnectionId).deployUncompleted(pensionFundContract.TransactionHash);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.LogError(new EventId(1), ex, string.Format("Erro on CheckContractMined {0}.", transactionHash));
-                        hubContext.Clients.Client(ConnectionId).deployError();
-                    }
-                });
-                return Json(new { success = true });
+                if (pensionFundContract.BlockNumber.HasValue)
+                    return Json(new { success = true, address = pensionFundContract.Address, blockNumber = pensionFundContract.BlockNumber, transactionHash = pensionFundContract.TransactionHash });
             }
-            else
-                return Json(new { success = false });
+            catch (Exception ex)
+            {
+                Logger.LogError(new EventId(1), ex, string.Format("Erro on CheckContractMined {0}.", transactionHash));
+            }
+            return Json(new { success = false });
         }
+
+        //[HttpPost]
+        //public IActionResult CheckContractMined(String transactionHash)
+        //{
+        //    if (!string.IsNullOrEmpty(ConnectionId))
+        //    {
+        //        Task.Factory.StartNew(() =>
+        //        {
+        //            var hubContext = HubConnectionManager.GetHubContext<AuctusDemoHub>();
+        //            try
+        //            {
+        //                var pensionFundContract = PensionFundsServices.GetPensionFundContract(transactionHash);
+        //                if (pensionFundContract == null)
+        //                    throw new InvalidOperationException("Invalid transaction hash");
+
+        //                if (pensionFundContract.BlockNumber.HasValue)
+        //                    hubContext.Clients.Client(ConnectionId).deployCompleted(Json(
+        //                        new
+        //                        {
+        //                            Address = pensionFundContract.Address,
+        //                            BlockNumber = pensionFundContract.BlockNumber,
+        //                            TransactionHash = pensionFundContract.TransactionHash
+        //                        }));
+        //                else
+        //                    hubContext.Clients.Client(ConnectionId).deployUncompleted(pensionFundContract.TransactionHash);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                Logger.LogError(new EventId(1), ex, string.Format("Erro on CheckContractMined {0}.", transactionHash));
+        //                hubContext.Clients.Client(ConnectionId).deployError();
+        //            }
+        //        });
+        //        return Json(new { success = true });
+        //    }
+        //    else
+        //        return Json(new { success = false });
+        //}
     }
 }

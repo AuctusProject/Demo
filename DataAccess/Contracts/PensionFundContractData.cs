@@ -20,6 +20,13 @@ namespace Auctus.DataAccess.Contracts
             return SelectByParameters<PensionFundContract>(parameters).SingleOrDefault();
         }
 
+        public PensionFundContract GetPensionFundContractByAddress(string address)
+        {
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("Address", address, DbType.AnsiStringFixedLength);
+            return SelectByParameters<PensionFundContract>(parameters).SingleOrDefault();
+        }
+
         public List<PensionFundContract> ListPendingMiningContracts()
         {
             return Query<PensionFundContract>(SQL_PENDING_MINING_CONTRACTS).ToList();

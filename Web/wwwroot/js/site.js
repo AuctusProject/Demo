@@ -25,31 +25,31 @@
 
     hljs.configure({ useBR: true });
     
-    startSignalRConnection();
+    //startSignalRConnection();
 
-    connection.disconnected(function () {
-        if (signalrDisconnected) {
-            signalrDisconnected();
-        }
-        setTimeout(function () {
-            startSignalRConnection();
-        }, 5000);
-    });
+    //connection.disconnected(function () {
+    //    if (signalrDisconnected) {
+    //        signalrDisconnected();
+    //    }
+    //    setTimeout(function () {
+    //        startSignalRConnection();
+    //    }, 5000);
+    //});
 
     $('.onlyInteger').keypress(isNumber);
 });
 
-function startSignalRConnection() {
-    connection.start()
-        .done(function () {
-            if (signalrDone) {
-                signalrDone();
-            } else {
-                signalrDone = function () { };
-            }
-        })
-        .fail(function () { alert('SignalR could not be connected.'); });
-}
+//function startSignalRConnection() {
+//    connection.start()
+//        .done(function () {
+//            if (signalrDone) {
+//                signalrDone();
+//            } else {
+//                signalrDone = function () { };
+//            }
+//        })
+//        .fail(function () { alert('SignalR could not be connected.'); });
+//}
 
 function isNumber(evt) {
     evt = (evt) ? evt : window.event;
@@ -64,10 +64,10 @@ jQuery.fn.outerHTML = function () {
     return jQuery('<div />').append(this.eq(0).clone()).html();
 };
 
-var connection = $.hubConnection();
-var hub = connection.createHubProxy("AuctusDemo");
-var signalrDone = null;
-var signalrDisconnected = null;
+//var connection = $.hubConnection();
+//var hub = connection.createHubProxy("AuctusDemo");
+//var signalrDone = null;
+//var signalrDisconnected = null;
 
 $('.form-control').focus(function () { $(this).parent().addClass('is-focused'); });
 $('.form-control').blur(function () { $(this).parent().removeClass('is-focused'); });

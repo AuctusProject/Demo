@@ -34,11 +34,11 @@
 
     loadAssetsGraphs();
     
-    hub.on('deployCompleted', Wizard.Operations.OnDeployCompleted);
-    hub.on('deployUncompleted', Wizard.Operations.OnDeployUncompleted);
-    hub.on('deployError', Wizard.Operations.OnDeployError);
-    hub.on('creationCompleted', Wizard.Operations.OnCreationCompleted);
-    hub.on('creationUncompleted', Wizard.Operations.OnCreationUncompleted);
+    //hub.on('deployCompleted', Wizard.Operations.OnDeployCompleted);
+    //hub.on('deployUncompleted', Wizard.Operations.OnDeployUncompleted);
+    //hub.on('deployError', Wizard.Operations.OnDeployError);
+    //hub.on('creationCompleted', Wizard.Operations.OnCreationCompleted);
+    //hub.on('creationUncompleted', Wizard.Operations.OnCreationUncompleted);
 });
 
 function validateFormToEnableNextButton() {
@@ -299,9 +299,6 @@ Wizard.Operations = {
             $.ajax({
                 url: urlSaveFund,
                 method: "POST",
-                beforeSend: function (request) {
-                    request.setRequestHeader("HubConnectionId", hub.connection.id);
-                },
                 data: model,
                 success: Wizard.Operations.OnSave,
                 error: function (xhr, ajaxOptions, thrownError) {
@@ -317,18 +314,16 @@ Wizard.Operations = {
     },
     OnSave: function (data) {
         Wizard.Components.ContractDeploy.PensionFundId = data.pensionFundId;
-        signalrDone = Wizard.Operations.OnCreationUncompleted;
         Wizard.Operations.OnCreationUncompleted();
         Wizard.Components.ErrorMessage.hide();
     },
     OnCreationCompleted: function (data) {
-        Wizard.Components.ContractDeploy.Transaction = data.Value.TransactionHash;
-        signalrDone = Wizard.Operations.OnDeployUncompleted;
+        Wizard.Components.ContractDeploy.Transaction = data.transactionHash;
         Wizard.Operations.OnDeployUncompleted();
         Wizard.Components.ErrorMessage.hide();
         Wizard.Components.ContractDeploy.ContractDeployedDiv.hide();
         Wizard.Components.ContractDeploy.TransactionIdLink.attr("href", Parameter.BlockExplorerUrl + "/tx/" + Wizard.Components.ContractDeploy.Transaction);
-        Wizard.Components.ContractDeploy.CodeMirror.setValue(js_beautify(data.Value.SmartContractCode, { indent_size: 4 })); 
+        Wizard.Components.ContractDeploy.CodeMirror.setValue(js_beautify(data.smartContractCode, { indent_size: 4 })); 
         setTimeout(function () { Wizard.Components.ContractDeploy.CodeMirror.refresh(); }, 1);
         Wizard.Components.ContractDeploy.ContractCodeWrapper.show();
         Wizard.Components.ContractDeploy.ContractBeingDeployedDiv.show();
@@ -340,12 +335,11 @@ Wizard.Operations = {
             url: urlCheckCreation,
             method: "POST",
             data: { pensionFundId: id },
-            beforeSend: function (request) {
-                request.setRequestHeader("HubConnectionId", connection.id);
-            },
             success: function (response) {
                 if (!response || !response.success) {
-                    setTimeout(function () { Wizard.Operations.OnCreationUncompleted(); }, 5000);
+                    setTimeout(function () { Wizard.Operations.OnCreationUncompleted(id); }, 5000);
+                } else {
+                    Wizard.Operations.OnCreationCompleted(response);
                 }
             },
             error: function (xhr, ajaxOptions, thrownError) {
@@ -357,11 +351,11 @@ Wizard.Operations = {
         Wizard.Components.ErrorMessage.hide();
         Wizard.Components.ContractDeploy.ContractBeingDeployedDiv.hide();
         Wizard.Components.ContractDeploy.ContractDeployedDiv.show();
-        Wizard.Components.ContractDeploy.ContractAddressLink.attr("href", Parameter.BlockExplorerUrl + "/address/" + data.Value.Address);
+        Wizard.Components.ContractDeploy.ContractAddressLink.attr("href", Parameter.BlockExplorerUrl + "/address/" + data.address);
         Wizard.Components.ContractDeploy.GeneratingContract.hide();
         Wizard.Components.ContractDeploy.ButtonsControl.show()
         Wizard.Components.ContractDeploy.NextButton.removeAttr('disabled');
-        Wizard.Components.ContractDeploy.NextButton.unbind('click').click(function () { Wizard.Operations.GoToDashBoard(data.Value.Address); });
+        Wizard.Components.ContractDeploy.NextButton.unbind('click').click(function () { Wizard.Operations.GoToDashBoard(data.address); });
         Wizard.Components.ContractDeploy.NextButton.show();
     },
     OnDeployUncompleted: function (deployTransaction) {
@@ -370,12 +364,11 @@ Wizard.Operations = {
             url: urlCheckDeploy,
             method: "POST",
             data: { transactionHash: hash },
-            beforeSend: function (request) {
-                request.setRequestHeader("HubConnectionId", connection.id);
-            },
             success: function (response) {
                 if (!response || !response.success) {
-                    setTimeout(function () { Wizard.Operations.OnDeployUncompleted(); }, 5000);
+                    setTimeout(function () { Wizard.Operations.OnDeployUncompleted(hash); }, 5000);
+                } else {
+                    Wizard.Operations.OnDeployCompleted(response);
                 }
             },
             error: function (xhr, ajaxOptions, thrownError) {
