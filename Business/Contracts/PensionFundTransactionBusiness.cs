@@ -368,8 +368,8 @@ namespace Auctus.Business.Contracts
                 Parallel.ForEach(contractPendingTransactions, new ParallelOptions() { MaxDegreeOfParallelism = MaxParallelism }, (lostTransaction) =>
                 {
                     Logger.LogError(string.Format("Transaction {0} for contract {1} is lost.", lostTransaction.TransactionHash, pensionFund.Option.PensionFundContract.Address));
-                    Delete(lostTransaction);
                     CreateTransaction(DateTime.UtcNow, lostTransaction.FunctionType, lostTransaction.WalletAddress, pensionFund.Option.PensionFundContract.TransactionHash);
+                    Delete(lostTransaction);
                 });
             }
         }
