@@ -19,11 +19,15 @@ namespace Auctus.EthereumProxy
         internal static List<SCCompiled> Compile(string name, string smartContractStringified)
         {
             string filePath = string.Format("{0}{1}{2}.sol", Config.GETH_PATH, name, DateTime.UtcNow.Ticks);
+            Console.WriteLine($"\n Caminho: {filePath}");
             File.WriteAllText(filePath, smartContractStringified);
+            Console.WriteLine($"\n Text writed");
             try
             {
                 Solc solc = new Solc();
+                Console.WriteLine($"\n before solc");
                 solc.Compile(filePath);
+                Console.WriteLine($"\n after solc");
                 return solc.CompiledData;
             }
             finally
@@ -43,16 +47,17 @@ namespace Auctus.EthereumProxy
         {
             CompiledData = new List<SCCompiled>();
             BaseFilePath = filePath;
-
+            Console.WriteLine("before compile");
             ConsoleOutput output = Execute(new Command() { Comm = string.Format("solc --optimize --bin \"{0}\"", BaseFilePath), ReturnFunction = AfterGenerateBinary });
             if (!output.Ok)
                 throw new SolcException(string.Format("Failed to compile ABI.\n\n{0}", output.Output));
-
+            Console.WriteLine("after compile");
             ParseSCAbi(output.Output);
         }
 
         private Command AfterGenerateBinary(ConsoleOutput output)
         {
+            Console.WriteLine("AfterGenerateBinary");
             if (!output.Ok)
                 throw new SolcException(string.Format("Failed to compile binary.\n\n{0}", output.Output));
 
@@ -72,11 +77,14 @@ namespace Auctus.EthereumProxy
 
         private void ParseOutput(string output, string subtitle, string propertyNameToBeSet)
         {
+            Console.WriteLine("before parse");
             string[] initialSplit = output.Split(new string[] { subtitle, "\n", "\r", " ", "=" }, StringSplitOptions.RemoveEmptyEntries);
             SCCompiled scCompiled;
             //Reverse iteration in pairs 
+            Console.WriteLine($"Loop length {initialSplit.Length}");
             for (int i = initialSplit.Length - 1; i >= 0; i = i - 2)
             {
+                Console.WriteLine($"Loop {i}");
                 if (initialSplit[i].Contains(BaseFilePath))
                     i = i + 1; //It is a interface, so with empty BIN, go to the next skipping only one
                 else
@@ -94,6 +102,7 @@ namespace Auctus.EthereumProxy
                         CompiledData.Add(scCompiled);
                 }
             }
+            Console.WriteLine("after parse");
         }
 
         internal class SCCompiled

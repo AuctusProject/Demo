@@ -7,6 +7,7 @@ using Auctus.Util;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using Microsoft.Extensions.Caching.Memory;
+using Auctus.Util.NotShared;
 
 namespace Auctus.NodeProcessor
 {
@@ -29,8 +30,7 @@ namespace Auctus.NodeProcessor
             
             var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
             loggerFactory.AddNLog(new NLogProviderOptions { CaptureMessageTemplates = true, CaptureMessageProperties = true });
-            loggerFactory.ConfigureNLog(Directory.GetCurrentDirectory() + "\\nlog.config");
-
+            loggerFactory.ConfigureNLog(Directory.GetCurrentDirectory() + (Config.IS_WINDOWS ?  "\\nlog.config" : "/nlog.config"));
             serviceProvider.GetRequiredService<Processor>().Start(args);
         }
     }

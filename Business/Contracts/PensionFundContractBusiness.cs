@@ -26,12 +26,12 @@ namespace Auctus.Business.Contracts
             Dictionary<int, double> bonusVestingDistribuition)
         {
             var defaultDemonstrationPensionFundSmartContract = SmartContractBusiness.GetDefaultDemonstrationPensionFund();
-
+            Logger.LogTrace($"Deploying contract");
             KeyValuePair<string, string> demoTransaction = EthereumManager.DeployDefaultPensionFund(defaultDemonstrationPensionFundSmartContract.GasLimit, 
                 pensionFundAddress, employerAddress, employeeAddress,
                 pensionFundFee, pensionFundLatePenalty, AUCTUS_FEE, maxSalaryBonus, employeeContribution, employeeContributionBonus, employeeSalary, 
-                referenceValues, bonusVestingDistribuition.ToDictionary(c => c.Key * 12, c => c.Value));            
-
+                referenceValues, bonusVestingDistribuition.ToDictionary(c => c.Key * 12, c => c.Value));
+            Logger.LogTrace($"Contract deployed");
             var pensionFundContract = new PensionFundContract()
             {
                 CreationDate = DateTime.UtcNow,

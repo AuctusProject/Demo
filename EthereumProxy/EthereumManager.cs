@@ -84,8 +84,13 @@ namespace Auctus.EthereumProxy
             Dictionary<int, double> bonusVestingDistribuition)
         {
             string smartContractStringified = GetPensionFundSmartContractCode(pensionFundAddress, employerAddress, employeeAddress, pensionFundFee, pensionFundLatePenalty, auctusFee, maxSalaryBonus, employeeContribution, employeeContributionBonus, employeeSalary, referenceValues, bonusVestingDistribuition);
+            Console.WriteLine("Contract string generated");
+            Console.WriteLine("Compiling contract");
             SCCompiled scCompiled = Solc.Compile("CompanyContract", smartContractStringified).Single(c => c.Name == "CompanyContract");
+            Console.WriteLine("Contract compiled");
+            Console.WriteLine("Deploying contract");
             string transactionHash = Web3.DeployContract(scCompiled, gasLimit, GWEI_FAST);
+            Console.WriteLine("Contract deployed");
             return new KeyValuePair<string, string>(transactionHash, smartContractStringified);
         }
 

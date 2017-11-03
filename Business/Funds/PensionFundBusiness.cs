@@ -80,7 +80,7 @@ namespace Auctus.Business.Funds
         {
             Progress progress = new Progress();
             progress.StartTime = pensionFund.Option.PensionFundContract.CreationDate.Ticks;
-            
+
             IEnumerable<Payment> completed = payments.Where(c => c.Period.HasValue).OrderBy(c => c.Period.Value);
             progress.Values = new List<ProgressValue>();
             progress.TransactionHistory = new List<TransactionHistory>();
@@ -184,7 +184,8 @@ namespace Auctus.Business.Funds
         private string GetFormattedDate(DateTime date)
         {
             string month;
-            switch(date.Month) {
+            switch (date.Month)
+            {
                 case 1:
                     month = "JAN";
                     break;
@@ -225,7 +226,7 @@ namespace Auctus.Business.Funds
             return string.Format("{0} {1} {2}", date.Day, month, date.Year.ToString().Substring(2));
         }
 
-        private void AddProgressValue(Progress progress, ProgressValue progressValue, PensionFund pensionFund, Payment payment, double totalToken, 
+        private void AddProgressValue(Progress progress, ProgressValue progressValue, PensionFund pensionFund, Payment payment, double totalToken,
             double employeeToken, double invested, double pensionFundFee, double auctusFee)
         {
             double price = payment.TokenAmount.Value / (payment.SzaboInvested.Value + payment.LatePenalty.Value);
@@ -240,7 +241,7 @@ namespace Auctus.Business.Funds
         }
 
         private void AddProgressTransaction(Progress progress, IEnumerable<Payment> payments, List<Payment> alreadyIdentified, DateTime createdDate, DateTime referenceDate,
-            string employeeAddress, string companyAddress, string employeeTransaction, string companyTransaction, int? employeeBlockNumber, int? companyBlockNumber, 
+            string employeeAddress, string companyAddress, string employeeTransaction, string companyTransaction, int? employeeBlockNumber, int? companyBlockNumber,
             double? employeeToken, double? companyToken)
         {
             TransactionHistory transaction = new TransactionHistory();
@@ -329,7 +330,7 @@ namespace Auctus.Business.Funds
             fund.Fee = 0.75;
 
             Validate(fund, company, employee);
-           
+
             UPensionFund uFund = UPensionFundBusiness.Create(fund);
             UCompany uCompany = UCompanyBusiness.Create(company, uFund.Id);
             UEmployee uEmployee = UEmployeeBusiness.Create(employee, uCompany.Id);
@@ -338,32 +339,43 @@ namespace Auctus.Business.Funds
 
         private PensionFundContract ProcessCompleteEntry(UPensionFund unprocessedPensionFund)
         {
-             var assetDictionary = GetAssetAllocationDictionary(unprocessedPensionFund);
-             var pensionFund = PensionFundBusiness.Create(unprocessedPensionFund.Name);
-             var pensionFundWallet = WalletBusiness.Create();
-             var pensionFundOption = PensionFundOptionBusiness.Create(pensionFundWallet.Address, unprocessedPensionFund.Fee, unprocessedPensionFund.LatePaymentFee, pensionFund.Id);
-             var companyWallet = WalletBusiness.Create();
-             var domainCompany = CompanyBusiness.Create(companyWallet.Address, unprocessedPensionFund.Company.Name, unprocessedPensionFund.Company.BonusFee, unprocessedPensionFund.Company.MaxBonusFee, pensionFundOption.Address, unprocessedPensionFund.Company.VestingRules);
-             var employeeWallet = WalletBusiness.Create();
-             var domainEmployee = EmployeeBusiness.Create(employeeWallet.Address, unprocessedPensionFund.Company.Employee.Name, unprocessedPensionFund.Company.Employee.Salary, unprocessedPensionFund.Company.Employee.Contribution, domainCompany.Address);
-             var pensionFundContract = PensionFundContractBusiness.Create(pensionFundOption.Address, domainCompany.Address, domainEmployee.Address,
-                 pensionFundOption.Fee, pensionFundOption.LatePenalty, domainCompany.MaxSalaryBonusRate, domainEmployee.Contribution,
-                 domainCompany.BonusRate, domainEmployee.Salary,
-                 assetDictionary,
-                 unprocessedPensionFund.Company.VestingRules.ToDictionary(bonus => bonus.Period, bonus => bonus.Percentage));
-             foreach (var asset in assetDictionary)
-                 PensionFundReferenceContractBusiness.Create(pensionFundContract.TransactionHash, asset.Key, asset.Value);
+            var assetDictionary = GetAssetAllocationDictionary(unprocessedPensionFund);
+            Logger.LogTrace($"Creating pension fund: {unprocessedPensionFund.Id}");
+            var pensionFund = PensionFundBusiness.Create(unprocessedPensionFund.Name);
+            Logger.LogTrace($"Creating pension fund wallet");
+            var pensionFundWallet = WalletBusiness.Create();
+            Logger.LogTrace($"Pension fund wallet created");
+            var pensionFundOption = PensionFundOptionBusiness.Create(pensionFundWallet.Address, unprocessedPensionFund.Fee, unprocessedPensionFund.LatePaymentFee, pensionFund.Id);
+            Logger.LogTrace($"Creating company wallet");
+            var companyWallet = WalletBusiness.Create();
+            Logger.LogTrace($"Company wallet created");
+            var domainCompany = CompanyBusiness.Create(companyWallet.Address, unprocessedPensionFund.Company.Name, unprocessedPensionFund.Company.BonusFee, unprocessedPensionFund.Company.MaxBonusFee, pensionFundOption.Address, unprocessedPensionFund.Company.VestingRules);
+            Logger.LogTrace($"Creating employee wallet");
+            var employeeWallet = WalletBusiness.Create();
+            Logger.LogTrace($"Employee wallet created");
+            var domainEmployee = EmployeeBusiness.Create(employeeWallet.Address, unprocessedPensionFund.Company.Employee.Name, unprocessedPensionFund.Company.Employee.Salary, unprocessedPensionFund.Company.Employee.Contribution, domainCompany.Address);
+            Logger.LogTrace($"Employee created");
+            var pensionFundContract = PensionFundContractBusiness.Create(pensionFundOption.Address, domainCompany.Address, domainEmployee.Address,
+                pensionFundOption.Fee, pensionFundOption.LatePenalty, domainCompany.MaxSalaryBonusRate, domainEmployee.Contribution,
+                domainCompany.BonusRate, domainEmployee.Salary,
+                assetDictionary,
+                unprocessedPensionFund.Company.VestingRules.ToDictionary(bonus => bonus.Period, bonus => bonus.Percentage));
+            Logger.LogTrace($"Pension fund contract created");
+            foreach (var asset in assetDictionary)
+                PensionFundReferenceContractBusiness.Create(pensionFundContract.TransactionHash, asset.Key, asset.Value);
+            Logger.LogTrace($"Pension fund reference contract created");
 
             unprocessedPensionFund.Processed = pensionFund.Id;
+            Logger.LogTrace($"Updating pension fund");
             UPensionFundBusiness.Update(unprocessedPensionFund);
-
+            Logger.LogTrace($"Pension fund updated");
             return pensionFundContract;
         }
 
         public void ProcessPensionFundsEntries()
         {
             var unprocessedEntries = UPensionFundBusiness.ListUnprocessed();
-            foreach(UPensionFund pensionFund in unprocessedEntries)
+            foreach (UPensionFund pensionFund in unprocessedEntries)
             {
                 try
                 {
@@ -423,7 +435,7 @@ namespace Auctus.Business.Funds
             ValidateNonNegative(fund.GoldPercentage, "GoldPercentage");
             ValidateNonNegative(fund.MSCIPercentage, "MSCIPercentage");
             ValidateNonNegative(fund.SPPercentage, "SPPercentage");
-            if ((fund.BitcoinPercentage + fund.VWEHXPercentage + fund.GoldPercentage +fund.MSCIPercentage + fund.SPPercentage) != 100)
+            if ((fund.BitcoinPercentage + fund.VWEHXPercentage + fund.GoldPercentage + fund.MSCIPercentage + fund.SPPercentage) != 100)
                 throw new ArgumentException("Asset allocations must match 100 percentage.");
         }
 
