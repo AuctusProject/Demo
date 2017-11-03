@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Auctus.NodeProcessor
@@ -71,7 +72,7 @@ namespace Auctus.NodeProcessor
                     logger.LogInformation($"Method {processName} started");
                     action(cache, loggerFactory, configuration);
                     logger.LogInformation($"Method {processName} ended");
-                    Task.Delay(ExecutionMilisecondsInterval);
+                    Thread.Sleep(ExecutionMilisecondsInterval);
                     consecutiveExceptions = 0;
                 }
                 catch (Exception e)
