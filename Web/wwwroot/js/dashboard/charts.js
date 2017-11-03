@@ -20,7 +20,7 @@ Dashboard.charts = {
         this.loadVestingChart();
     },
     update: function (response) {
-        this.loadVestingChart(response.Values);
+        this.loadVestingChart(response.values);
     },
     loadVestingChart: function (values) {
         if (!values || (Array.isArray(values) && values.length === 0)) {
@@ -31,7 +31,7 @@ Dashboard.charts = {
         $('#noDataValuesChart').css('display', 'none');
         var dataArray = [];
         for (var i = 0; i < values.length; ++i) {
-            dataArray.push([values[i].Period, values[i].Total, values[i].Invested, values[i].Vested]);
+            dataArray.push([values[i].period, values[i].total, values[i].invested, values[i].vested]);
         }
 
         var openDate = new Date();

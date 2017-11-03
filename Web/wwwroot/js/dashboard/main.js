@@ -147,7 +147,7 @@ var Dashboard = {
         Dashboard.setTransactionHistory(response);
         Dashboard.charts && Dashboard.charts.update(response);
         if (response && response.TransactionHistory) {
-            Dashboard.remainingPayments = 60 - response.TransactionHistory.length;
+            Dashboard.remainingPayments = 60 - response.transactionHistory.length;
         }
     },
     setPaymentSlider: function () {
@@ -171,22 +171,22 @@ var Dashboard = {
     },
     setSummary: function (progress) {
         if (progress) {
-            $('#totalInvested').text(Dashboard.getFormattedNumber(progress.TotalInvested));
-            $('#totalVested').text(Dashboard.getFormattedNumber(progress.TotalVested));
-            $('#totalToken').text(Dashboard.getFormattedNumber(progress.TotalToken));
-            $('#feePaid').text(Dashboard.getFormattedNumber(progress.TotalPensinonFundFee));
-            $('#auctusFee').text(Dashboard.getFormattedNumber(progress.TotalAuctusFee));
-            if (progress.NextVestingDate) {
-                var partialDates = progress.NextVestingDate.split(' ');
+            $('#totalInvested').text(Dashboard.getFormattedNumber(progress.totalInvested));
+            $('#totalVested').text(Dashboard.getFormattedNumber(progress.totalVested));
+            $('#totalToken').text(Dashboard.getFormattedNumber(progress.totalToken));
+            $('#feePaid').text(Dashboard.getFormattedNumber(progress.totalPensinonFundFee));
+            $('#auctusFee').text(Dashboard.getFormattedNumber(progress.totalAuctusFee));
+            if (progress.nextVestingDate) {
+                var partialDates = progress.nextVestingDate.split(' ');
                 $('#nextVestingDate').html('<span>' + partialDates[0] + '</span><span>' + partialDates[1] + '</span><span>' + partialDates[2] + '</span>');
             }
         }
     },
     setTimeline: function (progress) {
-        if (progress && progress.LastPeriod && progress.LastPeriod > 0) {
+        if (progress && progress.lastPeriod && progress.lastPeriod > 0) {
             $('div.timeline-grid-horizontal-line').each(function (i) {
                 var current = $(this);
-                if (progress.LastPeriod >= parseInt(current.data('line'))) {
+                if (progress.lastPeriod >= parseInt(current.data('line'))) {
                     current.removeClass('timeline-grid-horizontal-line-pending');
                     current.addClass('timeline-grid-horizontal-line-complete');
                 } else {
@@ -229,26 +229,26 @@ var Dashboard = {
     TransactionHistoryRowTemplate: $('.row-template').outerHTML(),
     setTransactionHistory: function (response) {
 
-        if (response.TransactionHistory) {
+        if (response.transactionHistory) {
             $('.table-content').html('');
             $('.table-content').show();
-            for (var i = 0; i < response.TransactionHistory.length; i++) {
-                var transaction = response.TransactionHistory[i];
+            for (var i = 0; i < response.transactionHistory.length; i++) {
+                var transaction = response.transactionHistory[i];
                 var row = Dashboard.TransactionHistoryRowTemplate;
-                row = row.replace('{TRANSACTION_DATE}', transaction.PaymentDate == undefined ? " - " : transaction.PaymentDate);
-                row = row.replace('{TRANSACTION_STATUS}', transaction.Status);
-                row = row.replace('{TRANSACTION_STATUS_CLASS}', transaction.Status.toLowerCase());
-                row = row.replace('{EMPLOYEE_TOKEN}', (transaction.EmployeeToken == undefined || transaction.EmployeeToken == null) ? " - " : transaction.EmployeeToken.toFixed(2));
-                row = row.replace('{EMPLOYER_TOKEN}', (transaction.CompanyToken == undefined || transaction.CompanyToken == null) ? " - " : transaction.CompanyToken.toFixed(2));
-                if (transaction.EmployeeTransactionHash != null && transaction.EmployeeTransactionHash != '') {
-                    row = row.replace('{EMPLOYEE_TRANSACTION_LINK}', Parameter.BlockExplorerUrl + "/tx/" + transaction.EmployeeTransactionHash);
+                row = row.replace('{TRANSACTION_DATE}', transaction.paymentDate == undefined ? " - " : transaction.paymentDate);
+                row = row.replace('{TRANSACTION_STATUS}', transaction.status);
+                row = row.replace('{TRANSACTION_STATUS_CLASS}', transaction.status.toLowerCase());
+                row = row.replace('{EMPLOYEE_TOKEN}', (transaction.employeeToken == undefined || transaction.employeeToken == null) ? " - " : transaction.employeeToken.toFixed(2));
+                row = row.replace('{EMPLOYER_TOKEN}', (transaction.companyToken == undefined || transaction.companyToken == null) ? " - " : transaction.companyToken.toFixed(2));
+                if (transaction.employeeTransactionHash != null && transaction.employeeTransactionHash != '') {
+                    row = row.replace('{EMPLOYEE_TRANSACTION_LINK}', Parameter.BlockExplorerUrl + "/tx/" + transaction.employeeTransactionHash);
                     row = row.replace('{EMPLOYEE_TRANSACTION_LINK_CLASS}', 'visible');
                 }
                 else {
                     row = row.replace('{EMPLOYEE_TRANSACTION_LINK_CLASS}', 'hidden');
                 }
-                if (transaction.CompanyTransactionHash != null && transaction.CompanyTransactionHash != '') {
-                    row = row.replace('{EMPLOYER_TRANSACTION_LINK}', Parameter.BlockExplorerUrl + "/tx/" + transaction.CompanyTransactionHash);
+                if (transaction.companyTransactionHash != null && transaction.companyTransactionHash != '') {
+                    row = row.replace('{EMPLOYER_TRANSACTION_LINK}', Parameter.BlockExplorerUrl + "/tx/" + transaction.companyTransactionHash);
                     row = row.replace('{EMPLOYER_TRANSACTION_LINK_CLASS}', 'visible');
                 }
                 else {
