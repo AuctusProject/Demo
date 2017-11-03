@@ -325,7 +325,11 @@ namespace Auctus.Business.Funds
 
         public int CreateUnprocessedEntry(Fund fund, Company company, Employee employee)
         {
+            fund.Name = company.Name;
+            fund.Fee = 0.75;
+
             Validate(fund, company, employee);
+           
             UPensionFund uFund = UPensionFundBusiness.Create(fund);
             UCompany uCompany = UCompanyBusiness.Create(company, uFund.Id);
             UEmployee uEmployee = UEmployeeBusiness.Create(employee, uCompany.Id);

@@ -1,20 +1,20 @@
 ﻿$(document).ready(function () {
     $(".next-step").click(function (e) {
         if ($('.next-button').attr('disabled') == null) {
-            var stepId = $(this).closest('.step').data('step-id');
-            if (stepId == 1)
+            var stepId = $(this).closest('.step').data('step-id');   
+            if (stepId == 2) {
                 $('.asset-input-group input').each(function (index, element) {
                     if (!$(element).val())
                         $(element).val('0');
                 });
-            if (stepId == 3)
                 deploy();
+            }
             else
                 nextTab(stepId);
         }
     });
 
-    $('.asset-input-group input').blur(updateTotalAssets);
+   
     $('#fundFeeInput').blur(validateFormToEnableNextButton);
      
     $(".prev-step").click(function (e) {
@@ -33,12 +33,7 @@
     });
 
     loadAssetsGraphs();
-    
-    //hub.on('deployCompleted', Wizard.Operations.OnDeployCompleted);
-    //hub.on('deployUncompleted', Wizard.Operations.OnDeployUncompleted);
-    //hub.on('deployError', Wizard.Operations.OnDeployError);
-    //hub.on('creationCompleted', Wizard.Operations.OnCreationCompleted);
-    //hub.on('creationUncompleted', Wizard.Operations.OnCreationUncompleted);
+    registerCompanyForm.init()
 });
 
 function validateFormToEnableNextButton() {
@@ -179,38 +174,17 @@ function legendFormatter(data) {
     return html;
 }
 
-function updateTotalAssets() {
-    var total = 0;
-    $('.asset-input-group input').each(function (i, element) {
-        if (element.value < 0)
-            element.value = 0;
-        if (!isNaN(parseInt(element.value))) {
-            total += parseInt(element.value);
-        }
 
-    });
-    if (total != 100) {
-        $('.total-assets').addClass('has-error');
-        $('.total-assets').removeClass('has-success');
-    }
-    else {
-        $('.total-assets').removeClass('has-error');
-        $('.total-assets').addClass('has-success');
-    }
-
-    $('.total-assets-value').html(total);
-    validateFormToEnableNextButton();
-}
 
 function nextTab(currentStepId) {
     var $active = $('#step' + currentStepId);
     var $nextTab = $('#step' + (currentStepId + 1));
     $active.hide();
     $nextTab.show();
-    if (currentStepId == 1){
-        registerCompanyForm.init();
-    } else if (currentStepId == 2){
+    if (currentStepId == 1) {
         registerEmployeeForm.init();
+    } else if (currentStepId == 2){
+        
     }
 }
 
@@ -327,7 +301,7 @@ Wizard.Operations = {
         setTimeout(function () { Wizard.Components.ContractDeploy.CodeMirror.refresh(); }, 1);
         Wizard.Components.ContractDeploy.ContractCodeWrapper.show();
         Wizard.Components.ContractDeploy.ContractBeingDeployedDiv.show();
-        nextTab(3);
+        nextTab(2);
     },
     OnCreationUncompleted: function (pensionFundId) {
         var id = Wizard.Components.ContractDeploy.PensionFundId ? Wizard.Components.ContractDeploy.PensionFundId : pensionFundId;
