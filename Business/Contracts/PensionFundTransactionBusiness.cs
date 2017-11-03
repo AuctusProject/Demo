@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using System.Threading;
 using Auctus.Model;
 using Microsoft.Extensions.Configuration;
+using System.Collections.Concurrent;
 
 namespace Auctus.Business.Contracts
 {
@@ -108,7 +109,7 @@ namespace Auctus.Business.Contracts
             else if (transactions.Any(c => c.FunctionType == FunctionType.CompleteWithdrawal))
                 throw new InvalidOperationException("Withdrawal already made.");
 
-            List<PensionFundTransaction> newTransactions = new List<PensionFundTransaction>();
+            ConcurrentBag<PensionFundTransaction> newTransactions = new ConcurrentBag<PensionFundTransaction>();
             Parallel.For(1, monthsAmount + 1, new ParallelOptions() { MaxDegreeOfParallelism = 5 },
             month =>
             {
