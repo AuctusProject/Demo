@@ -367,6 +367,7 @@ namespace Auctus.Business.Funds
             {
                 try
                 {
+                    Logger.LogInformation($"Processing pension fund entry: {pensionFund.Id}");
                     pensionFund.Company.VestingRules = UVestingRuleBusiness.ListByCompany(pensionFund.Company.Id);
                     ProcessCompleteEntry(pensionFund);
                 }

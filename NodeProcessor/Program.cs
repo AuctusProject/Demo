@@ -31,7 +31,7 @@ namespace Auctus.NodeProcessor
             loggerFactory.AddNLog(new NLogProviderOptions { CaptureMessageTemplates = true, CaptureMessageProperties = true });
             loggerFactory.ConfigureNLog(Directory.GetCurrentDirectory() + "\\nlog.config");
 
-            serviceProvider.GetRequiredService<Processor>().Start();
+            serviceProvider.GetRequiredService<Processor>().Start(args);
         }
     }
 }

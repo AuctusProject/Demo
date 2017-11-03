@@ -53,6 +53,7 @@ namespace Auctus.Business.Contracts
                 {
                     try
                     {
+                        Logger.LogInformation($"Read contract mined: {contract.TransactionHash}");
                         CheckContractCreationTransaction(contract);
                     }
                     catch (Exception e)

@@ -254,6 +254,8 @@ namespace Auctus.Business.Contracts
             var pendingTransactions = Data.ListForProcessing(transactionStatus, NodeId);
             var transactionsByContract = pendingTransactions.GroupBy(p => p.PensionFundContractAddress).
                 ToDictionary(p => p.Key, p => p.ToList());
+
+            Logger.LogInformation($"Transactions from status: {transactionStatus}. Total contracts: {transactionsByContract.Keys.Count}. Total transactions: {transactionsByContract.Sum(t => t.Value.Count)}");
             return transactionsByContract;
         }
 
@@ -297,10 +299,9 @@ namespace Auctus.Business.Contracts
                     }
                     else
                     {
-                        poolInfo = SendToAutoRecoveryIfTransactionIsLost(poolInfo, contractPendingTransaction);
+                        SendToAutoRecoveryIfTransactionIsLost(poolInfo, contractPendingTransaction);
                     }
                 });
-
                 SaveWithdrawalValuesIfAllTransactionsCompleted(contractPendingTransactions);
             }
         }
@@ -313,7 +314,7 @@ namespace Auctus.Business.Contracts
             }
         }
 
-        private PoolInfo SendToAutoRecoveryIfTransactionIsLost(PoolInfo poolInfo, PensionFundTransaction contractPendingTransaction)
+        private void SendToAutoRecoveryIfTransactionIsLost(PoolInfo poolInfo, PensionFundTransaction contractPendingTransaction)
         {
             DateTime chainTolerance = DateTime.UtcNow.AddMinutes(-BLOCKCHAIN_TRANSACTION_TOLERANCE);
             if (contractPendingTransaction.CreationDate < chainTolerance)
@@ -326,8 +327,6 @@ namespace Auctus.Business.Contracts
                     Update(contractPendingTransaction);
                 }
             }
-
-            return poolInfo;
         }
 
         private void SaveEventInfo(PensionFundTransaction contractPendingTransaction, BaseEventInfo baseInfo)

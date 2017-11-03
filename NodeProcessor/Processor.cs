@@ -15,6 +15,7 @@ namespace Auctus.NodeProcessor
         private readonly ILoggerFactory loggerFactory;
         private readonly IConfigurationRoot configuration;
         protected readonly ILogger logger;
+        private string processName;
         private int ExecutionMilisecondsInterval {
             get {
                 if(configuration!=null && configuration["ExecutionMilisecondsInterval"] !=null)
@@ -31,18 +32,33 @@ namespace Auctus.NodeProcessor
             this.logger = loggerFactory.CreateLogger(GetType().Namespace);
         }
 
-        internal void Start()
+        internal void Start(string [] args)
         {
-            var taskList = new List<Task>
+            var process = GetProcessToRun(args);
+            process();
+        }
+
+        private Action GetProcessToRun(string[] args)
+        {
+            processName = args[0];
+            switch (processName)
             {
-                Task.Run(() => ProcessPensionFundsEntries()),
-                Task.Run(() => ReadContractMined()),
-                Task.Run(() => PostNotSentTransactions()),
-                Task.Run(() => ReadPendingTransactions()),
-                Task.Run(() => ProcessAutoRecoveryTransactions())
-            };
-            Task.WaitAny(taskList.ToArray());
-            //Log: some task ended and should be restarted
+                case "ProcessPensionFundsEntries":
+                    return ProcessPensionFundsEntries;
+                case "ReadContractMined":
+                    return ReadContractMined;
+                case "PostNotSentTransactions":
+                    return PostNotSentTransactions;
+                case "ReadPendingTransactions":
+                    return ProcessPensionFundsEntries;
+                case "ProcessAutoRecoveryTransactions":
+                    return ProcessAutoRecoveryTransactions;
+                default:
+                {
+                    logger.LogError($"Invalid process: {processName}");
+                        throw new ArgumentException("args");
+                }
+            }
         }
 
         private void Process(Action<Cache, ILoggerFactory, IConfigurationRoot> action)
@@ -52,7 +68,9 @@ namespace Auctus.NodeProcessor
             {
                 try
                 {
+                    logger.LogInformation($"Method {processName} started");
                     action(cache, loggerFactory, configuration);
+                    logger.LogInformation($"Method {processName} ended");
                     Task.Delay(ExecutionMilisecondsInterval);
                     consecutiveExceptions = 0;
                 }
