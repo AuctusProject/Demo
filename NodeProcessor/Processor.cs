@@ -50,7 +50,7 @@ namespace Auctus.NodeProcessor
                 case "PostNotSentTransactions":
                     return PostNotSentTransactions;
                 case "ReadPendingTransactions":
-                    return ProcessPensionFundsEntries;
+                    return ReadPendingTransactions;
                 case "ProcessAutoRecoveryTransactions":
                     return ProcessAutoRecoveryTransactions;
                 default:
