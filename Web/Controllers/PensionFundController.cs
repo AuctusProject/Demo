@@ -110,7 +110,7 @@ namespace Web.Controllers
             try
             {
                 Withdrawal withdrawal = PensionFundsServices.ReadWithdrawal(contractAddress);
-                Json(new { success = (withdrawal == null || withdrawal.Completed), data = Json(withdrawal).Value });
+                return Json(new { success = (withdrawal == null || withdrawal.Completed), data = Json(withdrawal).Value });
             }
             catch (Exception ex)
             {
