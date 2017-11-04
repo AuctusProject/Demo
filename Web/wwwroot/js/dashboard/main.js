@@ -86,11 +86,11 @@ var Dashboard = {
             Dashboard.finished = true;
             Dashboard.disableActionButtons();
             Dashboard.hideLoading();
-            $('.employee-receivable').text(Dashboard.getFormattedNumber(response.EmployeeSzaboCashback));
-            $('.company-receivable').text(Dashboard.getFormattedNumber(response.EmployerSzaboCashback));
+            $('.employee-receivable').text(Dashboard.getFormattedNumber(response.employeeSzaboCashback));
+            $('.company-receivable').text(Dashboard.getFormattedNumber(response.employerSzaboCashback));
             $('#employeeWalletLink').attr("href", Parameter.BlockExplorerUrl + "/address/" + pensionFundData.employeeAddress);
             $('#employerWalletLink').attr("href", Parameter.BlockExplorerUrl + "/address/" + pensionFundData.companyAddress);
-            $('#withdrawTransactionLink').attr("href", Parameter.BlockExplorerUrl + "/tx/" + response.TransactionHash);
+            $('#withdrawTransactionLink').attr("href", Parameter.BlockExplorerUrl + "/tx/" + response.transactionHash);
             $("#withdrawBtn").on('click', function () {
                 $('#withdrawCompletedModal').modal('toggle');
             });
@@ -130,7 +130,7 @@ var Dashboard = {
     },
     manageReadWithdrawResponse: function (response) {
         if (!response.success) {
-            Dashboard.withdrawalUncompleted(response.data);
+            Dashboard.withdrawalUncompleted(response);
         } else {
             Dashboard.withdrawalCompleted(response.data);
         }
@@ -146,7 +146,7 @@ var Dashboard = {
         Dashboard.setSummary(response);
         Dashboard.setTransactionHistory(response);
         Dashboard.charts && Dashboard.charts.update(response);
-        if (response && response.TransactionHistory) {
+        if (response && response.transactionHistory) {
             Dashboard.remainingPayments = 60 - response.transactionHistory.length;
         }
     },
