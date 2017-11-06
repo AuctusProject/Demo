@@ -549,7 +549,7 @@ input[type=number]::-webkit-outer-spin-button {
 .demo-description,
 .demo-description p {
     font-family: 'Helvetica Neue', sans-serif;
-    font-size: 12px;
+    font-size: 12.5px;
     line-height: 1.83;
     text-align: justify;
     color: #707070;
