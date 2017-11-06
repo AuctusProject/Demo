@@ -39,6 +39,7 @@ var Dashboard = {
         $('div.timeline-grid').on('click', function () {
             $('div.popup-timeline-footer').on('click', function () {
                 $('div.timeline-grid').click();
+                $('#paymentBtn').click()
             });
         });
     },
