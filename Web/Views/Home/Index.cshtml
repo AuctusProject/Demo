@@ -27,14 +27,16 @@
                             <div class="demo-description">
                                 <p>This demo was created to show how Auctus aims to revolutionize the pension fund market by creating a smart contract-powered pension funds platform. Auctus intends to make the creation of employer-sponsored retirement plans really simple, allowing companies of any size and from anywhere in the world to offer this benefit for its employees.</p>
                                 <p>Several simplifications were made to facilitate the simulation. For investments, a fixed asset allocation strategy was used. However, it would be also possible to implement in the smart contracts allocation limits based on asset characteristics and risk measures (i.e., var) in accordance with local legislation and the plan's investment policy, in which a designated manager could operate with ongoing compliance monitoring of all transactions.</p>
-                                <p>Doubts? Access <a href="https://auctus.org/" target="_blank">auctus.org</a> and learn more.</p>
+                                <p>Doubts? Access <a href="https://auctus.org/" target="_blank" tabindex="2">auctus.org</a> and learn more.</p>
                             </div>
-                            <div class="buttons-control-div" onclick="window.location.href = '@Url.Action("StartDemo", "Home")';">
-                                <div class="start-button">
-                                    <span class="next-button-label">START&nbsp;DEMO</span>
-                                    <img src="~/images/landing/play.png" srcset="~/images/landing/play@2x.png 2x, ~/images/landing/play@3x.png 3x" class="play-ico">
+                            <a href="@Url.Action("StartDemo", "Home")" tabindex="1">
+                                <div class="buttons-control-div" >
+                                    <div class="start-button">
+                                        <span class="next-button-label">START&nbsp;DEMO</span>
+                                        <img src="~/images/landing/play.png" srcset="~/images/landing/play@2x.png 2x, ~/images/landing/play@3x.png 3x" class="play-ico">
+                                    </div>
                                 </div>
-                            </div>
+                            </a>
                         </div>
                     </div>
                 </div>
