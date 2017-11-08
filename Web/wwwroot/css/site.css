@@ -530,7 +530,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 .pig-container {
     float: right;
-    padding: 110px 5px 110px 5px;
+    padding: 55px 5px 55px 5px;
 }
 
 .container.landing {
@@ -563,7 +563,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 .landing-blue-rectangle {
     width: 505px;
-    height: 496px;
+    height: 387px;
     background-color: #0243b7;
     z-index: -2;
     display: block;
