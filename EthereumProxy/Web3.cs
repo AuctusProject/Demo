@@ -162,7 +162,8 @@ namespace Auctus.EthereumProxy
                 else
                     strDecimals = numberFractions[1].PadRight(decimals, '0');
             }
-            return string.Format("{0}{1}", strNonDecimal, strDecimals).TrimStart('0');
+            string result = string.Format("{0}{1}", strNonDecimal, strDecimals).TrimStart('0');
+            return string.IsNullOrEmpty(result) ? "0" : result;
         }
 
         internal static double GetBigNumberStringToDouble(string bigNumber, int decimals)
