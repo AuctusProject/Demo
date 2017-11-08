@@ -160,9 +160,9 @@ namespace Auctus.EthereumProxy
                 if (numberFractions[1].Length > decimals)
                     strDecimals = numberFractions[1].Substring(0, decimals);
                 else
-                    strDecimals = numberFractions[1].PadRight(decimals, '0').TrimStart('0');
+                    strDecimals = numberFractions[1].PadRight(decimals, '0');
             }
-            return string.Format("{0}{1}", strNonDecimal, strDecimals);
+            return string.Format("{0}{1}", strNonDecimal, strDecimals).TrimStart('0');
         }
 
         internal static double GetBigNumberStringToDouble(string bigNumber, int decimals)
