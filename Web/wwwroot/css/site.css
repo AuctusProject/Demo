@@ -533,6 +533,12 @@ input[type=number]::-webkit-outer-spin-button {
     padding: 55px 5px 55px 5px;
 }
 
+.mobile-landing .pig-container {
+    float: unset;
+    padding: 5px;
+    text-align:center;
+}
+
 .container.landing {
     padding-left: 10%;
     padding-right: 10%;
@@ -601,3 +607,14 @@ div.g-recaptcha {
     div.g-recaptcha > div {
         width: 100% !important;
     }
+
+@media (min-width:992px){
+    .mobile-only {
+        display:none;
+    }
+}
+@media (max-width:992px) {
+    .desktop-only {
+        display: none;
+    }
+}
