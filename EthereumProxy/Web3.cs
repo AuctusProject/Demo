@@ -250,6 +250,12 @@ namespace Auctus.EthereumProxy
                 Output = ReadOutputStream(process.StandardOutput)
             };
         }
+
+        protected override void InternalDispose(Process process)
+        {
+            WriteCommand(process, new Command() { Comm = "exit" });
+            base.ReadOutput(process);
+        }
         #endregion
         #region Private Methods
         #region Executes

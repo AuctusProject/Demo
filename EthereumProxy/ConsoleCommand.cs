@@ -28,6 +28,7 @@ namespace Auctus.EthereumProxy
                     else
                         output.Output = "Error to start Process.";
 
+                    InternalDispose(process);
                     process.StandardOutput.Dispose();
                     process.StandardInput.Dispose();
                     process.StandardError.Dispose();
@@ -88,6 +89,11 @@ namespace Auctus.EthereumProxy
                 output.Output = (string.IsNullOrEmpty(standard) ? error : (string.IsNullOrEmpty(error) ? standard : standard + '\r' + '\n' + error));
             }
             return output;
+        }
+
+        protected virtual void InternalDispose(Process process)
+        {
+
         }
 
         protected ConsoleOutput ProcessCommand(Process process, Command command)
