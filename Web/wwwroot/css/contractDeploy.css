@@ -1,5 +1,5 @@
 ﻿.contract-deploy-title {
-    font-family: 'Helvetica Neue Bold';
+    font-family: 'Helvetica Neue Bold', "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
     font-size: 12px;
     letter-spacing: 0.9px;
     text-align: center;
@@ -7,7 +7,7 @@
 }
 
 .contract-deploy-subtitle {
-    font-family: 'Helvetica Neue';
+    font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
     font-size: 12px;
     font-weight: 300;
     line-height: 1.5;

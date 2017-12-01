@@ -12,14 +12,14 @@
     min-width: 32px;
 }
 
-.company-register .img-container .number {
-    position: relative;
-    left: -16px;
-    top: 4px;
-    font-family: 'Helvetica Neue Bold';
-    font-size: 11px;
-    color: #00E6D1;
-}
+    .company-register .img-container .number {
+        position: relative;
+        left: -16px;
+        top: 4px;
+        font-family: 'Helvetica Neue Bold', "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+        font-size: 11px;
+        color: #00E6D1;
+    }
 
 .company-register .vesting-title {
     font-family: Helvetica Neue;
